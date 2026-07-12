@@ -119,14 +119,12 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
             <Play size={13} weight="fill" />
             Run Tests
           </button>
-          <div className="relative">
-            <AiHintPanel
-              challenge={challenge}
-              code={code}
-              runResult={runResult}
-              onHintUsed={() => setAiHintUsed(true)}
-            />
-          </div>
+          <AiHintPanel
+            challenge={challenge}
+            code={code}
+            runResult={runResult}
+            onHintUsed={() => setAiHintUsed(true)}
+          />
         </div>
       </div>
 

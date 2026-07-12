@@ -77,7 +77,7 @@ export function AiHintPanel({ challenge, code, runResult, onHintUsed }: Props) {
     return (
       <button
         onClick={fetchHint}
-        disabled={!runResult || runResult.passed}
+        disabled={runResult?.passed === true}
         className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 disabled:opacity-40 text-white text-xs font-medium transition-opacity"
       >
         <Sparkle size={13} weight="fill" />

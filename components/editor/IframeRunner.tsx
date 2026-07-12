@@ -16,8 +16,15 @@ function stripHiddenMarkers(suite: string) {
   return suite.replace(/\/\/ __hidden__\n?/g, '')
 }
 
+function stripExports(code: string): string {
+  return code
+    .replace(/^export\s+default\s+/gm, '')
+    .replace(/^export\s+((?:async\s+)?function|class|const|let|var)/gm, '$1')
+}
+
 function buildIframeDoc(code: string, testSuite: string): string {
   const cleanSuite = stripHiddenMarkers(testSuite)
+  const cleanCode = stripExports(code)
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -60,7 +67,7 @@ window.renderHook = (hookFn, opts) => {
 };
 <\/script>
 <script type="text/babel" data-presets="typescript">
-${code}
+${cleanCode}
 <\/script>
 <script type="text/babel" data-presets="typescript">
 ${cleanSuite}
