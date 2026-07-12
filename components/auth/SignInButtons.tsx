@@ -17,6 +17,7 @@ export function SignInButtons() {
 
   return (
     <div className="flex flex-col gap-3 w-full max-w-xs">
+      <div id="clerk-captcha" />
       <button
         onClick={() => signInWith('oauth_github')}
         className="flex items-center justify-center gap-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg px-4 py-3 text-sm font-medium transition-colors cursor-pointer"
