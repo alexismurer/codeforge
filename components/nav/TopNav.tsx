@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import {
   CodeBlock,
   Trophy,
@@ -9,7 +9,7 @@ import {
   Lightning,
   Fire,
 } from '@phosphor-icons/react'
-import { createClient } from '@/lib/supabase/client'
+import { useClerk } from '@clerk/nextjs'
 
 type NavUser = {
   username: string
@@ -19,13 +19,10 @@ type NavUser = {
 
 export function TopNav({ user }: { user: NavUser | null }) {
   const pathname = usePathname()
-  const router = useRouter()
-  const supabase = createClient()
+  const { signOut } = useClerk()
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/')
-    router.refresh()
+    await signOut({ redirectUrl: '/' })
   }
 
   const navLinks = [
