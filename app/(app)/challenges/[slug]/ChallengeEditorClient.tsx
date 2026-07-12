@@ -2,7 +2,8 @@
 
 import { useState, useRef, useCallback } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Play, Sparkle, ArrowCounterClockwise } from '@phosphor-icons/react'
+import { ArrowLeft, Play, Sparkle, ArrowCounterClockwise, CheckCircle } from '@phosphor-icons/react'
+import { recordSubmission, type SubmitResult } from '@/lib/actions/submission'
 import { CodeEditor } from '@/components/editor/CodeEditor'
 import { IframeRunner, type IframeRunnerHandle } from '@/components/editor/IframeRunner'
 import { TestResults } from '@/components/editor/TestResults'
@@ -25,6 +26,9 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
   const [code, setCode] = useState(challenge.starter_code)
   const [runResult, setRunResult] = useState<RunResult | null>(null)
   const [running, setRunning] = useState(false)
+  const [solveResult, setSolveResult] = useState<SubmitResult | null>(null)
+  const [aiHintUsed, setAiHintUsed] = useState(false)
+  const startTimeRef = useRef(Date.now())
 
   const runnerRef = useRef<IframeRunnerHandle>(null)
 
@@ -34,10 +38,38 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
     runnerRef.current?.run(code, challenge.test_suite)
   }, [code, challenge.test_suite])
 
-  const handleResult = useCallback((result: RunResult) => {
-    setRunning(false)
-    setRunResult(result)
-  }, [])
+  const handleResult = useCallback(
+    async (result: RunResult) => {
+      setRunning(false)
+      setRunResult(result)
+
+      if (!userId) return
+
+      const timeToSolve = Math.floor((Date.now() - startTimeRef.current) / 1000)
+
+      try {
+        const submitResult = await recordSubmission({
+          challengeId: challenge.id,
+          code,
+          passed: result.passed,
+          timeToSolveSeconds: timeToSolve,
+          aiHintUsed,
+          challengeXpReward: challenge.xp_reward,
+          challengeTopic: challenge.topic,
+          challengeType: challenge.type,
+          challengeTags: challenge.tags,
+          challengeDifficulty: challenge.difficulty,
+        })
+
+        if (result.passed) {
+          setSolveResult(submitResult)
+        }
+      } catch (e) {
+        console.error('Submission error:', e)
+      }
+    },
+    [userId, code, challenge, aiHintUsed]
+  )
 
   const handleError = useCallback((msg: string) => {
     setRunning(false)
@@ -92,6 +124,20 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
           </button>
         </div>
       </div>
+
+      {solveResult && (
+        <div className="bg-emerald-950 border-b border-emerald-800 px-4 py-2.5 flex items-center gap-4 flex-shrink-0">
+          <CheckCircle size={18} weight="fill" className="text-emerald-400" />
+          <span className="text-emerald-300 text-sm font-medium">
+            Challenge solved! +{solveResult.xpEarned} XP
+            {solveResult.newLevel && ` · Level up — ${solveResult.newLevel}`}
+            {solveResult.newBadges.length > 0 && ` · 🏆 ${solveResult.newBadges.join(', ')}`}
+          </span>
+          <Link href="/challenges" className="ml-auto text-xs text-emerald-500 hover:text-emerald-300">
+            Next challenge →
+          </Link>
+        </div>
+      )}
 
       {/* 3-panel layout */}
       <div className="flex flex-1 overflow-hidden">
