@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import { auth } from '@clerk/nextjs/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { ActivityHeatmap } from '@/components/gamification/ActivityHeatmap'
@@ -47,6 +48,17 @@ export default async function ProfilePage({
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4 flex flex-col gap-8">
+      {/* Profile banner — place generated image at public/images/profile-banner.png (recommended 1200×220) */}
+      <div className="relative -mx-4 -mt-8 h-[140px] bg-gradient-to-br from-indigo-950 via-zinc-900 to-purple-950 overflow-hidden">
+        <Image
+          src="/images/profile-banner.png"
+          alt=""
+          fill
+          style={{ objectFit: 'cover', opacity: 0.55 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-zinc-950" />
+      </div>
+
       <div className="flex items-start gap-4">
         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
           {profile.username.charAt(0).toUpperCase()}
