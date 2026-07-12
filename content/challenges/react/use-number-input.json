@@ -1,0 +1,15 @@
+{
+  "slug": "use-number-input",
+  "title": "useNumberInput Hook",
+  "description": "Implement a `useNumberInput` hook that returns `{ value, increment, decrement, set }`. `increment` adds `step` to the value, clamped at `max`. `decrement` subtracts `step`, clamped at `min`. `set(n)` sets any value within bounds.\n\n**Example:**\n```tsx\nconst { value, increment, decrement, set } = useNumberInput({ initial: 5, step: 2, min: 0, max: 10 });\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useNumberInput({ initial, step = 1, min = -Infinity, max = Infinity }) {\n  // your code here\n}",
+  "test_suite": "test('starts at initial value', () => {\n  const { result } = renderHook(() => useNumberInput({ initial: 5, step: 1, min: 0, max: 10 }));\n  expect(result.current.value).toBe(5);\n});\n\ntest('increment adds step', () => {\n  const { result } = renderHook(() => useNumberInput({ initial: 0, step: 2, min: 0, max: 10 }));\n  act(() => result.current.increment());\n  expect(result.current.value).toBe(2);\n});\n\ntest('decrement subtracts step', () => {\n  const { result } = renderHook(() => useNumberInput({ initial: 6, step: 3, min: 0, max: 10 }));\n  act(() => result.current.decrement());\n  expect(result.current.value).toBe(3);\n});\n\ntest('increment clamps at max', () => {\n  const { result } = renderHook(() => useNumberInput({ initial: 9, step: 5, min: 0, max: 10 }));\n  act(() => result.current.increment());\n  expect(result.current.value).toBe(10);\n});\n\n// __hidden__\ntest('decrement clamps at min', () => {\n  const { result } = renderHook(() => useNumberInput({ initial: 1, step: 5, min: 0, max: 10 }));\n  act(() => result.current.decrement());\n  expect(result.current.value).toBe(0);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useNumberInput({ initial, step = 1, min = -Infinity, max = Infinity }) {\n  const [value, setValue] = useState(initial);\n  const clamp = (v) => Math.min(Math.max(v, min), max);\n  return {\n    value,\n    increment: () => setValue(v => clamp(v + step)),\n    decrement: () => setValue(v => clamp(v - step)),\n    set: (n) => setValue(clamp(n)),\n  };\n}",
+  "ai_context": "Common mistake: applying clamp only on increment/decrement but not on set — all value-changing operations should clamp to keep the value within the declared bounds.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "forms"],
+  "order_index": 22
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "use-set-state",
+  "title": "useSetState Hook",
+  "description": "Implement a `useSetState` hook that stores unique values and returns `{ set, add, remove, has, toggle, clear }`. The `set` value is a JavaScript `Set`. `toggle(item)` adds if absent, removes if present.\n\n**Example:**\n```tsx\nconst { set, add, remove, has, toggle, clear } = useSetState(['a', 'b']);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useSetState(initial = []) {\n  // your code here\n}",
+  "test_suite": "test('starts with initial values as a Set', () => {\n  const { result } = renderHook(() => useSetState(['a', 'b']));\n  expect(result.current.set.has('a')).toBe(true);\n});\n\ntest('add inserts a new entry', () => {\n  const { result } = renderHook(() => useSetState([]));\n  act(() => result.current.add('x'));\n  expect(result.current.has('x')).toBe(true);\n});\n\ntest('remove deletes an entry', () => {\n  const { result } = renderHook(() => useSetState(['x']));\n  act(() => result.current.remove('x'));\n  expect(result.current.has('x')).toBe(false);\n});\n\ntest('toggle adds if absent', () => {\n  const { result } = renderHook(() => useSetState([]));\n  act(() => result.current.toggle('y'));\n  expect(result.current.has('y')).toBe(true);\n  act(() => result.current.toggle('y'));\n  expect(result.current.has('y')).toBe(false);\n});\n\n// __hidden__\ntest('clear empties the set', () => {\n  const { result } = renderHook(() => useSetState(['a', 'b']));\n  act(() => result.current.clear());\n  expect(result.current.set.size).toBe(0);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useSetState(initial = []) {\n  const [set, setSet] = useState(() => new Set(initial));\n  return {\n    set,\n    add: (item) => setSet(s => new Set([...s, item])),\n    remove: (item) => setSet(s => { const n = new Set(s); n.delete(item); return n; }),\n    has: (item) => set.has(item),\n    toggle: (item) => setSet(s => { const n = new Set(s); n.has(item) ? n.delete(item) : n.add(item); return n; }),\n    clear: () => setSet(new Set()),\n  };\n}",
+  "ai_context": "Common mistake: mutating the existing Set with set.add(item) and passing it to setState — React won't see a new reference, so it won't re-render. Always create a new Set.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "data-structures"],
+  "order_index": 14
+}

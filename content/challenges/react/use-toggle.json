@@ -1,0 +1,15 @@
+{
+  "slug": "use-toggle",
+  "title": "useToggle Hook",
+  "description": "Implement a `useToggle` hook that returns `[value, toggle, setOn, setOff]`. The boolean starts at `initial` (default `false`).\n\n**Example:**\n```tsx\nconst [isOpen, toggle, setOn, setOff] = useToggle(false);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useToggle(initial = false) {\n  // your code here\n}",
+  "test_suite": "test('starts at initial value', () => {\n  const { result } = renderHook(() => useToggle(true));\n  expect(result.current[0]).toBe(true);\n});\n\ntest('toggle flips the boolean', () => {\n  const { result } = renderHook(() => useToggle(false));\n  act(() => result.current[1]());\n  expect(result.current[0]).toBe(true);\n  act(() => result.current[1]());\n  expect(result.current[0]).toBe(false);\n});\n\ntest('setOn forces value to true', () => {\n  const { result } = renderHook(() => useToggle(false));\n  act(() => result.current[2]());\n  expect(result.current[0]).toBe(true);\n});\n\ntest('setOff forces value to false', () => {\n  const { result } = renderHook(() => useToggle(true));\n  act(() => result.current[3]());\n  expect(result.current[0]).toBe(false);\n});\n\n// __hidden__\ntest('defaults initial to false', () => {\n  const { result } = renderHook(() => useToggle());\n  expect(result.current[0]).toBe(false);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useToggle(initial = false) {\n  const [value, setValue] = useState(initial);\n  return [\n    value,\n    () => setValue(v => !v),\n    () => setValue(true),\n    () => setValue(false),\n  ];\n}",
+  "ai_context": "Common mistake: returning setOn and setOff as setValue(true) and setValue(false) inline — these should be stable function references, not inline arrow functions that recreate on every render.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "boolean"],
+  "order_index": 4
+}

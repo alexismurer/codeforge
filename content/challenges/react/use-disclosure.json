@@ -1,0 +1,15 @@
+{
+  "slug": "use-disclosure",
+  "title": "useDisclosure Hook",
+  "description": "Implement a `useDisclosure` hook commonly used for modals and drawers. It returns `{ isOpen, open, close, toggle }`. `open()` sets `isOpen` to `true`, `close()` sets it to `false`, and `toggle()` flips it.\n\n**Example:**\n```tsx\nconst { isOpen, open, close, toggle } = useDisclosure(false);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useDisclosure(initial = false) {\n  // your code here\n}",
+  "test_suite": "test('starts at initial value', () => {\n  const { result } = renderHook(() => useDisclosure(true));\n  expect(result.current.isOpen).toBe(true);\n});\n\ntest('open sets isOpen to true', () => {\n  const { result } = renderHook(() => useDisclosure(false));\n  act(() => result.current.open());\n  expect(result.current.isOpen).toBe(true);\n});\n\ntest('close sets isOpen to false', () => {\n  const { result } = renderHook(() => useDisclosure(true));\n  act(() => result.current.close());\n  expect(result.current.isOpen).toBe(false);\n});\n\ntest('toggle flips isOpen', () => {\n  const { result } = renderHook(() => useDisclosure(false));\n  act(() => result.current.toggle());\n  expect(result.current.isOpen).toBe(true);\n  act(() => result.current.toggle());\n  expect(result.current.isOpen).toBe(false);\n});\n\n// __hidden__\ntest('defaults initial to false', () => {\n  const { result } = renderHook(() => useDisclosure());\n  expect(result.current.isOpen).toBe(false);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useDisclosure(initial = false) {\n  const [isOpen, setIsOpen] = useState(initial);\n  return {\n    isOpen,\n    open: () => setIsOpen(true),\n    close: () => setIsOpen(false),\n    toggle: () => setIsOpen(v => !v),\n  };\n}",
+  "ai_context": "Common mistake: naming the returned state 'open' instead of 'isOpen', which conflicts with the 'open' function — always use isOpen for the boolean value to avoid shadowing.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "ui-patterns"],
+  "order_index": 18
+}

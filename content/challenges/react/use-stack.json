@@ -1,0 +1,15 @@
+{
+  "slug": "use-stack",
+  "title": "useStack Hook",
+  "description": "Implement a `useStack` hook that manages a LIFO stack and returns `{ stack, push, pop, peek, size }`. `push(item)` adds to the top. `pop()` removes the top item. `peek` is the top item (or `undefined` if empty). `size` is the current length.\n\n**Example:**\n```tsx\nconst { stack, push, pop, peek, size } = useStack([]);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useStack(initial = []) {\n  // your code here\n}",
+  "test_suite": "test('starts with initial stack', () => {\n  const { result } = renderHook(() => useStack([1, 2]));\n  expect(result.current.stack).toEqual([1, 2]);\n});\n\ntest('push adds to top (end of array)', () => {\n  const { result } = renderHook(() => useStack([]));\n  act(() => result.current.push('a'));\n  act(() => result.current.push('b'));\n  expect(result.current.stack).toEqual(['a', 'b']);\n});\n\ntest('pop removes top item', () => {\n  const { result } = renderHook(() => useStack(['a', 'b', 'c']));\n  act(() => result.current.pop());\n  expect(result.current.stack).toEqual(['a', 'b']);\n});\n\ntest('peek reads top item without removing', () => {\n  const { result } = renderHook(() => useStack(['x', 'y']));\n  expect(result.current.peek).toBe('y');\n  expect(result.current.stack.length).toBe(2);\n});\n\n// __hidden__\ntest('size reflects current length', () => {\n  const { result } = renderHook(() => useStack([]));\n  act(() => result.current.push('a'));\n  expect(result.current.size).toBe(1);\n  act(() => result.current.pop());\n  expect(result.current.size).toBe(0);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useStack(initial = []) {\n  const [stack, setStack] = useState(initial);\n  return {\n    stack,\n    push: (item) => setStack(s => [...s, item]),\n    pop: () => setStack(s => s.slice(0, -1)),\n    peek: stack[stack.length - 1],\n    size: stack.length,\n  };\n}",
+  "ai_context": "Common mistake: confusing which end is the 'top' — in a stack modeled as an array, the top is the last element (index -1), so peek is stack[stack.length - 1] and pop removes the last element with slice(0, -1).",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "data-structures"],
+  "order_index": 12
+}

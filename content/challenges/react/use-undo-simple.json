@@ -1,0 +1,15 @@
+{
+  "slug": "use-undo-simple",
+  "title": "useUndoSimple Hook",
+  "description": "Implement a `useUndoSimple` hook that supports a single level of undo and returns `{ value, set, undo, canUndo }`. `set(newValue)` changes the value and saves the previous one. `undo()` reverts to the previous value. `canUndo` is `false` initially and after an undo.\n\n**Example:**\n```tsx\nconst { value, set, undo, canUndo } = useUndoSimple('hello');\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useUndoSimple(initial) {\n  // your code here\n}",
+  "test_suite": "test('starts at initial value', () => {\n  const { result } = renderHook(() => useUndoSimple('a'));\n  expect(result.current.value).toBe('a');\n});\n\ntest('set changes the value', () => {\n  const { result } = renderHook(() => useUndoSimple('a'));\n  act(() => result.current.set('b'));\n  expect(result.current.value).toBe('b');\n});\n\ntest('undo reverts to previous value', () => {\n  const { result } = renderHook(() => useUndoSimple('a'));\n  act(() => result.current.set('b'));\n  act(() => result.current.undo());\n  expect(result.current.value).toBe('a');\n});\n\ntest('canUndo is false initially', () => {\n  const { result } = renderHook(() => useUndoSimple('a'));\n  expect(result.current.canUndo).toBe(false);\n});\n\n// __hidden__\ntest('canUndo is false after undo', () => {\n  const { result } = renderHook(() => useUndoSimple('a'));\n  act(() => result.current.set('b'));\n  act(() => result.current.undo());\n  expect(result.current.canUndo).toBe(false);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useUndoSimple(initial) {\n  const [value, setValue] = useState(initial);\n  const [prev, setPrev] = useState(undefined);\n  return {\n    value,\n    set: (newValue) => { setPrev(value); setValue(newValue); },\n    undo: () => { if (prev !== undefined) { setValue(prev); setPrev(undefined); } },\n    canUndo: prev !== undefined,\n  };\n}",
+  "ai_context": "Common mistake: storing canUndo as a separate boolean state rather than deriving it from whether prev is defined — derived state stays in sync automatically and avoids inconsistency bugs.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "undo"],
+  "order_index": 19
+}

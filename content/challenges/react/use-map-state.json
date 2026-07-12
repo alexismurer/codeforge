@@ -1,0 +1,15 @@
+{
+  "slug": "use-map-state",
+  "title": "useMapState Hook",
+  "description": "Implement a `useMapState` hook that stores key/value pairs and returns `{ map, set, get, remove, has, clear }`. The `map` value is a plain object. `set(key, value)` upserts. `remove(key)` deletes. `has(key)` returns a boolean. `get(key)` returns the value.\n\n**Example:**\n```tsx\nconst { map, set, get, remove, has, clear } = useMapState({});\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useMapState(initial = {}) {\n  // your code here\n}",
+  "test_suite": "test('starts with initial map', () => {\n  const { result } = renderHook(() => useMapState({ a: 1 }));\n  expect(result.current.map).toEqual({ a: 1 });\n});\n\ntest('set upserts a key', () => {\n  const { result } = renderHook(() => useMapState({}));\n  act(() => result.current.set('x', 42));\n  expect(result.current.get('x')).toBe(42);\n});\n\ntest('remove deletes a key', () => {\n  const { result } = renderHook(() => useMapState({ a: 1, b: 2 }));\n  act(() => result.current.remove('a'));\n  expect(result.current.has('a')).toBe(false);\n  expect(result.current.has('b')).toBe(true);\n});\n\ntest('has returns correct boolean', () => {\n  const { result } = renderHook(() => useMapState({ k: 'v' }));\n  expect(result.current.has('k')).toBe(true);\n  expect(result.current.has('missing')).toBe(false);\n});\n\n// __hidden__\ntest('clear empties the map', () => {\n  const { result } = renderHook(() => useMapState({ a: 1, b: 2 }));\n  act(() => result.current.clear());\n  expect(result.current.map).toEqual({});\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useMapState(initial = {}) {\n  const [map, setMap] = useState(initial);\n  return {\n    map,\n    set: (key, value) => setMap(m => ({ ...m, [key]: value })),\n    get: (key) => map[key],\n    remove: (key) => setMap(m => { const n = { ...m }; delete n[key]; return n; }),\n    has: (key) => Object.prototype.hasOwnProperty.call(map, key),\n    clear: () => setMap({}),\n  };\n}",
+  "ai_context": "Common mistake: mutating the map object directly with map[key] = value instead of spreading into a new object — React compares by reference, so a mutation won't trigger a re-render.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "objects"],
+  "order_index": 13
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "use-form-field",
+  "title": "useFormField Hook",
+  "description": "Implement a `useFormField` hook that returns `{ value, onChange, error, touched, setError, reset }`. `onChange` sets the value and marks `touched` as `true`. `setError(msg)` stores a validation error. `reset` clears all state back to initial.\n\n**Example:**\n```tsx\nconst { value, onChange, error, touched, setError, reset } = useFormField('');\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useFormField(initial = '') {\n  // your code here\n}",
+  "test_suite": "test('starts with initial value and no error', () => {\n  const { result } = renderHook(() => useFormField('hello'));\n  expect(result.current.value).toBe('hello');\n  expect(result.current.error).toBe('');\n  expect(result.current.touched).toBe(false);\n});\n\ntest('onChange sets value and touched', () => {\n  const { result } = renderHook(() => useFormField(''));\n  act(() => result.current.onChange({ target: { value: 'world' } }));\n  expect(result.current.value).toBe('world');\n  expect(result.current.touched).toBe(true);\n});\n\ntest('setError stores an error message', () => {\n  const { result } = renderHook(() => useFormField(''));\n  act(() => result.current.setError('Required field'));\n  expect(result.current.error).toBe('Required field');\n});\n\ntest('reset clears all state', () => {\n  const { result } = renderHook(() => useFormField('init'));\n  act(() => result.current.onChange({ target: { value: 'changed' } }));\n  act(() => result.current.setError('bad'));\n  act(() => result.current.reset());\n  expect(result.current.value).toBe('init');\n  expect(result.current.error).toBe('');\n  expect(result.current.touched).toBe(false);\n});\n\n// __hidden__\ntest('touched stays true after multiple onChange calls', () => {\n  const { result } = renderHook(() => useFormField(''));\n  act(() => result.current.onChange({ target: { value: 'a' } }));\n  act(() => result.current.onChange({ target: { value: 'ab' } }));\n  expect(result.current.touched).toBe(true);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useFormField(initial = '') {\n  const [value, setValue] = useState(initial);\n  const [error, setError] = useState('');\n  const [touched, setTouched] = useState(false);\n  return {\n    value,\n    onChange: (e) => { setValue(e.target.value); setTouched(true); },\n    error,\n    touched,\n    setError: (msg) => setError(msg),\n    reset: () => { setValue(initial); setError(''); setTouched(false); },\n  };\n}",
+  "ai_context": "Common mistake: forgetting to reset all three pieces of state (value, error, touched) in the reset function — learners often only reset value and miss the other fields.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "forms"],
+  "order_index": 24
+}

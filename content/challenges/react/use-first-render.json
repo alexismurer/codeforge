@@ -1,0 +1,15 @@
+{
+  "slug": "use-first-render",
+  "title": "useFirstRender Hook",
+  "description": "Implement a `useFirstRender` hook that returns `true` on the very first render and `false` on every subsequent render. Use `useRef` to track this without triggering re-renders.\n\n**Example:**\n```tsx\nconst isFirstRender = useFirstRender();\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useRef } from 'react';\n\nexport function useFirstRender() {\n  // your code here\n}",
+  "test_suite": "test('returns true on first render', () => {\n  const { result } = renderHook(() => useFirstRender());\n  expect(result.current).toBe(true);\n});\n\ntest('returns false on rerender', () => {\n  const { result, rerender } = renderHook(() => useFirstRender());\n  rerender();\n  expect(result.current).toBe(false);\n});\n\ntest('stays false on multiple rerenders', () => {\n  const { result, rerender } = renderHook(() => useFirstRender());\n  rerender();\n  rerender();\n  rerender();\n  expect(result.current).toBe(false);\n});\n\n// __hidden__\ntest('each hook instance is independent', () => {\n  const { result: r1, rerender: rr1 } = renderHook(() => useFirstRender());\n  const { result: r2 } = renderHook(() => useFirstRender());\n  rr1();\n  expect(r1.current).toBe(false);\n  expect(r2.current).toBe(true);\n});",
+  "solution": "import { useRef } from 'react';\n\nexport function useFirstRender() {\n  const isFirst = useRef(true);\n  if (isFirst.current) {\n    isFirst.current = false;\n    return true;\n  }\n  return false;\n}",
+  "ai_context": "Common mistake: using useState instead of useRef — useState causes a re-render when updated, creating an infinite loop. useRef lets you mutate the value without triggering a render.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useRef", "lifecycle"],
+  "order_index": 20
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "use-queue",
+  "title": "useQueue Hook",
+  "description": "Implement a `useQueue` hook that manages a FIFO queue and returns `{ queue, enqueue, dequeue, peek, size }`. `enqueue(item)` adds to the back. `dequeue()` removes the front item. `peek` is the front item (or `undefined` if empty). `size` is the current length.\n\n**Example:**\n```tsx\nconst { queue, enqueue, dequeue, peek, size } = useQueue([]);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useQueue(initial = []) {\n  // your code here\n}",
+  "test_suite": "test('starts with initial queue', () => {\n  const { result } = renderHook(() => useQueue([1, 2]));\n  expect(result.current.queue).toEqual([1, 2]);\n});\n\ntest('enqueue appends to back', () => {\n  const { result } = renderHook(() => useQueue([]));\n  act(() => result.current.enqueue('a'));\n  act(() => result.current.enqueue('b'));\n  expect(result.current.queue).toEqual(['a', 'b']);\n});\n\ntest('dequeue removes front item', () => {\n  const { result } = renderHook(() => useQueue(['a', 'b', 'c']));\n  act(() => result.current.dequeue());\n  expect(result.current.queue).toEqual(['b', 'c']);\n});\n\ntest('peek reads front item without removing', () => {\n  const { result } = renderHook(() => useQueue(['x', 'y']));\n  expect(result.current.peek).toBe('x');\n  expect(result.current.queue.length).toBe(2);\n});\n\n// __hidden__\ntest('size reflects current length', () => {\n  const { result } = renderHook(() => useQueue([]));\n  expect(result.current.size).toBe(0);\n  act(() => result.current.enqueue('a'));\n  expect(result.current.size).toBe(1);\n  act(() => result.current.dequeue());\n  expect(result.current.size).toBe(0);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useQueue(initial = []) {\n  const [queue, setQueue] = useState(initial);\n  return {\n    queue,\n    enqueue: (item) => setQueue(q => [...q, item]),\n    dequeue: () => setQueue(q => q.slice(1)),\n    peek: queue[0],\n    size: queue.length,\n  };\n}",
+  "ai_context": "Common mistake: implementing dequeue with queue.shift() which mutates the existing array — always create a new array with slice(1) so React detects the state change.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "data-structures"],
+  "order_index": 11
+}

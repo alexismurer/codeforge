@@ -1,0 +1,15 @@
+{
+  "slug": "use-step",
+  "title": "useStep Hook",
+  "description": "Implement a `useStep` hook that moves through an array of steps and returns `{ current, index, next, prev, isFirst, isLast }`. Navigation is clamped — `next` does nothing on the last step and `prev` does nothing on the first.\n\n**Example:**\n```tsx\nconst { current, index, next, prev, isFirst, isLast } = useStep(['intro', 'form', 'confirm']);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useStep(steps) {\n  // your code here\n}",
+  "test_suite": "test('starts at first step', () => {\n  const { result } = renderHook(() => useStep(['a', 'b', 'c']));\n  expect(result.current.current).toBe('a');\n  expect(result.current.index).toBe(0);\n});\n\ntest('next advances index', () => {\n  const { result } = renderHook(() => useStep(['a', 'b', 'c']));\n  act(() => result.current.next());\n  expect(result.current.index).toBe(1);\n  expect(result.current.current).toBe('b');\n});\n\ntest('prev goes back', () => {\n  const { result } = renderHook(() => useStep(['a', 'b', 'c']));\n  act(() => result.current.next());\n  act(() => result.current.prev());\n  expect(result.current.index).toBe(0);\n});\n\ntest('isFirst and isLast are correct', () => {\n  const { result } = renderHook(() => useStep(['a', 'b']));\n  expect(result.current.isFirst).toBe(true);\n  expect(result.current.isLast).toBe(false);\n  act(() => result.current.next());\n  expect(result.current.isFirst).toBe(false);\n  expect(result.current.isLast).toBe(true);\n});\n\n// __hidden__\ntest('next clamps at last step', () => {\n  const { result } = renderHook(() => useStep(['a', 'b']));\n  act(() => result.current.next());\n  act(() => result.current.next());\n  expect(result.current.index).toBe(1);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useStep(steps) {\n  const [index, setIndex] = useState(0);\n  return {\n    current: steps[index],\n    index,\n    next: () => setIndex(i => Math.min(i + 1, steps.length - 1)),\n    prev: () => setIndex(i => Math.max(i - 1, 0)),\n    isFirst: index === 0,\n    isLast: index === steps.length - 1,\n  };\n}",
+  "ai_context": "Common mistake: confusing useCycle (wrapping) with useStep (clamped) — learners often apply the modulo wrap from useCycle here, when useStep should clamp at boundaries instead.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "navigation"],
+  "order_index": 10
+}

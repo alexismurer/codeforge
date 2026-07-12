@@ -1,0 +1,15 @@
+{
+  "slug": "use-clamp",
+  "title": "useClamp Hook",
+  "description": "Implement a `useClamp` hook that returns `{ value, increment, decrement }`. The value is bounded between `min` and `max` — `increment` stops at `max` and `decrement` stops at `min`.\n\n**Example:**\n```tsx\nconst { value, increment, decrement } = useClamp(5, 0, 10);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useClamp(initial, min, max) {\n  // your code here\n}",
+  "test_suite": "test('starts at initial value', () => {\n  const { result } = renderHook(() => useClamp(5, 0, 10));\n  expect(result.current.value).toBe(5);\n});\n\ntest('increment stops at max', () => {\n  const { result } = renderHook(() => useClamp(9, 0, 10));\n  act(() => result.current.increment());\n  expect(result.current.value).toBe(10);\n  act(() => result.current.increment());\n  expect(result.current.value).toBe(10);\n});\n\ntest('decrement stops at min', () => {\n  const { result } = renderHook(() => useClamp(1, 0, 10));\n  act(() => result.current.decrement());\n  expect(result.current.value).toBe(0);\n  act(() => result.current.decrement());\n  expect(result.current.value).toBe(0);\n});\n\ntest('increment and decrement within bounds', () => {\n  const { result } = renderHook(() => useClamp(5, 0, 10));\n  act(() => result.current.increment());\n  expect(result.current.value).toBe(6);\n  act(() => result.current.decrement());\n  expect(result.current.value).toBe(5);\n});\n\n// __hidden__\ntest('initial value at min boundary', () => {\n  const { result } = renderHook(() => useClamp(0, 0, 5));\n  act(() => result.current.decrement());\n  expect(result.current.value).toBe(0);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useClamp(initial, min, max) {\n  const [value, setValue] = useState(initial);\n  return {\n    value,\n    increment: () => setValue(v => Math.min(v + 1, max)),\n    decrement: () => setValue(v => Math.max(v - 1, min)),\n  };\n}",
+  "ai_context": "Common mistake: not using the functional updater form — writing setValue(Math.min(value + 1, max)) captures a stale closure value instead of the latest state.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "math"],
+  "order_index": 8
+}

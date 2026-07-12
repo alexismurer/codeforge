@@ -1,0 +1,15 @@
+{
+  "slug": "use-input",
+  "title": "useInput Hook",
+  "description": "Implement a `useInput` hook for controlled inputs that returns `{ value, onChange, reset }`. `onChange` must accept a React change event and update `value` from `e.target.value`. `reset` restores the initial value.\n\n**Example:**\n```tsx\nconst { value, onChange, reset } = useInput('');\n// <input value={value} onChange={onChange} />\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useInput(initial = '') {\n  // your code here\n}",
+  "test_suite": "test('starts at initial value', () => {\n  const { result } = renderHook(() => useInput('hello'));\n  expect(result.current.value).toBe('hello');\n});\n\ntest('onChange updates value from e.target.value', () => {\n  const { result } = renderHook(() => useInput(''));\n  act(() => result.current.onChange({ target: { value: 'world' } }));\n  expect(result.current.value).toBe('world');\n});\n\ntest('reset restores initial value', () => {\n  const { result } = renderHook(() => useInput('init'));\n  act(() => result.current.onChange({ target: { value: 'changed' } }));\n  act(() => result.current.reset());\n  expect(result.current.value).toBe('init');\n});\n\ntest('empty string default', () => {\n  const { result } = renderHook(() => useInput());\n  expect(result.current.value).toBe('');\n});\n\n// __hidden__\ntest('multiple onChange calls accumulate correctly', () => {\n  const { result } = renderHook(() => useInput(''));\n  act(() => result.current.onChange({ target: { value: 'a' } }));\n  act(() => result.current.onChange({ target: { value: 'ab' } }));\n  expect(result.current.value).toBe('ab');\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useInput(initial = '') {\n  const [value, setValue] = useState(initial);\n  return {\n    value,\n    onChange: (e) => setValue(e.target.value),\n    reset: () => setValue(initial),\n  };\n}",
+  "ai_context": "Common mistake: destructuring e.target.value before passing to setState, or forgetting that the event object shape in tests uses { target: { value } } — the handler must read e.target.value, not e.value.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "forms"],
+  "order_index": 6
+}

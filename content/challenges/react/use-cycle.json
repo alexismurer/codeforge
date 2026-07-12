@@ -1,0 +1,15 @@
+{
+  "slug": "use-cycle",
+  "title": "useCycle Hook",
+  "description": "Implement a `useCycle` hook that cycles through a fixed array of values and returns `[current, next, prev]`. `next()` advances to the next item (wrapping from last to first). `prev()` goes back (wrapping from first to last).\n\n**Example:**\n```tsx\nconst [color, next, prev] = useCycle(['red', 'green', 'blue']);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useCycle(items) {\n  // your code here\n}",
+  "test_suite": "test('starts at first item', () => {\n  const { result } = renderHook(() => useCycle(['a', 'b', 'c']));\n  expect(result.current[0]).toBe('a');\n});\n\ntest('next advances to next item', () => {\n  const { result } = renderHook(() => useCycle(['a', 'b', 'c']));\n  act(() => result.current[1]());\n  expect(result.current[0]).toBe('b');\n});\n\ntest('next wraps from last to first', () => {\n  const { result } = renderHook(() => useCycle(['a', 'b', 'c']));\n  act(() => result.current[1]());\n  act(() => result.current[1]());\n  act(() => result.current[1]());\n  expect(result.current[0]).toBe('a');\n});\n\ntest('prev wraps from first to last', () => {\n  const { result } = renderHook(() => useCycle(['a', 'b', 'c']));\n  act(() => result.current[2]());\n  expect(result.current[0]).toBe('c');\n});\n\n// __hidden__\ntest('prev goes back one item', () => {\n  const { result } = renderHook(() => useCycle(['a', 'b', 'c']));\n  act(() => result.current[1]());\n  act(() => result.current[2]());\n  expect(result.current[0]).toBe('a');\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useCycle(items) {\n  const [index, setIndex] = useState(0);\n  return [\n    items[index],\n    () => setIndex(i => (i + 1) % items.length),\n    () => setIndex(i => (i - 1 + items.length) % items.length),\n  ];\n}",
+  "ai_context": "Common mistake: the prev wrap formula — using (index - 1) % items.length returns -1 in JavaScript when index is 0. The correct formula is (index - 1 + items.length) % items.length.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "arrays"],
+  "order_index": 9
+}

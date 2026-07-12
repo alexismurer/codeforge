@@ -1,0 +1,15 @@
+{
+  "slug": "use-color",
+  "title": "useColor Hook",
+  "description": "Implement a `useColor` hook that cycles through a color palette and returns `{ color, next, prev, index }`. `next()` advances to the next color (wrapping from last to first). `prev()` goes back (wrapping from first to last). `index` tracks the current position.\n\n**Example:**\n```tsx\nconst { color, next, prev, index } = useColor(['red', 'green', 'blue']);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useColor(palette) {\n  // your code here\n}",
+  "test_suite": "test('starts at first color', () => {\n  const { result } = renderHook(() => useColor(['red', 'green', 'blue']));\n  expect(result.current.color).toBe('red');\n  expect(result.current.index).toBe(0);\n});\n\ntest('next advances to next color', () => {\n  const { result } = renderHook(() => useColor(['red', 'green', 'blue']));\n  act(() => result.current.next());\n  expect(result.current.color).toBe('green');\n  expect(result.current.index).toBe(1);\n});\n\ntest('next wraps from last to first', () => {\n  const { result } = renderHook(() => useColor(['red', 'green', 'blue']));\n  act(() => result.current.next());\n  act(() => result.current.next());\n  act(() => result.current.next());\n  expect(result.current.color).toBe('red');\n  expect(result.current.index).toBe(0);\n});\n\ntest('prev wraps from first to last', () => {\n  const { result } = renderHook(() => useColor(['red', 'green', 'blue']));\n  act(() => result.current.prev());\n  expect(result.current.color).toBe('blue');\n  expect(result.current.index).toBe(2);\n});\n\n// __hidden__\ntest('prev goes back one step', () => {\n  const { result } = renderHook(() => useColor(['red', 'green', 'blue']));\n  act(() => result.current.next());\n  act(() => result.current.prev());\n  expect(result.current.color).toBe('red');\n  expect(result.current.index).toBe(0);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useColor(palette) {\n  const [index, setIndex] = useState(0);\n  return {\n    color: palette[index],\n    next: () => setIndex(i => (i + 1) % palette.length),\n    prev: () => setIndex(i => (i - 1 + palette.length) % palette.length),\n    index,\n  };\n}",
+  "ai_context": "Common mistake: the prev wrap formula — (index - 1) % palette.length returns -1 in JavaScript when index is 0. The correct formula adds palette.length before taking the modulo: (index - 1 + palette.length) % palette.length.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "ui-patterns"],
+  "order_index": 26
+}

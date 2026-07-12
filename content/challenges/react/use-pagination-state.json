@@ -1,0 +1,15 @@
+{
+  "slug": "use-pagination-state",
+  "title": "usePaginationState Hook",
+  "description": "Implement a `usePaginationState` hook that returns `{ page, totalPages, next, prev, isFirst, isLast }`. Page starts at `1`. `next()` and `prev()` are clamped — they do nothing when already at the boundary.\n\n**Example:**\n```tsx\nconst { page, totalPages, next, prev, isFirst, isLast } = usePaginationState({ total: 50, pageSize: 10 });\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function usePaginationState({ total, pageSize }) {\n  // your code here\n}",
+  "test_suite": "test('starts at page 1', () => {\n  const { result } = renderHook(() => usePaginationState({ total: 50, pageSize: 10 }));\n  expect(result.current.page).toBe(1);\n});\n\ntest('calculates totalPages correctly', () => {\n  const { result } = renderHook(() => usePaginationState({ total: 50, pageSize: 10 }));\n  expect(result.current.totalPages).toBe(5);\n});\n\ntest('next increments page', () => {\n  const { result } = renderHook(() => usePaginationState({ total: 30, pageSize: 10 }));\n  act(() => result.current.next());\n  expect(result.current.page).toBe(2);\n});\n\ntest('isFirst and isLast are correct', () => {\n  const { result } = renderHook(() => usePaginationState({ total: 20, pageSize: 10 }));\n  expect(result.current.isFirst).toBe(true);\n  act(() => result.current.next());\n  expect(result.current.isLast).toBe(true);\n});\n\n// __hidden__\ntest('next clamps at totalPages', () => {\n  const { result } = renderHook(() => usePaginationState({ total: 10, pageSize: 10 }));\n  act(() => result.current.next());\n  expect(result.current.page).toBe(1);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function usePaginationState({ total, pageSize }) {\n  const [page, setPage] = useState(1);\n  const totalPages = Math.ceil(total / pageSize);\n  return {\n    page,\n    totalPages,\n    next: () => setPage(p => Math.min(p + 1, totalPages)),\n    prev: () => setPage(p => Math.max(p - 1, 1)),\n    isFirst: page === 1,\n    isLast: page === totalPages,\n  };\n}",
+  "ai_context": "Common mistake: computing totalPages with Math.floor instead of Math.ceil — this underestimates pages when items don't divide evenly, leaving the last partial page unreachable.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "pagination"],
+  "order_index": 21
+}

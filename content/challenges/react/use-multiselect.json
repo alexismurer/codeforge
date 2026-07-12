@@ -1,0 +1,15 @@
+{
+  "slug": "use-multiselect",
+  "title": "useMultiSelect Hook",
+  "description": "Implement a `useMultiSelect` hook that returns `{ selected, toggle, selectAll, clear, isSelected }`. `selected` is a `Set`. `toggle(item)` adds if absent, removes if present. `selectAll(items)` selects all given items. `isSelected(item)` returns a boolean.\n\n**Example:**\n```tsx\nconst { selected, toggle, selectAll, clear, isSelected } = useMultiSelect([]);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useMultiSelect(initial = []) {\n  // your code here\n}",
+  "test_suite": "test('starts with initial selection', () => {\n  const { result } = renderHook(() => useMultiSelect(['a']));\n  expect(result.current.isSelected('a')).toBe(true);\n});\n\ntest('toggle adds item if absent', () => {\n  const { result } = renderHook(() => useMultiSelect([]));\n  act(() => result.current.toggle('x'));\n  expect(result.current.isSelected('x')).toBe(true);\n});\n\ntest('toggle removes item if present', () => {\n  const { result } = renderHook(() => useMultiSelect(['x']));\n  act(() => result.current.toggle('x'));\n  expect(result.current.isSelected('x')).toBe(false);\n});\n\ntest('selectAll selects all given items', () => {\n  const { result } = renderHook(() => useMultiSelect([]));\n  act(() => result.current.selectAll(['a', 'b', 'c']));\n  expect(result.current.isSelected('a')).toBe(true);\n  expect(result.current.isSelected('c')).toBe(true);\n});\n\n// __hidden__\ntest('clear empties selection', () => {\n  const { result } = renderHook(() => useMultiSelect(['a', 'b']));\n  act(() => result.current.clear());\n  expect(result.current.selected.size).toBe(0);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useMultiSelect(initial = []) {\n  const [selected, setSelected] = useState(() => new Set(initial));\n  return {\n    selected,\n    toggle: (item) => setSelected(s => { const n = new Set(s); n.has(item) ? n.delete(item) : n.add(item); return n; }),\n    selectAll: (items) => setSelected(new Set(items)),\n    clear: () => setSelected(new Set()),\n    isSelected: (item) => selected.has(item),\n  };\n}",
+  "ai_context": "Common mistake: calling isSelected by looking up selected.has(item) inside a stale closure — make sure isSelected reads from the current selected state, not a captured variable from an earlier render.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "selection"],
+  "order_index": 16
+}

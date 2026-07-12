@@ -1,0 +1,15 @@
+{
+  "slug": "use-char-count",
+  "title": "useCharCount Hook",
+  "description": "Implement a `useCharCount` hook for text inputs with a character limit. It returns `{ value, onChange, remaining, isOverLimit }`. `remaining` is `max - value.length`. `isOverLimit` is `true` when the user exceeds the limit.\n\n**Example:**\n```tsx\nconst { value, onChange, remaining, isOverLimit } = useCharCount(140);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useCharCount(max) {\n  // your code here\n}",
+  "test_suite": "test('starts with empty value', () => {\n  const { result } = renderHook(() => useCharCount(10));\n  expect(result.current.value).toBe('');\n});\n\ntest('remaining equals max minus length', () => {\n  const { result } = renderHook(() => useCharCount(10));\n  act(() => result.current.onChange({ target: { value: 'hello' } }));\n  expect(result.current.remaining).toBe(5);\n});\n\ntest('isOverLimit is false when within limit', () => {\n  const { result } = renderHook(() => useCharCount(10));\n  act(() => result.current.onChange({ target: { value: 'hi' } }));\n  expect(result.current.isOverLimit).toBe(false);\n});\n\ntest('isOverLimit is true when over limit', () => {\n  const { result } = renderHook(() => useCharCount(3));\n  act(() => result.current.onChange({ target: { value: 'toolong' } }));\n  expect(result.current.isOverLimit).toBe(true);\n});\n\n// __hidden__\ntest('remaining goes negative when over limit', () => {\n  const { result } = renderHook(() => useCharCount(5));\n  act(() => result.current.onChange({ target: { value: 'toolongvalue' } }));\n  expect(result.current.remaining).toBeLessThan(0);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useCharCount(max) {\n  const [value, setValue] = useState('');\n  return {\n    value,\n    onChange: (e) => setValue(e.target.value),\n    remaining: max - value.length,\n    isOverLimit: value.length > max,\n  };\n}",
+  "ai_context": "Common mistake: clamping the value at max length inside onChange — the hook should allow typing beyond the limit (showing negative remaining) so the UI can display the over-limit state, not silently block input.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "forms"],
+  "order_index": 23
+}

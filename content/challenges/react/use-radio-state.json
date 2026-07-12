@@ -1,0 +1,15 @@
+{
+  "slug": "use-radio-state",
+  "title": "useRadioState Hook",
+  "description": "Implement a `useRadioState` hook that manages a single selected option and returns `{ value, select, options }`. Only one option can be selected at a time. `value` is always one of the provided options.\n\n**Example:**\n```tsx\nconst { value, select, options } = useRadioState(['xs', 'sm', 'md', 'lg'], 'md');\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useRadioState(options, initial) {\n  // your code here\n}",
+  "test_suite": "test('starts at initial value', () => {\n  const { result } = renderHook(() => useRadioState(['a', 'b', 'c'], 'b'));\n  expect(result.current.value).toBe('b');\n});\n\ntest('select updates value', () => {\n  const { result } = renderHook(() => useRadioState(['a', 'b', 'c'], 'a'));\n  act(() => result.current.select('c'));\n  expect(result.current.value).toBe('c');\n});\n\ntest('options array is returned unchanged', () => {\n  const opts = ['x', 'y', 'z'];\n  const { result } = renderHook(() => useRadioState(opts, 'x'));\n  expect(result.current.options).toEqual(['x', 'y', 'z']);\n});\n\ntest('selecting current value keeps it selected', () => {\n  const { result } = renderHook(() => useRadioState(['a', 'b'], 'a'));\n  act(() => result.current.select('a'));\n  expect(result.current.value).toBe('a');\n});\n\n// __hidden__\ntest('value is always one of the options', () => {\n  const { result } = renderHook(() => useRadioState(['red', 'green', 'blue'], 'red'));\n  act(() => result.current.select('green'));\n  expect(['red', 'green', 'blue']).toContain(result.current.value);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useRadioState(options, initial) {\n  const [value, setValue] = useState(initial);\n  return {\n    value,\n    select: (option) => setValue(option),\n    options,\n  };\n}",
+  "ai_context": "Common mistake: trying to validate that the selected option exists in the options array inside select() — while good practice, beginners often add this check incorrectly with indexOf instead of includes, or forget to handle the case at all.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "forms"],
+  "order_index": 17
+}

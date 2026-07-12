@@ -1,0 +1,15 @@
+{
+  "slug": "use-switch",
+  "title": "useSwitch Hook",
+  "description": "Implement a `useSwitch` hook that returns `{ isOn, toggle, switchOn, switchOff, label }`. `label` is the string `'On'` when `isOn` is `true` and `'Off'` when `false`.\n\n**Example:**\n```tsx\nconst { isOn, toggle, switchOn, switchOff, label } = useSwitch(false);\n// label === 'Off'\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useSwitch(initial = false) {\n  // your code here\n}",
+  "test_suite": "test('starts at initial value', () => {\n  const { result } = renderHook(() => useSwitch(true));\n  expect(result.current.isOn).toBe(true);\n});\n\ntest('switchOn sets isOn to true', () => {\n  const { result } = renderHook(() => useSwitch(false));\n  act(() => result.current.switchOn());\n  expect(result.current.isOn).toBe(true);\n});\n\ntest('switchOff sets isOn to false', () => {\n  const { result } = renderHook(() => useSwitch(true));\n  act(() => result.current.switchOff());\n  expect(result.current.isOn).toBe(false);\n});\n\ntest('label is On when isOn is true', () => {\n  const { result } = renderHook(() => useSwitch(true));\n  expect(result.current.label).toBe('On');\n});\n\n// __hidden__\ntest('label is Off when isOn is false', () => {\n  const { result } = renderHook(() => useSwitch(false));\n  expect(result.current.label).toBe('Off');\n  act(() => result.current.toggle());\n  expect(result.current.label).toBe('On');\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useSwitch(initial = false) {\n  const [isOn, setIsOn] = useState(initial);\n  return {\n    isOn,\n    toggle: () => setIsOn(v => !v),\n    switchOn: () => setIsOn(true),\n    switchOff: () => setIsOn(false),\n    label: isOn ? 'On' : 'Off',\n  };\n}",
+  "ai_context": "Common mistake: computing label with a useEffect that sets another state piece — label is pure derived state that should be computed inline from isOn, not stored separately.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "ui-patterns"],
+  "order_index": 25
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "use-counter",
+  "title": "useCounter Hook",
+  "description": "Implement a `useCounter` hook that returns `{ count, increment, decrement, reset }`. The counter starts at the provided `initialValue` (default `0`).\n\n**Example:**\n```tsx\nconst { count, increment, decrement, reset } = useCounter(10);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useCounter(initialValue = 0) {\n  // your code here\n}",
+  "test_suite": "test('starts at initialValue', () => {\n  const { result } = renderHook(() => useCounter(5));\n  expect(result.current.count).toBe(5);\n});\n\ntest('increments count', () => {\n  const { result } = renderHook(() => useCounter());\n  act(() => result.current.increment());\n  expect(result.current.count).toBe(1);\n});\n\ntest('decrements count', () => {\n  const { result } = renderHook(() => useCounter(3));\n  act(() => result.current.decrement());\n  expect(result.current.count).toBe(2);\n});\n\ntest('resets to initialValue', () => {\n  const { result } = renderHook(() => useCounter(5));\n  act(() => result.current.increment());\n  act(() => result.current.reset());\n  expect(result.current.count).toBe(5);\n});\n\n// __hidden__\ntest('defaults initialValue to 0', () => {\n  const { result } = renderHook(() => useCounter());\n  expect(result.current.count).toBe(0);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useCounter(initialValue = 0) {\n  const [count, setCount] = useState(initialValue);\n  return {\n    count,\n    increment: () => setCount(c => c + 1),\n    decrement: () => setCount(c => c - 1),\n    reset: () => setCount(initialValue),\n  };\n}",
+  "ai_context": "Common mistake: using setCount(count + 1) instead of the functional updater setCount(c => c + 1), which causes stale closure bugs when multiple updates fire rapidly.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState"],
+  "order_index": 3
+}

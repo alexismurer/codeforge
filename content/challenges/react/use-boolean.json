@@ -1,0 +1,15 @@
+{
+  "slug": "use-boolean",
+  "title": "useBoolean Hook",
+  "description": "Implement a `useBoolean` hook that returns `{ value, setTrue, setFalse, toggle }`. The boolean starts at `initial` (default `false`).\n\n**Example:**\n```tsx\nconst { value, setTrue, setFalse, toggle } = useBoolean(false);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useBoolean(initial = false) {\n  // your code here\n}",
+  "test_suite": "test('starts at initial value', () => {\n  const { result } = renderHook(() => useBoolean(true));\n  expect(result.current.value).toBe(true);\n});\n\ntest('setTrue sets value to true', () => {\n  const { result } = renderHook(() => useBoolean(false));\n  act(() => result.current.setTrue());\n  expect(result.current.value).toBe(true);\n});\n\ntest('setFalse sets value to false', () => {\n  const { result } = renderHook(() => useBoolean(true));\n  act(() => result.current.setFalse());\n  expect(result.current.value).toBe(false);\n});\n\ntest('toggle flips the value', () => {\n  const { result } = renderHook(() => useBoolean(false));\n  act(() => result.current.toggle());\n  expect(result.current.value).toBe(true);\n});\n\n// __hidden__\ntest('defaults to false', () => {\n  const { result } = renderHook(() => useBoolean());\n  expect(result.current.value).toBe(false);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useBoolean(initial = false) {\n  const [value, setValue] = useState(initial);\n  return {\n    value,\n    setTrue: () => setValue(true),\n    setFalse: () => setValue(false),\n    toggle: () => setValue(v => !v),\n  };\n}",
+  "ai_context": "Common mistake: implementing toggle as setValue(!value) rather than setValue(v => !v), which reads stale closure state when called multiple times before a re-render.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "boolean"],
+  "order_index": 5
+}

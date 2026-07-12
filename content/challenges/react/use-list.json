@@ -1,0 +1,15 @@
+{
+  "slug": "use-list",
+  "title": "useList Hook",
+  "description": "Implement a `useList` hook that manages an array and returns `{ list, push, remove, clear }`. `push(item)` appends an item. `remove(index)` deletes the item at that index. `clear()` empties the list.\n\n**Example:**\n```tsx\nconst { list, push, remove, clear } = useList([1, 2, 3]);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useList(initial = []) {\n  // your code here\n}",
+  "test_suite": "test('starts with initial list', () => {\n  const { result } = renderHook(() => useList([1, 2]));\n  expect(result.current.list).toEqual([1, 2]);\n});\n\ntest('push appends an item', () => {\n  const { result } = renderHook(() => useList([]));\n  act(() => result.current.push('a'));\n  expect(result.current.list).toEqual(['a']);\n});\n\ntest('remove deletes item at index', () => {\n  const { result } = renderHook(() => useList(['a', 'b', 'c']));\n  act(() => result.current.remove(1));\n  expect(result.current.list).toEqual(['a', 'c']);\n});\n\ntest('clear empties the list', () => {\n  const { result } = renderHook(() => useList([1, 2, 3]));\n  act(() => result.current.clear());\n  expect(result.current.list).toEqual([]);\n});\n\n// __hidden__\ntest('push multiple items in sequence', () => {\n  const { result } = renderHook(() => useList([]));\n  act(() => result.current.push('x'));\n  act(() => result.current.push('y'));\n  expect(result.current.list).toEqual(['x', 'y']);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useList(initial = []) {\n  const [list, setList] = useState(initial);\n  return {\n    list,\n    push: (item) => setList(l => [...l, item]),\n    remove: (index) => setList(l => l.filter((_, i) => i !== index)),\n    clear: () => setList([]),\n  };\n}",
+  "ai_context": "Common mistake: mutating the array directly with list.push(item) or list.splice(index, 1) instead of creating a new array — React won't detect the state change and won't re-render.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "arrays"],
+  "order_index": 7
+}

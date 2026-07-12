@@ -1,0 +1,15 @@
+{
+  "slug": "use-score",
+  "title": "useScore Hook",
+  "description": "Implement a `useScore` hook that returns `{ score, add, subtract, reset }`. The score never goes below zero — `subtract` clamps at `0`. `reset` returns to the `initial` value.\n\n**Example:**\n```tsx\nconst { score, add, subtract, reset } = useScore(0);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "import { useState } from 'react';\n\nexport function useScore(initial = 0) {\n  // your code here\n}",
+  "test_suite": "test('starts at initial value', () => {\n  const { result } = renderHook(() => useScore(10));\n  expect(result.current.score).toBe(10);\n});\n\ntest('add increases score', () => {\n  const { result } = renderHook(() => useScore(0));\n  act(() => result.current.add(5));\n  expect(result.current.score).toBe(5);\n});\n\ntest('subtract decreases score', () => {\n  const { result } = renderHook(() => useScore(10));\n  act(() => result.current.subtract(3));\n  expect(result.current.score).toBe(7);\n});\n\ntest('subtract clamps at 0', () => {\n  const { result } = renderHook(() => useScore(2));\n  act(() => result.current.subtract(10));\n  expect(result.current.score).toBe(0);\n});\n\n// __hidden__\ntest('reset returns to initial', () => {\n  const { result } = renderHook(() => useScore(5));\n  act(() => result.current.add(100));\n  act(() => result.current.reset());\n  expect(result.current.score).toBe(5);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useScore(initial = 0) {\n  const [score, setScore] = useState(initial);\n  return {\n    score,\n    add: (amount) => setScore(s => s + amount),\n    subtract: (amount) => setScore(s => Math.max(0, s - amount)),\n    reset: () => setScore(initial),\n  };\n}",
+  "ai_context": "Common mistake: forgetting to clamp on subtract — writing setScore(s => s - amount) without Math.max(0, ...) allows the score to go negative.",
+  "xp_reward": 50,
+  "tags": ["hooks", "useState", "math"],
+  "order_index": 15
+}
