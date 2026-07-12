@@ -1,8 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
-
-vi.mock('@supabase/ssr', () => ({
-  createBrowserClient: vi.fn(() => ({ auth: {} })),
-}))
+import { describe, it, expect } from 'vitest'
 
 describe('createClient', () => {
   it('returns a supabase client', async () => {
