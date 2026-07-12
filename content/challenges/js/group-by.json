@@ -1,0 +1,15 @@
+{
+  "slug": "group-by",
+  "title": "Group By",
+  "description": "Implement a `groupBy` function that groups an array of objects by a key. Returns an object where each key maps to an array of items that share that key's value.\n\n**Example:**\n```js\nconst pets = [\n  { name: 'Fluffy', type: 'cat' },\n  { name: 'Rex',    type: 'dog' },\n  { name: 'Whiskers', type: 'cat' },\n];\ngroupBy(pets, 'type')\n// { cat: [{...}, {...}], dog: [{...}] }\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export function groupBy(arr, key) {\n  // your code here\n}",
+  "test_suite": "test('groups by a string key', () => {\n  const items = [{ type: 'a' }, { type: 'b' }, { type: 'a' }];\n  const result = groupBy(items, 'type');\n  expect(result.a).toHaveLength(2);\n  expect(result.b).toHaveLength(1);\n});\n\ntest('preserves items in each group', () => {\n  const items = [{ id: 1, cat: 'x' }, { id: 2, cat: 'x' }];\n  const result = groupBy(items, 'cat');\n  expect(result.x[0].id).toBe(1);\n  expect(result.x[1].id).toBe(2);\n});\n\ntest('returns empty object for empty array', () => {\n  expect(groupBy([], 'key')).toEqual({});\n});\n\ntest('groups by numeric values', () => {\n  const items = [{ score: 1 }, { score: 2 }, { score: 1 }];\n  const result = groupBy(items, 'score');\n  expect(Object.keys(result)).toHaveLength(2);\n});\n\n// __hidden__\ntest('single-item groups work correctly', () => {\n  const items = [{ type: 'unique' }];\n  expect(groupBy(items, 'type')).toEqual({ unique: [{ type: 'unique' }] });\n});",
+  "solution": "export function groupBy(arr, key) {\n  return arr.reduce((groups, item) => {\n    const groupKey = item[key];\n    if (!groups[groupKey]) groups[groupKey] = [];\n    groups[groupKey].push(item);\n    return groups;\n  }, {});\n}",
+  "ai_context": "Learners often forget to initialize the group array before pushing: `groups[groupKey].push(item)` throws if `groups[groupKey]` is `undefined`. The pattern `(groups[groupKey] = groups[groupKey] || [])` or an explicit `if (!groups[groupKey])` check handles this.",
+  "xp_reward": 100,
+  "tags": ["arrays", "reduce", "objects"],
+  "order_index": 20
+}

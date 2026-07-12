@@ -1,0 +1,15 @@
+{
+  "slug": "my-required",
+  "title": "MyRequired",
+  "description": "Implement `MyRequired<T>` — a mapped type that removes optionality from all properties of `T` — without using the built-in `Required<T>`.\n\nAlso implement `requireAll<T>(obj: Partial<T>): MyRequired<T>` that returns the same object cast as `MyRequired<T>`.\n\n**Example:**\n```ts\ntype Config = { host?: string; port?: number };\ntype StrictConfig = MyRequired<Config>;\n// { host: string; port: number }  (no '?')\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export type MyRequired<T> = // your type here\n\nexport function requireAll<T>(obj: Partial<T>): MyRequired<T> {\n  return obj as MyRequired<T>;\n}",
+  "test_suite": "test('requireAll returns the same object', () => {\n  const obj = { host: 'localhost', port: 5432 };\n  expect(requireAll(obj)).toEqual(obj);\n});\n\ntest('type-level: all properties become required', () => {\n  type T = MyRequired<{ a?: number; b?: string }>;\n  type Check = T extends { a: number; b: string } ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: MyRequired matches built-in Required', () => {\n  type T = { x?: boolean; y?: number };\n  type Check = MyRequired<T> extends Required<T> ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\n// __hidden__\ntest('type-level: -? removes optionality correctly', () => {\n  type T = MyRequired<{ name?: string }>;\n  type IsRequired = undefined extends T['name'] ? false : true;\n  const check: IsRequired = true;\n  expect(check).toBe(true);\n});",
+  "solution": "export type MyRequired<T> = { [K in keyof T]-?: T[K] };\n\nexport function requireAll<T>(obj: Partial<T>): MyRequired<T> {\n  return obj as MyRequired<T>;\n}",
+  "ai_context": "Common mistake: using `[K in keyof T]: T[K]` (no `-?`). The `-?` modifier is the key — it explicitly removes the optional flag, unlike `?:` which adds it.",
+  "xp_reward": 100,
+  "tags": ["mapped-types", "generics"],
+  "order_index": 10
+}

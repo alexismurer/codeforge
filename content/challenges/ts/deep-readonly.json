@@ -1,0 +1,15 @@
+{
+  "slug": "deep-readonly",
+  "title": "DeepReadonly Type",
+  "description": "Implement a `DeepReadonly<T>` utility type that recursively makes all properties (and nested properties) readonly.\n\n**Example:**\n```ts\ntype Config = DeepReadonly<{ host: string; db: { port: number } }>;\n// { readonly host: string; readonly db: { readonly port: number } }\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export type DeepReadonly<T> = // your type here\n\n// Helper function to test your type (do not change)\nexport function freeze<T>(obj: T): DeepReadonly<T> {\n  return Object.freeze(obj) as DeepReadonly<T>;\n}",
+  "test_suite": "test('freeze returns same value', () => {\n  const obj = freeze({ x: 1, nested: { y: 2 } });\n  expect(obj.x).toBe(1);\n  expect(obj.nested.y).toBe(2);\n});\n\ntest('type-level: top properties are readonly', () => {\n  type T = DeepReadonly<{ a: number }>;\n  type IsReadonly = T extends { readonly a: number } ? true : false;\n  const check: IsReadonly = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: nested properties are readonly', () => {\n  type T = DeepReadonly<{ inner: { b: string } }>;\n  type IsReadonly = T extends { readonly inner: { readonly b: string } } ? true : false;\n  const check: IsReadonly = true;\n  expect(check).toBe(true);\n});\n\n// __hidden__\ntest('primitives pass through unchanged', () => {\n  type T = DeepReadonly<string>;\n  const s: T = 'hello';\n  expect(s).toBe('hello');\n});",
+  "solution": "export type DeepReadonly<T> = T extends (infer U)[]\n  ? ReadonlyArray<DeepReadonly<U>>\n  : T extends object\n  ? { readonly [K in keyof T]: DeepReadonly<T[K]> }\n  : T;\n\nexport function freeze<T>(obj: T): DeepReadonly<T> {\n  return Object.freeze(obj) as DeepReadonly<T>;\n}",
+  "ai_context": "Common mistake: using `Readonly<T>` which only goes one level deep. Requires recursive application with a conditional type to handle nested objects.",
+  "xp_reward": 200,
+  "tags": ["recursive-types", "mapped-types", "conditional-types"],
+  "order_index": 12
+}

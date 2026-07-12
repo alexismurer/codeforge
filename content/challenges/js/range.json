@@ -1,0 +1,15 @@
+{
+  "slug": "range",
+  "title": "Range",
+  "description": "Write a function `range` that returns an array of numbers from `start` to `end` (inclusive) with an optional `step` (default `1`). Return an empty array when `start > end`.\n\n**Example:**\n```js\nrange(1, 5)    // [1, 2, 3, 4, 5]\nrange(0, 10, 2) // [0, 2, 4, 6, 8, 10]\nrange(5, 3)    // []\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export function range(start, end, step = 1) {\n  // your code here\n}",
+  "test_suite": "test('generates inclusive range', () => {\n  expect(range(1, 5)).toEqual([1, 2, 3, 4, 5]);\n});\n\ntest('respects step parameter', () => {\n  expect(range(0, 10, 2)).toEqual([0, 2, 4, 6, 8, 10]);\n});\n\ntest('returns empty array when start > end', () => {\n  expect(range(5, 3)).toEqual([]);\n});\n\ntest('handles same start and end', () => {\n  expect(range(3, 3)).toEqual([3]);\n});\n\n// __hidden__\ntest('step larger than range produces single element', () => {\n  expect(range(1, 4, 10)).toEqual([1]);\n});",
+  "solution": "export function range(start, end, step = 1) {\n  const result = [];\n  for (let i = start; i <= end; i += step) {\n    result.push(i);\n  }\n  return result;\n}",
+  "ai_context": "Learners often use exclusive end (`i < end`) instead of inclusive (`i <= end`), missing the last value. Another pitfall: forgetting the default parameter for step, causing `step` to be `undefined` and the loop to produce `NaN` entries when doing arithmetic with it.",
+  "xp_reward": 50,
+  "tags": ["arrays", "loops"],
+  "order_index": 12
+}

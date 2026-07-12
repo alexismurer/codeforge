@@ -1,0 +1,15 @@
+{
+  "slug": "debounce",
+  "title": "Debounce",
+  "description": "Implement a `debounce` function that delays invoking `fn` until `delay` ms have elapsed since the last call. Returns the debounced function.\n\n**Example:**\n```js\nconst save = debounce(() => saveToServer(), 300);\nsave(); save(); save(); // saveToServer called once after 300ms\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export function debounce(fn, delay) {\n  // your code here\n}",
+  "test_suite": "test('calls fn after delay', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const d = debounce(fn, 200);\n  d();\n  vi.advanceTimersByTime(200);\n  expect(fn).toHaveBeenCalledTimes(1);\n  vi.useRealTimers();\n});\n\ntest('does not call before delay', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const d = debounce(fn, 200);\n  d();\n  vi.advanceTimersByTime(199);\n  expect(fn).not.toHaveBeenCalled();\n  vi.useRealTimers();\n});\n\ntest('resets timer on rapid calls', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const d = debounce(fn, 200);\n  d(); vi.advanceTimersByTime(100);\n  d(); vi.advanceTimersByTime(200);\n  expect(fn).toHaveBeenCalledTimes(1);\n  vi.useRealTimers();\n});\n\n// __hidden__\ntest('passes arguments to fn', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const d = debounce(fn, 100);\n  d('hello', 42);\n  vi.advanceTimersByTime(100);\n  expect(fn).toHaveBeenCalledWith('hello', 42);\n  vi.useRealTimers();\n});",
+  "solution": "export function debounce(fn, delay) {\n  let timer;\n  return function(...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn(...args), delay);\n  };\n}",
+  "ai_context": "Common mistake: forgetting to clear the previous timer on each call, so fn fires multiple times. Also forgetting to pass ...args to fn.",
+  "xp_reward": 200,
+  "tags": ["closures", "timers", "performance"],
+  "order_index": 23
+}

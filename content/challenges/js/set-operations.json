@@ -1,0 +1,15 @@
+{
+  "slug": "set-operations",
+  "title": "Set Operations",
+  "description": "Export three functions that operate on JavaScript `Set` objects:\n- `union(a, b)` — all elements from both sets\n- `intersection(a, b)` — only elements in both sets\n- `difference(a, b)` — elements in `a` but not in `b`\n\n**Example:**\n```js\nunion(new Set([1,2]), new Set([2,3]));        // Set {1, 2, 3}\nintersection(new Set([1,2]), new Set([2,3])); // Set {2}\ndifference(new Set([1,2]), new Set([2,3]));   // Set {1}\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export function union(a, b) {\n  // your code here\n}\n\nexport function intersection(a, b) {\n  // your code here\n}\n\nexport function difference(a, b) {\n  // your code here\n}",
+  "test_suite": "test('union contains all elements', () => {\n  const result = union(new Set([1, 2]), new Set([2, 3]));\n  expect(result).toEqual(new Set([1, 2, 3]));\n});\n\ntest('intersection contains common elements', () => {\n  const result = intersection(new Set([1, 2, 3]), new Set([2, 3, 4]));\n  expect(result).toEqual(new Set([2, 3]));\n});\n\ntest('difference contains elements in a not in b', () => {\n  const result = difference(new Set([1, 2, 3]), new Set([2, 3]));\n  expect(result).toEqual(new Set([1]));\n});\n\ntest('intersection of disjoint sets is empty', () => {\n  const result = intersection(new Set([1, 2]), new Set([3, 4]));\n  expect(result.size).toBe(0);\n});\n\n// __hidden__\ntest('difference returns empty set when a is subset of b', () => {\n  const result = difference(new Set([1, 2]), new Set([1, 2, 3]));\n  expect(result.size).toBe(0);\n});",
+  "solution": "export function union(a, b) {\n  return new Set([...a, ...b]);\n}\n\nexport function intersection(a, b) {\n  return new Set([...a].filter(x => b.has(x)));\n}\n\nexport function difference(a, b) {\n  return new Set([...a].filter(x => !b.has(x)));\n}",
+  "ai_context": "Common mistake: returning arrays instead of Sets, or using nested loops instead of Set.has() for O(1) lookups. Also forgetting that [...set] spread creates an iterable array for filtering.",
+  "xp_reward": 200,
+  "tags": ["sets", "collections", "functional"],
+  "order_index": 33
+}

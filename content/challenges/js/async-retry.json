@@ -1,0 +1,15 @@
+{
+  "slug": "async-retry",
+  "title": "Async Retry",
+  "description": "Implement `asyncRetry(fn, maxAttempts)` that calls an async function and retries up to `maxAttempts` times on failure. Returns the first successful result, or throws the last error if all attempts fail.\n\n**Example:**\n```js\nlet tries = 0;\nconst result = await asyncRetry(async () => {\n  if (++tries < 3) throw new Error('fail');\n  return 'ok';\n}, 3);\n// result === 'ok'\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export async function asyncRetry(fn, maxAttempts) {\n  // your code here\n}",
+  "test_suite": "test('returns result on first success', async () => {\n  const fn = vi.fn().mockResolvedValue('done');\n  const result = await asyncRetry(fn, 3);\n  expect(result).toBe('done');\n  expect(fn).toHaveBeenCalledTimes(1);\n});\n\ntest('retries on failure and returns on eventual success', async () => {\n  let count = 0;\n  const fn = async () => {\n    if (++count < 3) throw new Error('not yet');\n    return 'ok';\n  };\n  const result = await asyncRetry(fn, 3);\n  expect(result).toBe('ok');\n  expect(count).toBe(3);\n});\n\ntest('throws last error after max attempts', async () => {\n  const fn = vi.fn().mockRejectedValue(new Error('fail'));\n  await expect(asyncRetry(fn, 3)).rejects.toThrow('fail');\n  expect(fn).toHaveBeenCalledTimes(3);\n});\n\n// __hidden__\ntest('maxAttempts of 1 does not retry', async () => {\n  const fn = vi.fn().mockRejectedValue(new Error('only once'));\n  await expect(asyncRetry(fn, 1)).rejects.toThrow('only once');\n  expect(fn).toHaveBeenCalledTimes(1);\n});",
+  "solution": "export async function asyncRetry(fn, maxAttempts) {\n  let lastError;\n  for (let i = 0; i < maxAttempts; i++) {\n    try {\n      return await fn();\n    } catch (err) {\n      lastError = err;\n    }\n  }\n  throw lastError;\n}",
+  "ai_context": "Common mistake: using recursion without tracking attempt count correctly, or not storing and re-throwing the last error — instead throwing a generic error. Also off-by-one errors in the loop condition.",
+  "xp_reward": 200,
+  "tags": ["async", "error-handling", "loops"],
+  "order_index": 28
+}

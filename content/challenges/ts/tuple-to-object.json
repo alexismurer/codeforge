@@ -1,0 +1,15 @@
+{
+  "slug": "tuple-to-object",
+  "title": "Tuple to Object",
+  "description": "Implement `TupleToObject<T>` that converts a readonly tuple of string literals into an object type where each key and value is the same string literal.\n\n**Example:**\n```ts\ntype T = TupleToObject<['a', 'b', 'c']>;\n// { a: 'a'; b: 'b'; c: 'c' }\n```\n\nAlso implement `tupleToObject<T extends readonly string[]>(t: T): TupleToObject<T>` at runtime.",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 5,
+  "starter_code": "export type TupleToObject<T extends readonly string[]> = // your type here\n\nexport function tupleToObject<T extends readonly string[]>(t: T): TupleToObject<T> {\n  // your code here\n}",
+  "test_suite": "test('tupleToObject creates correct runtime object', () => {\n  const result = tupleToObject(['a', 'b', 'c'] as const);\n  expect(result).toEqual({ a: 'a', b: 'b', c: 'c' });\n});\n\ntest('type-level: keys map to same string value', () => {\n  type T = TupleToObject<['x', 'y']>;\n  const check: T = { x: 'x', y: 'y' };\n  expect(check).toEqual({ x: 'x', y: 'y' });\n});\n\ntest('tupleToObject with single element', () => {\n  const result = tupleToObject(['hello'] as const);\n  expect(result).toEqual({ hello: 'hello' });\n});\n\ntest('type-level: all tuple values become keys', () => {\n  type T = TupleToObject<['foo', 'bar']>;\n  type Keys = keyof T;\n  const k1: Keys = 'foo';\n  const k2: Keys = 'bar';\n  expect(k1).toBe('foo');\n  expect(k2).toBe('bar');\n});\n\n// __hidden__\ntest('tupleToObject with numbers-as-strings', () => {\n  const result = tupleToObject(['1', '2'] as const);\n  expect(result).toEqual({ '1': '1', '2': '2' });\n});",
+  "solution": "export type TupleToObject<T extends readonly string[]> = { [K in T[number]]: K };\n\nexport function tupleToObject<T extends readonly string[]>(t: T): TupleToObject<T> {\n  return Object.fromEntries(t.map(k => [k, k])) as TupleToObject<T>;\n}",
+  "ai_context": "Common mistake: using `T[number]` incorrectly — it distributes over the union of tuple elements, which is exactly what you need for the key iteration. Forgetting `readonly` in the constraint causes type errors with `as const` tuples.",
+  "xp_reward": 400,
+  "tags": ["mapped-types", "tuples", "template-literal-types"],
+  "order_index": 23
+}

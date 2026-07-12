@@ -1,0 +1,15 @@
+{
+  "slug": "proxy-readonly",
+  "title": "Proxy ReadOnly",
+  "description": "Implement `readOnly(obj)` that wraps an object in a `Proxy` and throws a `TypeError` on any write attempt. Reads should pass through normally.\n\n**Example:**\n```js\nconst obj = readOnly({ x: 1 });\nobj.x;     // 1\nobj.x = 2; // throws TypeError\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export function readOnly(obj) {\n  // your code here\n}",
+  "test_suite": "test('reads pass through', () => {\n  const obj = readOnly({ name: 'Alice', score: 10 });\n  expect(obj.name).toBe('Alice');\n  expect(obj.score).toBe(10);\n});\n\ntest('any write throws TypeError', () => {\n  const obj = readOnly({ x: 1 });\n  expect(() => { obj.x = 2; }).toThrow(TypeError);\n});\n\ntest('setting new property also throws', () => {\n  const obj = readOnly({});\n  expect(() => { obj.newProp = 'value'; }).toThrow(TypeError);\n});\n\n// __hidden__\ntest('delete throws TypeError', () => {\n  const obj = readOnly({ a: 1 });\n  expect(() => { delete obj.a; }).toThrow(TypeError);\n});",
+  "solution": "export function readOnly(obj) {\n  return new Proxy(obj, {\n    set(target, prop, value, receiver) {\n      throw new TypeError(`Cannot set property '${String(prop)}' on read-only object`);\n    },\n    deleteProperty(target, prop) {\n      throw new TypeError(`Cannot delete property '${String(prop)}' on read-only object`);\n    }\n  });\n}",
+  "ai_context": "Common mistake: only trapping set but forgetting deleteProperty. Also forgetting to return true from set when you want normal behavior — but here you always throw, so it's not needed. Students often use Object.freeze instead, which silently ignores writes in non-strict mode.",
+  "xp_reward": 300,
+  "tags": ["proxy", "metaprogramming", "immutability"],
+  "order_index": 35
+}

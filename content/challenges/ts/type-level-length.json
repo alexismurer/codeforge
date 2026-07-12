@@ -1,0 +1,15 @@
+{
+  "slug": "type-level-length",
+  "title": "Type Level Length",
+  "description": "Implement `Length<T>` that extracts the length of a tuple as a numeric literal type, and `IsEmpty<T>` that checks whether a tuple is empty.\n\n**Example:**\n```ts\ntype A = Length<[1, 2, 3]>   // 3 (literal type)\ntype B = Length<[]>          // 0\ntype C = IsEmpty<[]>         // true\ntype D = IsEmpty<[1]>        // false\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 5,
+  "starter_code": "export type Length<T extends any[]> = // your type here\nexport type IsEmpty<T extends any[]> = // your type here",
+  "test_suite": "test('type-level: Length of [1,2,3] is 3', () => {\n  type T = Length<[1, 2, 3]>;\n  const check: T = 3;\n  expect(check).toBe(3);\n});\n\ntest('type-level: Length of [] is 0', () => {\n  type T = Length<[]>;\n  const check: T = 0;\n  expect(check).toBe(0);\n});\n\ntest('type-level: IsEmpty<[]> is true', () => {\n  type T = IsEmpty<[]>;\n  const check: T = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: IsEmpty<[1]> is false', () => {\n  type T = IsEmpty<[number]>;\n  const check: T = false;\n  expect(check).toBe(false);\n});\n\n// __hidden__\ntest('type-level: Length of single element tuple is 1', () => {\n  type T = Length<[string]>;\n  const check: T = 1;\n  expect(check).toBe(1);\n});",
+  "solution": "export type Length<T extends any[]> = T['length'];\nexport type IsEmpty<T extends any[]> = T extends [] ? true : false;",
+  "ai_context": "Common mistake: trying to compute length with complex recursion when `T['length']` directly gives the numeric literal type. For `IsEmpty`, checking `T['length'] extends 0` also works but `T extends []` is more readable.",
+  "xp_reward": 400,
+  "tags": ["tuples", "conditional-types", "literal-types"],
+  "order_index": 24
+}

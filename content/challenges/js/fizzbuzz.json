@@ -1,0 +1,15 @@
+{
+  "slug": "fizzbuzz",
+  "title": "FizzBuzz",
+  "description": "Write a function `fizzbuzz` that returns an array of values from `1` to `n` where:\n- Multiples of 3 are replaced with `'Fizz'`\n- Multiples of 5 are replaced with `'Buzz'`\n- Multiples of both 3 and 5 are replaced with `'FizzBuzz'`\n- All other numbers remain as numbers\n\n**Example:**\n```js\nfizzbuzz(5) // [1, 2, 'Fizz', 4, 'Buzz']\nfizzbuzz(15) // [..., 'FizzBuzz']\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export function fizzbuzz(n) {\n  // your code here\n}",
+  "test_suite": "test('returns FizzBuzz for multiples of 15', () => {\n  expect(fizzbuzz(15)[14]).toBe('FizzBuzz');\n});\n\ntest('returns Fizz for multiples of 3', () => {\n  expect(fizzbuzz(3)[2]).toBe('Fizz');\n});\n\ntest('returns Buzz for multiples of 5', () => {\n  expect(fizzbuzz(5)[4]).toBe('Buzz');\n});\n\ntest('leaves non-multiples as numbers', () => {\n  expect(fizzbuzz(2)).toEqual([1, 2]);\n});\n\n// __hidden__\ntest('full array of length n', () => {\n  const result = fizzbuzz(6);\n  expect(result).toHaveLength(6);\n  expect(result).toEqual([1, 2, 'Fizz', 4, 'Buzz', 'Fizz']);\n});",
+  "solution": "export function fizzbuzz(n) {\n  return Array.from({ length: n }, (_, i) => {\n    const num = i + 1;\n    if (num % 15 === 0) return 'FizzBuzz';\n    if (num % 3 === 0) return 'Fizz';\n    if (num % 5 === 0) return 'Buzz';\n    return num;\n  });\n}",
+  "ai_context": "The classic mistake: checking `% 3` and `% 5` before checking `% 15`. Since 15 is divisible by both 3 and 5, you must check the combined case first, otherwise FizzBuzz never appears. Also returning strings for all values (including numbers) is wrong — the spec keeps non-fizzbuzz values as actual numbers.",
+  "xp_reward": 50,
+  "tags": ["arrays", "conditionals", "modulo"],
+  "order_index": 9
+}

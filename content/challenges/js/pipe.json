@@ -1,0 +1,15 @@
+{
+  "slug": "pipe",
+  "title": "Pipe",
+  "description": "Implement a `pipe` function that combines functions left-to-right. `pipe(f, g)(x)` is equivalent to `g(f(x))`.\n\n**Example:**\n```js\nconst double = x => x * 2;\nconst addOne = x => x + 1;\npipe(double, addOne)(3) // addOne(double(3)) = 7\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export function pipe(...fns) {\n  // your code here\n}",
+  "test_suite": "test('applies functions left-to-right', () => {\n  const double = x => x * 2;\n  const addOne = x => x + 1;\n  expect(pipe(double, addOne)(3)).toBe(7);\n});\n\ntest('single function acts as identity wrapper', () => {\n  const double = x => x * 2;\n  expect(pipe(double)(5)).toBe(10);\n});\n\ntest('pipes three functions', () => {\n  const triple = x => x * 3;\n  const addTwo = x => x + 2;\n  const negate = x => -x;\n  expect(pipe(triple, addTwo, negate)(4)).toBe(-14);\n});\n\ntest('leftmost function receives the initial value', () => {\n  const calls = [];\n  const tag = name => x => { calls.push(name); return x; };\n  pipe(tag('first'), tag('second'))(0);\n  expect(calls).toEqual(['first', 'second']);\n});\n\n// __hidden__\ntest('works with string transforms', () => {\n  const trim = s => s.trim();\n  const upper = s => s.toUpperCase();\n  expect(pipe(trim, upper)('  hello  ')).toBe('HELLO');\n});",
+  "solution": "export function pipe(...fns) {\n  return function(x) {\n    return fns.reduce((acc, fn) => fn(acc), x);\n  };\n}",
+  "ai_context": "Pipe is the mirror of compose — it uses `reduce` (left-to-right) instead of `reduceRight`. Learners who mix them up will get the wrong execution order. The test for call order is a useful sanity check to verify direction without caring about the computed value.",
+  "xp_reward": 100,
+  "tags": ["functional", "higher-order", "reduce"],
+  "order_index": 16
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "promise-pool",
+  "title": "Promise Pool",
+  "description": "Implement `promisePool(tasks, concurrency)` that runs an array of async task functions with a maximum of `concurrency` running at once. Returns a Promise resolving to results in input order.\n\n**Example:**\n```js\nconst results = await promisePool(\n  [() => fetch('/a'), () => fetch('/b'), () => fetch('/c')],\n  2\n); // at most 2 fetches run simultaneously\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export async function promisePool(tasks, concurrency) {\n  // your code here\n}",
+  "test_suite": "test('returns results in input order', async () => {\n  const tasks = [() => Promise.resolve(1), () => Promise.resolve(2), () => Promise.resolve(3)];\n  const results = await promisePool(tasks, 2);\n  expect(results).toEqual([1, 2, 3]);\n});\n\ntest('runs empty array', async () => {\n  const results = await promisePool([], 2);\n  expect(results).toEqual([]);\n});\n\ntest('concurrency of 1 runs tasks sequentially', async () => {\n  const order = [];\n  const tasks = [\n    async () => { order.push(1); return 1; },\n    async () => { order.push(2); return 2; },\n  ];\n  await promisePool(tasks, 1);\n  expect(order).toEqual([1, 2]);\n});\n\n// __hidden__\ntest('never exceeds concurrency limit', async () => {\n  let running = 0;\n  let maxRunning = 0;\n  const delay = ms => new Promise(r => setTimeout(r, ms));\n  const tasks = Array.from({ length: 5 }, () => async () => {\n    running++;\n    maxRunning = Math.max(maxRunning, running);\n    await delay(10);\n    running--;\n  });\n  await promisePool(tasks, 2);\n  expect(maxRunning).toBeLessThanOrEqual(2);\n});",
+  "solution": "export async function promisePool(tasks, concurrency) {\n  const results = new Array(tasks.length);\n  let index = 0;\n  async function worker() {\n    while (index < tasks.length) {\n      const i = index++;\n      results[i] = await tasks[i]();\n    }\n  }\n  const workers = Array.from({ length: Math.min(concurrency, tasks.length) }, worker);\n  await Promise.all(workers);\n  return results;\n}",
+  "ai_context": "Common mistake: pre-launching all tasks wrapped in Promise.all with slice batches — this creates fixed batches where a slow task blocks the whole batch. The correct approach uses a worker pool that picks up the next task as soon as a slot opens.",
+  "xp_reward": 300,
+  "tags": ["async", "concurrency", "promises", "performance"],
+  "order_index": 37
+}

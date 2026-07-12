@@ -1,0 +1,15 @@
+{
+  "slug": "microtask-queue",
+  "title": "Microtask Queue",
+  "description": "Implement a `MicrotaskQueue` class with an `add(fn)` method. Added functions should not run immediately — they should be batched and flushed in a single `queueMicrotask` call.\n\n**Example:**\n```js\nconst q = new MicrotaskQueue();\nconst log = [];\nq.add(() => log.push(1));\nq.add(() => log.push(2));\n// log is still [] here\nawait Promise.resolve();\n// log is now [1, 2]\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export class MicrotaskQueue {\n  // your code here\n}",
+  "test_suite": "test('functions do not run synchronously', () => {\n  const q = new MicrotaskQueue();\n  const fn = vi.fn();\n  q.add(fn);\n  expect(fn).not.toHaveBeenCalled();\n});\n\ntest('functions run after microtask', async () => {\n  const q = new MicrotaskQueue();\n  const results = [];\n  q.add(() => results.push(1));\n  q.add(() => results.push(2));\n  await Promise.resolve();\n  expect(results).toEqual([1, 2]);\n});\n\ntest('all fns in same flush are called', async () => {\n  const q = new MicrotaskQueue();\n  const fn1 = vi.fn();\n  const fn2 = vi.fn();\n  q.add(fn1);\n  q.add(fn2);\n  await Promise.resolve();\n  expect(fn1).toHaveBeenCalledTimes(1);\n  expect(fn2).toHaveBeenCalledTimes(1);\n});\n\n// __hidden__\ntest('fns added after flush run in next microtask', async () => {\n  const q = new MicrotaskQueue();\n  const results = [];\n  q.add(() => results.push('first'));\n  await Promise.resolve();\n  q.add(() => results.push('second'));\n  await Promise.resolve();\n  expect(results).toEqual(['first', 'second']);\n});",
+  "solution": "export class MicrotaskQueue {\n  constructor() {\n    this.queue = [];\n    this.scheduled = false;\n  }\n  add(fn) {\n    this.queue.push(fn);\n    if (!this.scheduled) {\n      this.scheduled = true;\n      queueMicrotask(() => {\n        this.scheduled = false;\n        const toRun = this.queue.splice(0);\n        toRun.forEach(f => f());\n      });\n    }\n  }\n}",
+  "ai_context": "Common mistake: calling queueMicrotask on every add instead of only when not already scheduled, causing each function to run in its own microtask rather than being batched. Also forgetting to reset the scheduled flag before running the queue.",
+  "xp_reward": 300,
+  "tags": ["microtasks", "async", "batching", "performance"],
+  "order_index": 43
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "celsius-to-fahrenheit",
+  "title": "Celsius to Fahrenheit",
+  "description": "Write a function `celsiusToFahrenheit` that converts a temperature from Celsius to Fahrenheit using the formula `F = C × 9/5 + 32`.\n\n**Example:**\n```js\ncelsiusToFahrenheit(0)   // 32\ncelsiusToFahrenheit(100) // 212\ncelsiusToFahrenheit(-40) // -40\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export function celsiusToFahrenheit(c) {\n  // your code here\n}",
+  "test_suite": "test('converts 0°C to 32°F', () => {\n  expect(celsiusToFahrenheit(0)).toBe(32);\n});\n\ntest('converts 100°C to 212°F', () => {\n  expect(celsiusToFahrenheit(100)).toBe(212);\n});\n\ntest('converts -40°C to -40°F', () => {\n  expect(celsiusToFahrenheit(-40)).toBe(-40);\n});\n\ntest('converts 37°C (body temp) to 98.6°F', () => {\n  expect(celsiusToFahrenheit(37)).toBeCloseTo(98.6);\n});\n\n// __hidden__\ntest('converts 20°C to 68°F', () => {\n  expect(celsiusToFahrenheit(20)).toBe(68);\n});",
+  "solution": "export function celsiusToFahrenheit(c) {\n  return c * 9 / 5 + 32;\n}",
+  "ai_context": "Integer division pitfall: writing `9/5` in some languages gives 1, but JavaScript always does floating-point division, so `9/5` is `1.8` — no cast needed. The common mistake here is getting operator precedence wrong, e.g. `c * 9 / (5 + 32)` instead of `(c * 9 / 5) + 32`.",
+  "xp_reward": 50,
+  "tags": ["math", "arithmetic"],
+  "order_index": 10
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "weak-cache",
+  "title": "WeakMap Cache",
+  "description": "Implement `weakCache(fn)` that memoizes the result of `fn` per object reference using a `WeakMap`, so results are cached without preventing garbage collection of the key objects.\n\n**Example:**\n```js\nconst compute = weakCache((obj) => obj.x * 2);\nconst a = { x: 5 };\ncompute(a); // 10 — computed\ncompute(a); // 10 — cached, fn not called again\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export function weakCache(fn) {\n  // your code here\n}",
+  "test_suite": "test('returns correct result', () => {\n  const compute = weakCache((obj) => obj.value * 3);\n  expect(compute({ value: 4 })).toBe(12);\n});\n\ntest('caches result for same reference', () => {\n  const fn = vi.fn(obj => obj.x);\n  const cached = weakCache(fn);\n  const obj = { x: 7 };\n  cached(obj);\n  cached(obj);\n  expect(fn).toHaveBeenCalledTimes(1);\n});\n\ntest('calls fn again for different reference', () => {\n  const fn = vi.fn(obj => obj.x);\n  const cached = weakCache(fn);\n  cached({ x: 1 });\n  cached({ x: 1 });\n  expect(fn).toHaveBeenCalledTimes(2);\n});\n\n// __hidden__\ntest('cache is per-function (closure-isolated)', () => {\n  const fn = vi.fn(obj => obj.v);\n  const c1 = weakCache(fn);\n  const c2 = weakCache(fn);\n  const obj = { v: 5 };\n  c1(obj);\n  c2(obj);\n  expect(fn).toHaveBeenCalledTimes(2);\n});",
+  "solution": "export function weakCache(fn) {\n  const cache = new WeakMap();\n  return function(obj) {\n    if (cache.has(obj)) return cache.get(obj);\n    const result = fn(obj);\n    cache.set(obj, result);\n    return result;\n  };\n}",
+  "ai_context": "Common mistake: using a regular Map instead of WeakMap — this prevents garbage collection of keys. Also placing the cache outside the closure (sharing it across all calls to weakCache) instead of creating a new WeakMap per cached function.",
+  "xp_reward": 300,
+  "tags": ["weakmap", "memoization", "memory-management"],
+  "order_index": 44
+}

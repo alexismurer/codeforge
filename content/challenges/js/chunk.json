@@ -1,0 +1,15 @@
+{
+  "slug": "chunk",
+  "title": "Chunk Array",
+  "description": "Implement a `chunk` function that splits an array into groups of a given `size`. The last chunk may be smaller if the array doesn't divide evenly.\n\n**Example:**\n```js\nchunk([1, 2, 3, 4, 5], 2) // [[1, 2], [3, 4], [5]]\nchunk([1, 2, 3], 3)       // [[1, 2, 3]]\nchunk([], 2)              // []\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export function chunk(arr, size) {\n  // your code here\n}",
+  "test_suite": "test('splits array into chunks', () => {\n  expect(chunk([1, 2, 3, 4, 5], 2)).toEqual([[1, 2], [3, 4], [5]]);\n});\n\ntest('returns empty array for empty input', () => {\n  expect(chunk([], 2)).toEqual([]);\n});\n\ntest('handles chunk size equal to array length', () => {\n  expect(chunk([1, 2, 3], 3)).toEqual([[1, 2, 3]]);\n});\n\ntest('handles chunk size of 1', () => {\n  expect(chunk([1, 2, 3], 1)).toEqual([[1], [2], [3]]);\n});\n\n// __hidden__\ntest('preserves original array', () => {\n  const arr = [1, 2, 3, 4];\n  chunk(arr, 2);\n  expect(arr).toEqual([1, 2, 3, 4]);\n});",
+  "solution": "export function chunk(arr, size) {\n  const result = [];\n  for (let i = 0; i < arr.length; i += size) {\n    result.push(arr.slice(i, i + size));\n  }\n  return result;\n}",
+  "ai_context": "`Array.slice` is non-mutating and safe here, but learners sometimes use `splice` which mutates the original array and breaks subsequent operations. Using `slice(i, i + size)` naturally handles the last chunk being smaller without any special-case logic.",
+  "xp_reward": 100,
+  "tags": ["arrays", "slice", "iteration"],
+  "order_index": 21
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "count-vowels",
+  "title": "Count Vowels",
+  "description": "Write a function `countVowels` that returns the number of vowels (a, e, i, o, u) in a string. The count should be case-insensitive.\n\n**Example:**\n```js\ncountVowels('Hello World') // 3\ncountVowels('rhythm') // 0\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export function countVowels(str) {\n  // your code here\n}",
+  "test_suite": "test('counts vowels in mixed string', () => {\n  expect(countVowels('Hello World')).toBe(3);\n});\n\ntest('returns 0 when no vowels', () => {\n  expect(countVowels('rhythm')).toBe(0);\n});\n\ntest('returns 0 for empty string', () => {\n  expect(countVowels('')).toBe(0);\n});\n\ntest('is case-insensitive', () => {\n  expect(countVowels('AEIOU')).toBe(5);\n});\n\n// __hidden__\ntest('counts vowels in a sentence', () => {\n  expect(countVowels('The quick brown fox')).toBe(5);\n});",
+  "solution": "export function countVowels(str) {\n  return (str.match(/[aeiou]/gi) || []).length;\n}",
+  "ai_context": "Learners often forget the `g` flag (global), which stops after the first match, or forget the `i` flag for case-insensitivity. Also, `str.match(...)` returns `null` when there are no matches — not an empty array — so you must guard against null before accessing `.length`.",
+  "xp_reward": 50,
+  "tags": ["strings", "regex"],
+  "order_index": 7
+}

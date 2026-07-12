@@ -1,0 +1,15 @@
+{
+  "slug": "proxy-validator",
+  "title": "Proxy Validator",
+  "description": "Implement a `createValidated` function that wraps an object in a `Proxy` and throws a `TypeError` if a property is set to a value that fails its validator.\n\n**Example:**\n```js\nconst obj = createValidated(\n  { age: 25 },\n  { age: v => typeof v === 'number' && v >= 0 }\n);\nobj.age = 30;  // OK\nobj.age = -1;  // throws TypeError\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export function createValidated(target, validators) {\n  // your code here\n}",
+  "test_suite": "test('valid set passes', () => {\n  const obj = createValidated({ age: 25 }, { age: v => v >= 0 });\n  obj.age = 30;\n  expect(obj.age).toBe(30);\n});\n\ntest('invalid set throws TypeError', () => {\n  const obj = createValidated({ age: 25 }, { age: v => v >= 0 });\n  expect(() => { obj.age = -1; }).toThrow(TypeError);\n});\n\ntest('unvalidated props can be set freely', () => {\n  const obj = createValidated({ name: 'Alice' }, {});\n  obj.name = 'Bob';\n  expect(obj.name).toBe('Bob');\n});\n\n// __hidden__\ntest('get passes through correctly', () => {\n  const obj = createValidated({ x: 42 }, {});\n  expect(obj.x).toBe(42);\n});",
+  "solution": "export function createValidated(target, validators) {\n  return new Proxy(target, {\n    set(obj, prop, value) {\n      const validate = validators[prop];\n      if (validate && !validate(value)) {\n        throw new TypeError(`Invalid value for ${String(prop)}: ${value}`);\n      }\n      obj[prop] = value;\n      return true;\n    }\n  });\n}",
+  "ai_context": "Common mistake: forgetting to return true from the set trap, which causes a TypeError in strict mode. Also forgetting that Proxy traps must handle all property access, not just validated ones.",
+  "xp_reward": 300,
+  "tags": ["proxy", "metaprogramming"],
+  "order_index": 34
+}

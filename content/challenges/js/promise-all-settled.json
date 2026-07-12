@@ -1,0 +1,15 @@
+{
+  "slug": "promise-all-settled",
+  "title": "Promise.allSettled",
+  "description": "Implement `promiseAllSettled(promises)` that resolves with an array of outcome objects — never rejects. Each object has `status: 'fulfilled'` + `value`, or `status: 'rejected'` + `reason`.\n\n**Example:**\n```js\nconst results = await promiseAllSettled([\n  Promise.resolve(1),\n  Promise.reject('oops'),\n]);\n// [{ status: 'fulfilled', value: 1 }, { status: 'rejected', reason: 'oops' }]\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export function promiseAllSettled(promises) {\n  // your code here\n}",
+  "test_suite": "test('fulfilled promises have status and value', async () => {\n  const results = await promiseAllSettled([Promise.resolve(42)]);\n  expect(results[0]).toEqual({ status: 'fulfilled', value: 42 });\n});\n\ntest('rejected promises have status and reason', async () => {\n  const results = await promiseAllSettled([Promise.reject('err')]);\n  expect(results[0]).toEqual({ status: 'rejected', reason: 'err' });\n});\n\ntest('never rejects even if all reject', async () => {\n  await expect(promiseAllSettled([Promise.reject('a'), Promise.reject('b')])).resolves.toBeDefined();\n});\n\ntest('order matches input', async () => {\n  const results = await promiseAllSettled([Promise.resolve(1), Promise.reject(2), Promise.resolve(3)]);\n  expect(results.map(r => r.status)).toEqual(['fulfilled', 'rejected', 'fulfilled']);\n});\n\n// __hidden__\ntest('empty array resolves to empty array', async () => {\n  const results = await promiseAllSettled([]);\n  expect(results).toEqual([]);\n});",
+  "solution": "export function promiseAllSettled(promises) {\n  return Promise.all(\n    promises.map(p =>\n      Promise.resolve(p)\n        .then(value => ({ status: 'fulfilled', value }))\n        .catch(reason => ({ status: 'rejected', reason }))\n    )\n  );\n}",
+  "ai_context": "Common mistake: using Promise.all directly (which rejects on first failure). The key insight is wrapping each promise with .then/.catch to convert rejections into settled objects.",
+  "xp_reward": 200,
+  "tags": ["promises", "async", "error-handling"],
+  "order_index": 27
+}

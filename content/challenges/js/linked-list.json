@@ -1,0 +1,15 @@
+{
+  "slug": "linked-list",
+  "title": "LinkedList",
+  "description": "Implement a singly `LinkedList` class with:\n- `push(val)` — append a node to the tail\n- `pop()` — remove and return the tail node value (or `undefined` if empty)\n- `find(val)` — return the first node with matching value, or `null`\n- `size` — number of nodes\n\n**Example:**\n```js\nconst list = new LinkedList();\nlist.push(1); list.push(2);\nlist.size; // 2\nlist.find(1); // { value: 1, next: ... }\nlist.pop(); // 2\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export class LinkedList {\n  // your code here\n}",
+  "test_suite": "test('push increases size', () => {\n  const list = new LinkedList();\n  list.push(1);\n  list.push(2);\n  expect(list.size).toBe(2);\n});\n\ntest('pop removes and returns tail value', () => {\n  const list = new LinkedList();\n  list.push(1);\n  list.push(2);\n  expect(list.pop()).toBe(2);\n  expect(list.size).toBe(1);\n});\n\ntest('pop on empty list returns undefined', () => {\n  const list = new LinkedList();\n  expect(list.pop()).toBeUndefined();\n});\n\ntest('find returns matching node', () => {\n  const list = new LinkedList();\n  list.push(10);\n  list.push(20);\n  const node = list.find(10);\n  expect(node).not.toBeNull();\n  expect(node.value).toBe(10);\n});\n\n// __hidden__\ntest('find returns null when not found', () => {\n  const list = new LinkedList();\n  list.push(5);\n  expect(list.find(99)).toBeNull();\n});",
+  "solution": "export class LinkedList {\n  constructor() {\n    this.head = null;\n    this.size = 0;\n  }\n  push(val) {\n    const node = { value: val, next: null };\n    if (!this.head) { this.head = node; }\n    else {\n      let cur = this.head;\n      while (cur.next) cur = cur.next;\n      cur.next = node;\n    }\n    this.size++;\n  }\n  pop() {\n    if (!this.head) return undefined;\n    if (!this.head.next) {\n      const val = this.head.value;\n      this.head = null;\n      this.size--;\n      return val;\n    }\n    let cur = this.head;\n    while (cur.next.next) cur = cur.next;\n    const val = cur.next.value;\n    cur.next = null;\n    this.size--;\n    return val;\n  }\n  find(val) {\n    let cur = this.head;\n    while (cur) {\n      if (cur.value === val) return cur;\n      cur = cur.next;\n    }\n    return null;\n  }\n}",
+  "ai_context": "Common mistake: forgetting to decrement size in pop, or not handling the single-node edge case in pop. Also returning the node object from pop instead of the value.",
+  "xp_reward": 200,
+  "tags": ["data-structures", "linked-list", "classes"],
+  "order_index": 31
+}

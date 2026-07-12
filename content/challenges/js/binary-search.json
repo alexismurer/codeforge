@@ -1,0 +1,15 @@
+{
+  "slug": "binary-search",
+  "title": "Binary Search",
+  "description": "Implement `binarySearch(arr, target)` that searches a sorted array for `target` and returns its index, or `-1` if not found. Must run in O(log n).\n\n**Example:**\n```js\nbinarySearch([1, 3, 5, 7, 9], 5); // 2\nbinarySearch([1, 3, 5, 7, 9], 4); // -1\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export function binarySearch(arr, target) {\n  // your code here\n}",
+  "test_suite": "test('finds element in the middle', () => {\n  expect(binarySearch([1, 3, 5, 7, 9], 5)).toBe(2);\n});\n\ntest('finds first element', () => {\n  expect(binarySearch([1, 3, 5, 7, 9], 1)).toBe(0);\n});\n\ntest('finds last element', () => {\n  expect(binarySearch([1, 3, 5, 7, 9], 9)).toBe(4);\n});\n\ntest('returns -1 if not found', () => {\n  expect(binarySearch([1, 3, 5, 7, 9], 4)).toBe(-1);\n});\n\n// __hidden__\ntest('works on single-element array', () => {\n  expect(binarySearch([42], 42)).toBe(0);\n  expect(binarySearch([42], 1)).toBe(-1);\n});",
+  "solution": "export function binarySearch(arr, target) {\n  let lo = 0, hi = arr.length - 1;\n  while (lo <= hi) {\n    const mid = (lo + hi) >> 1;\n    if (arr[mid] === target) return mid;\n    if (arr[mid] < target) lo = mid + 1;\n    else hi = mid - 1;\n  }\n  return -1;\n}",
+  "ai_context": "Common mistake: using lo < hi instead of lo <= hi (misses the single-element case), and integer overflow with (lo + hi) / 2 (use (lo + hi) >>> 1 or lo + Math.floor((hi - lo) / 2)).",
+  "xp_reward": 200,
+  "tags": ["algorithms", "search", "arrays"],
+  "order_index": 30
+}

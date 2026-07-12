@@ -1,0 +1,15 @@
+{
+  "slug": "deep-equal",
+  "title": "Deep Equal",
+  "description": "Implement `deepEqual(a, b)` that returns `true` if two values are deeply equal — recursively comparing object properties and array elements.\n\n**Example:**\n```js\ndeepEqual({ a: [1, 2] }, { a: [1, 2] }); // true\ndeepEqual({ a: 1 }, { a: 2 });           // false\ndeepEqual(null, null);                   // true\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export function deepEqual(a, b) {\n  // your code here\n}",
+  "test_suite": "test('equal primitives', () => {\n  expect(deepEqual(1, 1)).toBe(true);\n  expect(deepEqual('hi', 'hi')).toBe(true);\n  expect(deepEqual(null, null)).toBe(true);\n});\n\ntest('different primitives', () => {\n  expect(deepEqual(1, 2)).toBe(false);\n  expect(deepEqual('a', 'b')).toBe(false);\n  expect(deepEqual(null, undefined)).toBe(false);\n});\n\ntest('nested objects', () => {\n  expect(deepEqual({ a: { b: 1 } }, { a: { b: 1 } })).toBe(true);\n  expect(deepEqual({ a: { b: 1 } }, { a: { b: 2 } })).toBe(false);\n});\n\ntest('arrays', () => {\n  expect(deepEqual([1, 2, 3], [1, 2, 3])).toBe(true);\n  expect(deepEqual([1, 2], [1, 2, 3])).toBe(false);\n});\n\n// __hidden__\ntest('mixed nested arrays and objects', () => {\n  expect(deepEqual({ x: [1, { y: 2 }] }, { x: [1, { y: 2 }] })).toBe(true);\n  expect(deepEqual({ x: [1, { y: 2 }] }, { x: [1, { y: 3 }] })).toBe(false);\n});",
+  "solution": "export function deepEqual(a, b) {\n  if (a === b) return true;\n  if (a === null || b === null) return false;\n  if (typeof a !== 'object' || typeof b !== 'object') return false;\n  const keysA = Object.keys(a);\n  const keysB = Object.keys(b);\n  if (keysA.length !== keysB.length) return false;\n  return keysA.every(key => deepEqual(a[key], b[key]));\n}",
+  "ai_context": "Common mistakes: using === only (misses nested structures), forgetting null check before typeof (null is typeof 'object'), and not verifying both objects have the same number of keys.",
+  "xp_reward": 200,
+  "tags": ["recursion", "objects", "equality"],
+  "order_index": 25
+}

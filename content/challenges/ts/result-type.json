@@ -1,0 +1,15 @@
+{
+  "slug": "result-type",
+  "title": "Result Type",
+  "description": "Implement a `Result<T, E>` discriminated union type for safe error handling.\n\nDefine `Ok<T>` and `Err<E>` variants, then implement `unwrap<T>(r: Result<T, unknown>): T` that returns the value or throws the error.\n\n**Example:**\n```ts\nconst ok: Result<number, string> = { ok: true, value: 42 };\nconst err: Result<number, string> = { ok: false, error: 'not found' };\nunwrap(ok)   // 42\nunwrap(err)  // throws 'not found'\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export type Ok<T> = // your type here\nexport type Err<E> = // your type here\nexport type Result<T, E> = Ok<T> | Err<E>;\n\nexport function unwrap<T>(r: Result<T, unknown>): T {\n  // your code here\n}",
+  "test_suite": "test('unwrap returns value for Ok result', () => {\n  const r: Result<number, string> = { ok: true, value: 42 };\n  expect(unwrap(r)).toBe(42);\n});\n\ntest('unwrap throws for Err result', () => {\n  const r: Result<number, string> = { ok: false, error: 'not found' };\n  expect(() => unwrap(r)).toThrow();\n});\n\ntest('type-level: Ok narrows correctly', () => {\n  const r: Result<string, Error> = { ok: true, value: 'hello' };\n  if (r.ok) {\n    const check: string = r.value;\n    expect(check).toBe('hello');\n  }\n});\n\ntest('type-level: Err narrows correctly', () => {\n  const r: Result<string, Error> = { ok: false, error: new Error('oops') };\n  if (!r.ok) {\n    expect(r.error.message).toBe('oops');\n  }\n});\n\n// __hidden__\ntest('unwrap throws the actual error', () => {\n  const err = new Error('custom error');\n  const r: Result<number, Error> = { ok: false, error: err };\n  expect(() => unwrap(r)).toThrow(err);\n});",
+  "solution": "export type Ok<T> = { ok: true; value: T };\nexport type Err<E> = { ok: false; error: E };\nexport type Result<T, E> = Ok<T> | Err<E>;\n\nexport function unwrap<T>(r: Result<T, unknown>): T {\n  if (r.ok) return r.value;\n  throw r.error;\n}",
+  "ai_context": "Common mistake: not using a discriminant property (`ok: true` / `ok: false`). Without a literal type discriminant, TypeScript cannot narrow the union in an if-check.",
+  "xp_reward": 300,
+  "tags": ["discriminated-unions", "generics", "error-handling"],
+  "order_index": 18
+}

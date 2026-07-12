@@ -1,0 +1,15 @@
+{
+  "slug": "dependency-injector",
+  "title": "Dependency Injector",
+  "description": "Implement a `Container` class that acts as a dependency injection container with singleton scope.\n\n- `register(token, factory)` — registers a factory function for a string token\n- `resolve(token)` — calls the factory (passing the container) and returns the instance; subsequent calls return the **same** instance (singleton)\n- Throws an `Error` if `resolve` is called for an unregistered token\n\n**Example:**\n```js\nconst c = new Container();\nc.register('logger', () => ({ log: (m) => console.log(m) }));\nc.register('app', (container) => ({ logger: container.resolve('logger') }));\nconst app = c.resolve('app');\napp.logger.log('hello'); // hello\nc.resolve('app') === app; // true — singleton\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 5,
+  "starter_code": "export class Container {\n  // your code here\n}",
+  "test_suite": "test('resolve returns registered instance', () => {\n  const c = new Container();\n  c.register('val', () => 42);\n  expect(c.resolve('val')).toBe(42);\n});\n\ntest('resolve is singleton — same instance each call', () => {\n  const c = new Container();\n  c.register('obj', () => ({ x: 1 }));\n  expect(c.resolve('obj')).toBe(c.resolve('obj'));\n});\n\ntest('factory receives container for dependency resolution', () => {\n  const c = new Container();\n  c.register('a', () => 10);\n  c.register('b', (container) => container.resolve('a') * 2);\n  expect(c.resolve('b')).toBe(20);\n});\n\ntest('throws for unregistered token', () => {\n  const c = new Container();\n  expect(() => c.resolve('unknown')).toThrow();\n});\n\n// __hidden__\ntest('factory is called only once even with multiple resolves', () => {\n  const c = new Container();\n  let calls = 0;\n  c.register('once', () => { calls++; return {}; });\n  c.resolve('once');\n  c.resolve('once');\n  c.resolve('once');\n  expect(calls).toBe(1);\n});",
+  "solution": "export class Container {\n  constructor() {\n    this._factories = new Map();\n    this._instances = new Map();\n  }\n\n  register(token, factory) {\n    this._factories.set(token, factory);\n  }\n\n  resolve(token) {\n    if (this._instances.has(token)) return this._instances.get(token);\n    if (!this._factories.has(token)) throw new Error(`No registration for token: ${token}`);\n    const instance = this._factories.get(token)(this);\n    this._instances.set(token, instance);\n    return instance;\n  }\n}",
+  "ai_context": "Common mistake: not caching instances (calling the factory every time). Learners also forget to pass the container itself to the factory, making recursive resolution impossible.",
+  "xp_reward": 400,
+  "tags": ["design-patterns", "dependency-injection", "oop", "architecture"],
+  "order_index": 49
+}

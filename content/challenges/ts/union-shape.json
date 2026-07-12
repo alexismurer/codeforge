@@ -1,0 +1,15 @@
+{
+  "slug": "union-shape",
+  "title": "Union Shape",
+  "description": "Define a `Shape` type as a literal union `'circle' | 'square' | 'triangle'`.\n\nImplement `getCorners(shape: Shape): number` that returns the number of corners for each shape.\n\n**Example:**\n```ts\ngetCorners('circle')    // 0\ngetCorners('square')    // 4\ngetCorners('triangle')  // 3\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export type Shape = 'circle' | 'square' | 'triangle';\n\nexport function getCorners(shape: Shape): number {\n  // your code here\n}",
+  "test_suite": "test('circle has 0 corners', () => {\n  expect(getCorners('circle')).toBe(0);\n});\n\ntest('square has 4 corners', () => {\n  expect(getCorners('square')).toBe(4);\n});\n\ntest('triangle has 3 corners', () => {\n  expect(getCorners('triangle')).toBe(3);\n});\n\n// __hidden__\ntest('returns a number for all shapes', () => {\n  const shapes: Shape[] = ['circle', 'square', 'triangle'];\n  shapes.forEach(s => expect(typeof getCorners(s)).toBe('number'));\n});",
+  "solution": "export type Shape = 'circle' | 'square' | 'triangle';\n\nexport function getCorners(shape: Shape): number {\n  switch (shape) {\n    case 'circle': return 0;\n    case 'square': return 4;\n    case 'triangle': return 3;\n  }\n}",
+  "ai_context": "Common mistake: using an if/else chain instead of a switch, missing exhaustiveness. TypeScript can verify all union branches are handled in a switch with a `never` default.",
+  "xp_reward": 50,
+  "tags": ["union-types", "switch", "literal-types"],
+  "order_index": 6
+}

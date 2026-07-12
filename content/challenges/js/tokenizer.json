@@ -1,0 +1,15 @@
+{
+  "slug": "tokenizer",
+  "title": "Arithmetic Tokenizer",
+  "description": "Implement a `tokenize` function that converts an arithmetic expression string into an array of tokens. Each token has a `type` (`'number'`, `'plus'`, `'minus'`, `'star'`, `'slash'`, `'lparen'`, `'rparen'`) and a `value` (string).\n\n**Example:**\n```js\ntokenize('3 + 42 * (2 - 1)')\n// [{type:'number',value:'3'},{type:'plus',value:'+'},{type:'number',value:'42'},{type:'star',value:'*'},\n//  {type:'lparen',value:'('},{type:'number',value:'2'},{type:'minus',value:'-'},{type:'number',value:'1'},{type:'rparen',value:')'}]\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 5,
+  "starter_code": "export function tokenize(expr) {\n  // your code here\n}",
+  "test_suite": "test('tokenizes single number', () => {\n  expect(tokenize('42')).toEqual([{type:'number',value:'42'}]);\n});\n\ntest('tokenizes operators', () => {\n  const t = tokenize('1+2');\n  expect(t[1]).toEqual({type:'plus',value:'+'});\n});\n\ntest('tokenizes multi-digit numbers', () => {\n  const t = tokenize('123 + 456');\n  expect(t[0]).toEqual({type:'number',value:'123'});\n  expect(t[2]).toEqual({type:'number',value:'456'});\n});\n\ntest('tokenizes parentheses', () => {\n  const t = tokenize('(1)');\n  expect(t[0].type).toBe('lparen');\n  expect(t[2].type).toBe('rparen');\n});\n\n// __hidden__\ntest('ignores whitespace', () => {\n  const t = tokenize('  3  *  4  ');\n  expect(t.length).toBe(3);\n  expect(t[0].value).toBe('3');\n});",
+  "solution": "export function tokenize(expr) {\n  const tokens = [];\n  let i = 0;\n  while (i < expr.length) {\n    if (/\\s/.test(expr[i])) { i++; continue; }\n    if (/\\d/.test(expr[i])) {\n      let num = '';\n      while (i < expr.length && /\\d/.test(expr[i])) num += expr[i++];\n      tokens.push({type:'number',value:num});\n    } else {\n      const map = {'+':'plus','-':'minus','*':'star','/':'slash','(':'lparen',')':'rparen'};\n      tokens.push({type:map[expr[i]],value:expr[i]});\n      i++;\n    }\n  }\n  return tokens;\n}",
+  "ai_context": "Common mistake: not accumulating multi-digit numbers — treating each digit as a separate token. Also forgetting to skip whitespace.",
+  "xp_reward": 400,
+  "tags": ["parsing", "strings", "algorithms"],
+  "order_index": 45
+}

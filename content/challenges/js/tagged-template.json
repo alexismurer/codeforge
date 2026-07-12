@@ -1,0 +1,15 @@
+{
+  "slug": "tagged-template",
+  "title": "Tagged Template",
+  "description": "Implement a `highlight` tagged template literal function that wraps each interpolated value in `<mark>` tags, concatenated with the surrounding string parts.\n\n**Example:**\n```js\nconst name = 'Alice';\nconst age = 30;\nhighlight`Hello ${name}, you are ${age} years old!`;\n// 'Hello <mark>Alice</mark>, you are <mark>30</mark> years old!'\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export function highlight(strings, ...values) {\n  // your code here\n}",
+  "test_suite": "test('wraps interpolated values in mark tags', () => {\n  const name = 'Alice';\n  const result = highlight`Hello ${name}!`;\n  expect(result).toBe('Hello <mark>Alice</mark>!');\n});\n\ntest('handles multiple interpolations', () => {\n  const a = 'foo';\n  const b = 'bar';\n  const result = highlight`${a} and ${b}`;\n  expect(result).toBe('<mark>foo</mark> and <mark>bar</mark>');\n});\n\ntest('no interpolations returns plain string', () => {\n  const result = highlight`just text`;\n  expect(result).toBe('just text');\n});\n\n// __hidden__\ntest('numeric values are stringified inside mark', () => {\n  const n = 42;\n  const result = highlight`value is ${n}`;\n  expect(result).toBe('value is <mark>42</mark>');\n});",
+  "solution": "export function highlight(strings, ...values) {\n  return strings.reduce((acc, str, i) => {\n    const val = values[i] !== undefined ? `<mark>${values[i]}</mark>` : '';\n    return acc + str + val;\n  }, '');\n}",
+  "ai_context": "Common mistake: not understanding that strings.length === values.length + 1, so the last string part has no corresponding value. Using zip-style iteration without accounting for the extra string leads to undefined in the output.",
+  "xp_reward": 300,
+  "tags": ["template-literals", "tagged-templates", "strings"],
+  "order_index": 41
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "capitalize-words",
+  "title": "Capitalize Words",
+  "description": "Write a function `capitalizeWords` that returns a string with the first letter of each word capitalized and the rest lowercased.\n\n**Example:**\n```js\ncapitalizeWords('hello world') // 'Hello World'\ncapitalizeWords('jAVAscript IS fun') // 'Javascript Is Fun'\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export function capitalizeWords(str) {\n  // your code here\n}",
+  "test_suite": "test('capitalizes each word', () => {\n  expect(capitalizeWords('hello world')).toBe('Hello World');\n});\n\ntest('lowercases remaining letters', () => {\n  expect(capitalizeWords('jAVAscript IS fun')).toBe('Javascript Is Fun');\n});\n\ntest('handles empty string', () => {\n  expect(capitalizeWords('')).toBe('');\n});\n\ntest('handles single word', () => {\n  expect(capitalizeWords('code')).toBe('Code');\n});\n\n// __hidden__\ntest('handles already-capitalized input', () => {\n  expect(capitalizeWords('Hello World')).toBe('Hello World');\n});",
+  "solution": "export function capitalizeWords(str) {\n  return str\n    .split(' ')\n    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())\n    .join(' ');\n}",
+  "ai_context": "A common pitfall is only uppercasing the first letter without lowercasing the rest, causing 'jAVAscript' to become 'JAVAscript'. Also, splitting on a single space fails when multiple consecutive spaces are present.",
+  "xp_reward": 50,
+  "tags": ["strings", "arrays", "map"],
+  "order_index": 6
+}

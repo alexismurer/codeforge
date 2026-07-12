@@ -1,0 +1,15 @@
+{
+  "slug": "template-literal-event",
+  "title": "Template Literal Event Map",
+  "description": "Use template literal types to build an `EventMap<T>` that maps `'change:<key>'` event names to the value type of that key in `T`.\n\n**Example:**\n```ts\ntype Config = { host: string; port: number };\ntype Events = EventMap<Config>;\n// { 'change:host': string; 'change:port': number }\n```\n\nAlso implement `on<T>(event: keyof EventMap<T>, handler: (val: EventMap<T>[typeof event]) => void)` — typed event listener.",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 5,
+  "starter_code": "export type EventMap<T> = // your type here\n\nexport function on<T>(\n  _obj: T,\n  event: keyof EventMap<T>,\n  handler: (val: EventMap<T>[keyof EventMap<T>]) => void\n) {\n  // runtime impl not required — type correctness is the goal\n  void event; void handler;\n}",
+  "test_suite": "test('EventMap maps change:key to value type', () => {\n  type Config = { host: string; port: number };\n  type Events = EventMap<Config>;\n  type HostEvent = Events['change:host'];\n  const check: HostEvent = 'localhost';\n  expect(check).toBe('localhost');\n});\n\ntest('EventMap includes all keys', () => {\n  type Config = { a: number; b: boolean };\n  type Keys = keyof EventMap<Config>;\n  const k1: Keys = 'change:a';\n  const k2: Keys = 'change:b';\n  expect(k1).toBe('change:a');\n  expect(k2).toBe('change:b');\n});\n\ntest('on function accepts correct event names', () => {\n  const cfg = { host: 'localhost', port: 8080 };\n  expect(() => on(cfg, 'change:host', (v) => { const s: string = v; void s; })).not.toThrow();\n});\n\n// __hidden__\ntest('EventMap port event is number type', () => {\n  type Config = { port: number };\n  type PortEvent = EventMap<Config>['change:port'];\n  const check: PortEvent = 3000;\n  expect(check).toBe(3000);\n});",
+  "solution": "export type EventMap<T> = {\n  [K in keyof T & string as `change:${K}`]: T[K]\n};\n\nexport function on<T>(\n  _obj: T,\n  event: keyof EventMap<T>,\n  handler: (val: EventMap<T>[keyof EventMap<T>]) => void\n) {\n  void event; void handler;\n}",
+  "ai_context": "Common mistake: using template literal without `as` remapping clause (requires `K in keyof T & string as \\`change:${K}\\``). Also forgetting `& string` which is needed since keyof can produce symbol.",
+  "xp_reward": 400,
+  "tags": ["template-literal-types", "mapped-types"],
+  "order_index": 21
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "lru-cache-simple",
+  "title": "LRU Cache (Simple)",
+  "description": "Implement an `LRUCache` class with a fixed `capacity`. Implement `get(key)` returning the value or `-1`, and `put(key, value)` inserting/updating. When over capacity, evict the least recently used entry.\n\n**Example:**\n```js\nconst cache = new LRUCache(2);\ncache.put('a', 1); cache.put('b', 2);\ncache.get('a');    // 1 (a is now most recent)\ncache.put('c', 3); // evicts 'b'\ncache.get('b');    // -1\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export class LRUCache {\n  constructor(capacity) {\n    // your code here\n  }\n\n  get(key) {\n    // your code here\n  }\n\n  put(key, value) {\n    // your code here\n  }\n}",
+  "test_suite": "test('get returns -1 for missing key', () => {\n  const cache = new LRUCache(2);\n  expect(cache.get('x')).toBe(-1);\n});\n\ntest('put and get a value', () => {\n  const cache = new LRUCache(2);\n  cache.put('a', 1);\n  expect(cache.get('a')).toBe(1);\n});\n\ntest('evicts least recently used when over capacity', () => {\n  const cache = new LRUCache(2);\n  cache.put('a', 1);\n  cache.put('b', 2);\n  cache.put('c', 3);\n  expect(cache.get('a')).toBe(-1);\n  expect(cache.get('b')).toBe(2);\n  expect(cache.get('c')).toBe(3);\n});\n\ntest('get refreshes recency', () => {\n  const cache = new LRUCache(2);\n  cache.put('a', 1);\n  cache.put('b', 2);\n  cache.get('a');\n  cache.put('c', 3);\n  expect(cache.get('a')).toBe(1);\n  expect(cache.get('b')).toBe(-1);\n});\n\n// __hidden__\ntest('put updates existing key without eviction', () => {\n  const cache = new LRUCache(2);\n  cache.put('a', 1);\n  cache.put('a', 99);\n  expect(cache.get('a')).toBe(99);\n});",
+  "solution": "export class LRUCache {\n  constructor(capacity) {\n    this.capacity = capacity;\n    this.map = new Map();\n  }\n  get(key) {\n    if (!this.map.has(key)) return -1;\n    const val = this.map.get(key);\n    this.map.delete(key);\n    this.map.set(key, val);\n    return val;\n  }\n  put(key, value) {\n    if (this.map.has(key)) this.map.delete(key);\n    this.map.set(key, value);\n    if (this.map.size > this.capacity) {\n      this.map.delete(this.map.keys().next().value);\n    }\n  }\n}",
+  "ai_context": "The elegant solution exploits Map's insertion order — moving a key to the end on access and evicting the first key. Common mistake: implementing a full doubly-linked list unnecessarily, or forgetting to update recency on get.",
+  "xp_reward": 200,
+  "tags": ["data-structures", "cache", "map"],
+  "order_index": 32
+}

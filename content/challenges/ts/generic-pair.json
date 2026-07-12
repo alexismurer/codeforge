@@ -1,0 +1,15 @@
+{
+  "slug": "generic-pair",
+  "title": "Generic Pair",
+  "description": "Implement a generic `Pair<A, B>` class that holds two values and supports `swap()` and `map()`.\n\n**Example:**\n```ts\nconst p = new Pair(1, 'hello');\np.first   // 1\np.second  // 'hello'\np.swap()  // Pair<string, number>('hello', 1)\np.map(x => x * 2)  // Pair<number, string>(2, 'hello')\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export class Pair<A, B> {\n  constructor(public first: A, public second: B) {}\n\n  swap(): Pair<B, A> {\n    // your code here\n  }\n\n  map<C>(fn: (a: A) => C): Pair<C, B> {\n    // your code here\n  }\n}",
+  "test_suite": "test('swap reverses first and second', () => {\n  const p = new Pair(1, 'hello');\n  const swapped = p.swap();\n  expect(swapped.first).toBe('hello');\n  expect(swapped.second).toBe(1);\n});\n\ntest('map transforms first value', () => {\n  const p = new Pair(3, 'x');\n  const mapped = p.map(n => n * 2);\n  expect(mapped.first).toBe(6);\n  expect(mapped.second).toBe('x');\n});\n\ntest('map returns a new Pair', () => {\n  const p = new Pair(1, true);\n  expect(p.map(n => String(n))).toBeInstanceOf(Pair);\n});\n\ntest('swap returns a new Pair', () => {\n  const p = new Pair('a', 42);\n  expect(p.swap()).toBeInstanceOf(Pair);\n});\n\n// __hidden__\ntest('chained swap restores original', () => {\n  const p = new Pair(7, 'z');\n  expect(p.swap().swap().first).toBe(7);\n});",
+  "solution": "export class Pair<A, B> {\n  constructor(public first: A, public second: B) {}\n\n  swap(): Pair<B, A> {\n    return new Pair(this.second, this.first);\n  }\n\n  map<C>(fn: (a: A) => C): Pair<C, B> {\n    return new Pair(fn(this.first), this.second);\n  }\n}",
+  "ai_context": "Common mistake: forgetting to declare type parameters on the class and methods separately. `map<C>` introduces a new type parameter C independent of A and B.",
+  "xp_reward": 100,
+  "tags": ["generics", "classes"],
+  "order_index": 8
+}

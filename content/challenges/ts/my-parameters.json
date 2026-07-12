@@ -1,0 +1,15 @@
+{
+  "slug": "my-parameters",
+  "title": "MyParameters",
+  "description": "Implement `MyParameters<T>` — a conditional type that extracts the parameter types of a function as a tuple — without using the built-in `Parameters<T>`.\n\n**Example:**\n```ts\ntype A = MyParameters<(n: number, s: string) => void>  // [number, string]\ntype B = MyParameters<() => boolean>                   // []\ntype C = MyParameters<(x: number) => number>           // [number]\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export type MyParameters<T extends (...args: any) => any> = // your type here",
+  "test_suite": "test('type-level: extracts [number, string] params', () => {\n  type T = MyParameters<(n: number, s: string) => void>;\n  const check: T = [42, 'hello'];\n  expect(check).toEqual([42, 'hello']);\n});\n\ntest('type-level: extracts [] for no-arg function', () => {\n  type T = MyParameters<() => void>;\n  const check: T = [];\n  expect(check).toEqual([]);\n});\n\ntest('type-level: matches built-in Parameters', () => {\n  type Fn = (a: boolean, b: number, c: string) => void;\n  type Check = MyParameters<Fn> extends Parameters<Fn> ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\n// __hidden__\ntest('type-level: single param extracts correctly', () => {\n  type T = MyParameters<(x: number) => number>;\n  const check: T = [99];\n  expect(check).toEqual([99]);\n});",
+  "solution": "export type MyParameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never;",
+  "ai_context": "Common mistake: using `infer P` in the return position instead of the args position, or forgetting to spread (`...args: infer P`). The `...args` spread is required to capture all parameters as a tuple.",
+  "xp_reward": 300,
+  "tags": ["infer", "conditional-types", "generics", "tuples"],
+  "order_index": 17
+}

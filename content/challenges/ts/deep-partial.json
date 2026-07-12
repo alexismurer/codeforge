@@ -1,0 +1,15 @@
+{
+  "slug": "deep-partial",
+  "title": "DeepPartial",
+  "description": "Implement `DeepPartial<T>` — a recursive type that makes all properties optional at every depth level.\n\n**Example:**\n```ts\ntype Config = DeepPartial<{ host: string; db: { port: number; name: string } }>;\n// { host?: string; db?: { port?: number; name?: string } }\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export type DeepPartial<T> = // your type here\n\nexport function mergeConfig<T>(defaults: T, overrides: DeepPartial<T>): T {\n  return { ...defaults, ...overrides } as T;\n}",
+  "test_suite": "test('mergeConfig merges top-level overrides', () => {\n  const defaults = { host: 'localhost', port: 5432 };\n  const result = mergeConfig(defaults, { port: 3000 });\n  expect(result.port).toBe(3000);\n  expect(result.host).toBe('localhost');\n});\n\ntest('type-level: top-level props are optional', () => {\n  type T = DeepPartial<{ a: number; b: string }>;\n  type Check = T extends { a?: number; b?: string } ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: nested props are optional', () => {\n  type T = DeepPartial<{ inner: { x: number } }>;\n  type Check = T extends { inner?: { x?: number } } ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: primitives pass through', () => {\n  type T = DeepPartial<string>;\n  const check: T = 'hello';\n  expect(check).toBe('hello');\n});\n\n// __hidden__\ntest('type-level: matches Partial at top level', () => {\n  type T = { name: string; age: number };\n  type Check = DeepPartial<T> extends Partial<T> ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});",
+  "solution": "export type DeepPartial<T> = T extends object ? { [K in keyof T]?: DeepPartial<T[K]> } : T;\n\nexport function mergeConfig<T>(defaults: T, overrides: DeepPartial<T>): T {\n  return { ...defaults, ...overrides } as T;\n}",
+  "ai_context": "Common mistake: using `Partial<T>` which is only one level deep. The recursive application `DeepPartial<T[K]>` is needed for nested objects. Also forgetting the primitive base case `T extends object ? ... : T`.",
+  "xp_reward": 300,
+  "tags": ["recursive-types", "mapped-types", "generics"],
+  "order_index": 20
+}

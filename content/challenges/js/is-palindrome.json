@@ -1,0 +1,15 @@
+{
+  "slug": "is-palindrome",
+  "title": "Is Palindrome",
+  "description": "Write a function `isPalindrome` that returns `true` if a string reads the same forwards and backwards. Ignore case and spaces.\n\n**Example:**\n```js\nisPalindrome('racecar') // true\nisPalindrome('A man a plan a canal Panama') // true\nisPalindrome('hello') // false\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export function isPalindrome(str) {\n  // your code here\n}",
+  "test_suite": "test('detects a simple palindrome', () => {\n  expect(isPalindrome('racecar')).toBe(true);\n});\n\ntest('ignores spaces and case', () => {\n  expect(isPalindrome('A man a plan a canal Panama')).toBe(true);\n});\n\ntest('returns false for non-palindrome', () => {\n  expect(isPalindrome('hello')).toBe(false);\n});\n\ntest('single character is a palindrome', () => {\n  expect(isPalindrome('a')).toBe(true);\n});\n\n// __hidden__\ntest('empty string is a palindrome', () => {\n  expect(isPalindrome('')).toBe(true);\n});",
+  "solution": "export function isPalindrome(str) {\n  const cleaned = str.toLowerCase().replace(/\\s/g, '');\n  return cleaned === cleaned.split('').reverse().join('');\n}",
+  "ai_context": "Learners often forget to normalize the string before comparing — not stripping spaces causes 'A man a plan a canal Panama' to return false. Another pitfall: only lowercasing but forgetting to strip spaces, or stripping punctuation when the problem only requires ignoring spaces.",
+  "xp_reward": 50,
+  "tags": ["strings", "regex"],
+  "order_index": 8
+}

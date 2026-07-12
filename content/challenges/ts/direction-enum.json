@@ -1,0 +1,15 @@
+{
+  "slug": "direction-enum",
+  "title": "Direction Enum",
+  "description": "Define a `Direction` enum with members `Up`, `Down`, `Left`, `Right`.\n\nThen implement `opposite(d: Direction): Direction` that returns the opposite direction.\n\n**Example:**\n```ts\nopposite(Direction.Up)    // Direction.Down\nopposite(Direction.Left)  // Direction.Right\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export enum Direction {\n  Up,\n  Down,\n  Left,\n  Right,\n}\n\nexport function opposite(d: Direction): Direction {\n  // your code here\n}",
+  "test_suite": "test('Up is opposite of Down', () => {\n  expect(opposite(Direction.Up)).toBe(Direction.Down);\n});\n\ntest('Down is opposite of Up', () => {\n  expect(opposite(Direction.Down)).toBe(Direction.Up);\n});\n\ntest('Left is opposite of Right', () => {\n  expect(opposite(Direction.Left)).toBe(Direction.Right);\n});\n\ntest('Right is opposite of Left', () => {\n  expect(opposite(Direction.Right)).toBe(Direction.Left);\n});\n\n// __hidden__\ntest('opposite is its own inverse', () => {\n  expect(opposite(opposite(Direction.Up))).toBe(Direction.Up);\n});",
+  "solution": "export enum Direction {\n  Up,\n  Down,\n  Left,\n  Right,\n}\n\nexport function opposite(d: Direction): Direction {\n  switch (d) {\n    case Direction.Up: return Direction.Down;\n    case Direction.Down: return Direction.Up;\n    case Direction.Left: return Direction.Right;\n    case Direction.Right: return Direction.Left;\n  }\n}",
+  "ai_context": "Common mistake: using numeric values directly (e.g. `return d ^ 1`) which is brittle and depends on enum ordering. A switch statement is explicit and safe.",
+  "xp_reward": 50,
+  "tags": ["enums", "switch"],
+  "order_index": 4
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "my-pick",
+  "title": "MyPick",
+  "description": "Implement `MyPick<T, K extends keyof T>` — a mapped type that selects only the specified keys from `T` — without using the built-in `Pick<T, K>`.\n\nAlso implement `pickKeys<T, K extends keyof T>(obj: T, keys: K[]): MyPick<T, K>` that extracts those keys at runtime.\n\n**Example:**\n```ts\ntype User = { id: number; name: string; email: string };\ntype Preview = MyPick<User, 'id' | 'name'>;\n// { id: number; name: string }\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export type MyPick<T, K extends keyof T> = // your type here\n\nexport function pickKeys<T, K extends keyof T>(obj: T, keys: K[]): MyPick<T, K> {\n  // your code here\n}",
+  "test_suite": "test('pickKeys selects specified keys', () => {\n  const user = { id: 1, name: 'Alice', email: 'a@x.com' };\n  expect(pickKeys(user, ['id', 'name'])).toEqual({ id: 1, name: 'Alice' });\n});\n\ntest('pickKeys excludes unselected keys', () => {\n  const obj = { a: 1, b: 2, c: 3 };\n  const result = pickKeys(obj, ['a', 'c']);\n  expect('b' in result).toBe(false);\n});\n\ntest('type-level: MyPick matches built-in Pick', () => {\n  type T = { x: number; y: string; z: boolean };\n  type Check = MyPick<T, 'x' | 'y'> extends Pick<T, 'x' | 'y'> ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\n// __hidden__\ntest('pickKeys with single key', () => {\n  const data = { foo: 'bar', baz: 42 };\n  expect(pickKeys(data, ['foo'])).toEqual({ foo: 'bar' });\n});",
+  "solution": "export type MyPick<T, K extends keyof T> = { [P in K]: T[P] };\n\nexport function pickKeys<T, K extends keyof T>(obj: T, keys: K[]): MyPick<T, K> {\n  const result = {} as MyPick<T, K>;\n  for (const key of keys) {\n    result[key] = obj[key];\n  }\n  return result;\n}",
+  "ai_context": "Common mistake: iterating over `keyof T` instead of `K` in the mapped type, which includes all keys not just the selected ones. The constraint `K extends keyof T` bounds K to valid keys.",
+  "xp_reward": 100,
+  "tags": ["mapped-types", "generics", "pick"],
+  "order_index": 11
+}

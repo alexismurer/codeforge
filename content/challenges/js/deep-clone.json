@@ -1,0 +1,15 @@
+{
+  "slug": "deep-clone",
+  "title": "Deep Clone",
+  "description": "Implement a `deepClone` function that creates a deep copy of an object or array. The clone must not share any references with the original. Handle nested objects, arrays, `null`, and primitives.\n\n**Example:**\n```js\nconst obj = { a: 1, b: { c: 2 } };\nconst clone = deepClone(obj);\nclone.b.c = 99;\nconsole.log(obj.b.c) // 2 — original unchanged\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export function deepClone(value) {\n  // your code here\n}",
+  "test_suite": "test('clones a flat object', () => {\n  const obj = { a: 1, b: 2 };\n  const clone = deepClone(obj);\n  expect(clone).toEqual(obj);\n  expect(clone).not.toBe(obj);\n});\n\ntest('nested objects are not shared references', () => {\n  const obj = { a: { b: 1 } };\n  const clone = deepClone(obj);\n  clone.a.b = 99;\n  expect(obj.a.b).toBe(1);\n});\n\ntest('clones arrays', () => {\n  const arr = [1, [2, 3]];\n  const clone = deepClone(arr);\n  clone[1][0] = 99;\n  expect(arr[1][0]).toBe(2);\n});\n\ntest('handles null', () => {\n  expect(deepClone(null)).toBeNull();\n});\n\n// __hidden__\ntest('handles primitives', () => {\n  expect(deepClone(42)).toBe(42);\n  expect(deepClone('hello')).toBe('hello');\n  expect(deepClone(true)).toBe(true);\n});",
+  "solution": "export function deepClone(value) {\n  if (value === null || typeof value !== 'object') return value;\n  if (Array.isArray(value)) return value.map(deepClone);\n  return Object.fromEntries(\n    Object.entries(value).map(([k, v]) => [k, deepClone(v)])\n  );\n}",
+  "ai_context": "A very common shortcut is `JSON.parse(JSON.stringify(obj))` which loses `undefined` values, functions, `Date` objects (converted to strings), and circular references. The recursive approach handles the cases the spec requires. Forgetting to check `typeof value !== 'object'` before recursing causes infinite loops on primitives.",
+  "xp_reward": 100,
+  "tags": ["recursion", "objects", "arrays"],
+  "order_index": 19
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "my-return-type",
+  "title": "MyReturnType",
+  "description": "Implement `MyReturnType<T>` — a conditional type that extracts the return type of a function type `T` — without using the built-in `ReturnType<T>`.\n\n**Example:**\n```ts\ntype A = MyReturnType<() => number>          // number\ntype B = MyReturnType<(s: string) => boolean> // boolean\ntype C = MyReturnType<() => { id: number }>  // { id: number }\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export type MyReturnType<T extends (...args: any) => any> = // your type here",
+  "test_suite": "test('type-level: extracts number return type', () => {\n  type T = MyReturnType<() => number>;\n  const check: T = 42;\n  expect(check).toBe(42);\n});\n\ntest('type-level: extracts string return type', () => {\n  type T = MyReturnType<(s: string) => string>;\n  const check: T = 'hello';\n  expect(check).toBe('hello');\n});\n\ntest('type-level: matches built-in ReturnType', () => {\n  type Fn = (a: number, b: string) => boolean;\n  type Check = MyReturnType<Fn> extends ReturnType<Fn> ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: extracts object return type', () => {\n  type T = MyReturnType<() => { id: number }>;\n  const check: T = { id: 1 };\n  expect(check.id).toBe(1);\n});\n\n// __hidden__\ntest('type-level: extracts void return type', () => {\n  type T = MyReturnType<() => void>;\n  type Check = T extends void ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});",
+  "solution": "export type MyReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : never;",
+  "ai_context": "Common mistake: trying to use `T['return']` or accessing return type without `infer`. The `infer R` keyword inside a conditional type is the only way to capture and name the return type.",
+  "xp_reward": 200,
+  "tags": ["infer", "conditional-types", "generics"],
+  "order_index": 15
+}

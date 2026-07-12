@@ -1,0 +1,15 @@
+{
+  "slug": "structured-clone-polyfill",
+  "title": "Structured Clone Polyfill",
+  "description": "Implement `structuredClonePolyfill(value)` that deep-clones a value. Support primitives, arrays, plain objects, `Date`, and `null`. Functions are not supported.\n\n**Example:**\n```js\nconst original = { a: [1, 2], d: new Date('2024-01-01') };\nconst clone = structuredClonePolyfill(original);\nclone.a.push(3);\noriginal.a.length; // 2 — unaffected\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export function structuredClonePolyfill(value) {\n  // your code here\n}",
+  "test_suite": "test('clones primitives', () => {\n  expect(structuredClonePolyfill(42)).toBe(42);\n  expect(structuredClonePolyfill('hi')).toBe('hi');\n  expect(structuredClonePolyfill(null)).toBe(null);\n});\n\ntest('deep clones arrays', () => {\n  const arr = [1, [2, 3]];\n  const clone = structuredClonePolyfill(arr);\n  clone[1].push(4);\n  expect(arr[1]).toEqual([2, 3]);\n});\n\ntest('deep clones objects', () => {\n  const obj = { a: { b: 1 } };\n  const clone = structuredClonePolyfill(obj);\n  clone.a.b = 99;\n  expect(obj.a.b).toBe(1);\n});\n\ntest('clones Date objects', () => {\n  const d = new Date('2024-06-01');\n  const clone = structuredClonePolyfill(d);\n  expect(clone).toEqual(d);\n  expect(clone).not.toBe(d);\n});\n\n// __hidden__\ntest('nested mix of arrays, objects, and Date', () => {\n  const val = { list: [new Date('2020-01-01'), { x: 1 }] };\n  const clone = structuredClonePolyfill(val);\n  clone.list[1].x = 99;\n  expect(val.list[1].x).toBe(1);\n  expect(clone.list[0]).toEqual(val.list[0]);\n  expect(clone.list[0]).not.toBe(val.list[0]);\n});",
+  "solution": "export function structuredClonePolyfill(value) {\n  if (value === null || typeof value !== 'object') return value;\n  if (value instanceof Date) return new Date(value.getTime());\n  if (Array.isArray(value)) return value.map(structuredClonePolyfill);\n  return Object.fromEntries(\n    Object.entries(value).map(([k, v]) => [k, structuredClonePolyfill(v)])\n  );\n}",
+  "ai_context": "Common mistake: using JSON.parse(JSON.stringify()) which loses Date objects (converts to string) and fails on circular references. Also forgetting the Date instanceof check before the generic object branch.",
+  "xp_reward": 300,
+  "tags": ["recursion", "cloning", "objects", "date"],
+  "order_index": 42
+}

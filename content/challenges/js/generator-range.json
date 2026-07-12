@@ -1,0 +1,15 @@
+{
+  "slug": "generator-range",
+  "title": "Generator Range",
+  "description": "Implement a `range` generator function. With one argument it yields `0` to `end` (exclusive). With two arguments, from `start` to `end`. With three, uses `step`.\n\n**Example:**\n```js\n[...range(3)];         // [0, 1, 2]\n[...range(1, 4)];      // [1, 2, 3]\n[...range(0, 10, 3)];  // [0, 3, 6, 9]\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export function* range(start, end, step = 1) {\n  // your code here\n}",
+  "test_suite": "test('single arg yields 0 to end exclusive', () => {\n  expect([...range(4)]).toEqual([0, 1, 2, 3]);\n});\n\ntest('two args yields start to end exclusive', () => {\n  expect([...range(2, 5)]).toEqual([2, 3, 4]);\n});\n\ntest('step arg skips values', () => {\n  expect([...range(0, 10, 3)]).toEqual([0, 3, 6, 9]);\n});\n\ntest('empty range when start >= end', () => {\n  expect([...range(5, 3)]).toEqual([]);\n});\n\n// __hidden__\ntest('step of 2 works correctly', () => {\n  expect([...range(1, 8, 2)]).toEqual([1, 3, 5, 7]);\n});",
+  "solution": "export function* range(start, end, step = 1) {\n  if (end === undefined) { end = start; start = 0; }\n  for (let i = start; i < end; i += step) {\n    yield i;\n  }\n}",
+  "ai_context": "Common mistake: not handling the single-argument case where `end` is undefined and `start` becomes the true end. Students also sometimes use `return` instead of `yield` inside the loop.",
+  "xp_reward": 300,
+  "tags": ["generators", "iterators", "functional"],
+  "order_index": 38
+}

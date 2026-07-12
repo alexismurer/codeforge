@@ -1,0 +1,15 @@
+{
+  "slug": "once",
+  "title": "Once",
+  "description": "Implement a `once` function that returns a wrapper that calls the original function at most once. Subsequent calls return the result of the first call without calling the function again.\n\n**Example:**\n```js\nconst init = once(() => 'initialized');\ninit() // 'initialized' — fn called\ninit() // 'initialized' — cached, fn NOT called again\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export function once(fn) {\n  // your code here\n}",
+  "test_suite": "test('returns result on first call', () => {\n  const greet = once(() => 'hello');\n  expect(greet()).toBe('hello');\n});\n\ntest('subsequent calls return the same result', () => {\n  const greet = once(() => 'hello');\n  greet();\n  expect(greet()).toBe('hello');\n});\n\ntest('underlying fn is called exactly once', () => {\n  const fn = vi.fn(() => 42);\n  const onceFn = once(fn);\n  onceFn(); onceFn(); onceFn();\n  expect(fn).toHaveBeenCalledTimes(1);\n});\n\ntest('passes arguments on first call', () => {\n  const add = once((a, b) => a + b);\n  expect(add(2, 3)).toBe(5);\n});\n\n// __hidden__\ntest('caches falsy return value', () => {\n  const fn = vi.fn(() => false);\n  const onceFn = once(fn);\n  onceFn(); onceFn();\n  expect(fn).toHaveBeenCalledTimes(1);\n  expect(onceFn()).toBe(false);\n});",
+  "solution": "export function once(fn) {\n  let called = false;\n  let result;\n  return function(...args) {\n    if (!called) {\n      called = true;\n      result = fn(...args);\n    }\n    return result;\n  };\n}",
+  "ai_context": "The classic pitfall: using the cached return value itself as the guard (e.g. `if (!result)`). This breaks when the function returns a falsy value like `0`, `false`, or `null`. Always use a separate boolean flag `called` to track invocation, not the return value.",
+  "xp_reward": 100,
+  "tags": ["closures", "higher-order", "state"],
+  "order_index": 17
+}

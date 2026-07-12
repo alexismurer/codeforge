@@ -1,0 +1,15 @@
+{
+  "slug": "generator-fibonacci",
+  "title": "Generator Fibonacci",
+  "description": "Implement an infinite `fibonacci` generator that yields Fibonacci numbers starting from 0.\n\n**Example:**\n```js\nconst gen = fibonacci();\ngen.next().value; // 0\ngen.next().value; // 1\ngen.next().value; // 1\ngen.next().value; // 2\ngen.next().value; // 3\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export function* fibonacci() {\n  // your code here\n}",
+  "test_suite": "test('first value is 0', () => {\n  const gen = fibonacci();\n  expect(gen.next().value).toBe(0);\n});\n\ntest('first seven values are correct', () => {\n  const gen = fibonacci();\n  const values = Array.from({ length: 7 }, () => gen.next().value);\n  expect(values).toEqual([0, 1, 1, 2, 3, 5, 8]);\n});\n\ntest('can advance past 10 values without stopping', () => {\n  const gen = fibonacci();\n  for (let i = 0; i < 10; i++) gen.next();\n  expect(gen.next().done).toBe(false);\n});\n\n// __hidden__\ntest('value at index 10 is 55', () => {\n  const gen = fibonacci();\n  let val;\n  for (let i = 0; i <= 10; i++) val = gen.next().value;\n  expect(val).toBe(55);\n});",
+  "solution": "export function* fibonacci() {\n  let [a, b] = [0, 1];\n  while (true) {\n    yield a;\n    [a, b] = [b, a + b];\n  }\n}",
+  "ai_context": "Common mistake: starting with [1, 1] instead of [0, 1], which skips 0. Also using a temporary variable for swapping instead of destructuring assignment, which can introduce bugs.",
+  "xp_reward": 300,
+  "tags": ["generators", "iterators", "math"],
+  "order_index": 39
+}

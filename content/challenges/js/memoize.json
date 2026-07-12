@@ -1,0 +1,15 @@
+{
+  "slug": "memoize",
+  "title": "Memoize",
+  "description": "Implement a `memoize` function that caches the results of a function call based on its first argument.\n\n**Example:**\n```js\nconst memoAdd = memoize((n) => n + 1);\nmemoAdd(5); // 6 — computed\nmemoAdd(5); // 6 — cached (fn not called again)\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export function memoize(fn) {\n  // your code here\n}",
+  "test_suite": "test('returns correct result', () => {\n  const add1 = memoize(n => n + 1);\n  expect(add1(5)).toBe(6);\n});\n\ntest('caches result — fn called once', () => {\n  const fn = vi.fn(n => n * 2);\n  const memoFn = memoize(fn);\n  memoFn(3); memoFn(3);\n  expect(fn).toHaveBeenCalledTimes(1);\n});\n\ntest('separate cache entries per argument', () => {\n  const fn = vi.fn(n => n + 10);\n  const memoFn = memoize(fn);\n  expect(memoFn(1)).toBe(11);\n  expect(memoFn(2)).toBe(12);\n  expect(fn).toHaveBeenCalledTimes(2);\n});\n\n// __hidden__\ntest('caches falsy return values', () => {\n  const fn = vi.fn(() => 0);\n  const memoFn = memoize(fn);\n  memoFn('x'); memoFn('x');\n  expect(fn).toHaveBeenCalledTimes(1);\n  expect(memoFn('x')).toBe(0);\n});",
+  "solution": "export function memoize(fn) {\n  const cache = new Map();\n  return function(arg) {\n    if (cache.has(arg)) return cache.get(arg);\n    const result = fn(arg);\n    cache.set(arg, result);\n    return result;\n  };\n}",
+  "ai_context": "Common mistake: using an object as cache (cache[arg]) which coerces keys to strings. Map handles all value types correctly. Also checking truthiness of cached value instead of `cache.has(arg)` misses cached falsy values.",
+  "xp_reward": 100,
+  "tags": ["closures", "performance", "higher-order"],
+  "order_index": 13
+}

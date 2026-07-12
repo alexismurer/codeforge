@@ -1,0 +1,15 @@
+{
+  "slug": "deep-required",
+  "title": "DeepRequired",
+  "description": "Implement `DeepRequired<T>` — a recursive type that removes optionality from all properties at every depth level.\n\n**Example:**\n```ts\ntype Config = DeepRequired<{ host?: string; db?: { port?: number } }>;\n// { host: string; db: { port: number } }\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 5,
+  "starter_code": "export type DeepRequired<T> = // your type here\n\nexport function ensureComplete<T>(obj: DeepRequired<T>): DeepRequired<T> {\n  return obj;\n}",
+  "test_suite": "test('ensureComplete returns same object', () => {\n  const obj = { host: 'localhost', db: { port: 5432 } };\n  expect(ensureComplete(obj)).toEqual(obj);\n});\n\ntest('type-level: top-level props are required', () => {\n  type T = DeepRequired<{ a?: number; b?: string }>;\n  type Check = T extends { a: number; b: string } ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: nested props are required', () => {\n  type T = DeepRequired<{ inner?: { x?: number } }>;\n  type Check = T extends { inner: { x: number } } ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: matches Required at top level', () => {\n  type T = { a?: string; b?: number };\n  type Check = DeepRequired<T> extends Required<T> ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\n// __hidden__\ntest('type-level: primitives pass through unchanged', () => {\n  type T = DeepRequired<number>;\n  const check: T = 42;\n  expect(check).toBe(42);\n});",
+  "solution": "export type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]> } : T;\n\nexport function ensureComplete<T>(obj: DeepRequired<T>): DeepRequired<T> {\n  return obj;\n}",
+  "ai_context": "Common mistake: using `Required<T>` which is only one level deep, or using `[K in keyof T]: ...` without the `-?` modifier. Both the `-?` modifier AND recursive application are required for a true DeepRequired.",
+  "xp_reward": 400,
+  "tags": ["recursive-types", "mapped-types", "generics"],
+  "order_index": 25
+}

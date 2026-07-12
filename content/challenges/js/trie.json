@@ -1,0 +1,15 @@
+{
+  "slug": "trie",
+  "title": "Trie Autocomplete",
+  "description": "Implement a `Trie` class for efficient prefix-based word lookup.\n\n- `insert(word)` — inserts a word into the trie\n- `search(word)` — returns `true` if the exact word was inserted, `false` otherwise\n- `startsWith(prefix)` — returns an array of all inserted words that start with `prefix` (any order)\n\n**Example:**\n```js\nconst trie = new Trie();\ntrie.insert('apple');\ntrie.insert('app');\ntrie.insert('apply');\ntrie.search('app');        // true\ntrie.search('ap');         // false\ntrie.startsWith('app');    // ['app', 'apple', 'apply'] (any order)\ntrie.startsWith('apz');    // []\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 5,
+  "starter_code": "export class Trie {\n  // your code here\n}",
+  "test_suite": "test('search returns true for inserted word', () => {\n  const t = new Trie();\n  t.insert('hello');\n  expect(t.search('hello')).toBe(true);\n});\n\ntest('search returns false for non-inserted word', () => {\n  const t = new Trie();\n  t.insert('hello');\n  expect(t.search('hell')).toBe(false);\n  expect(t.search('world')).toBe(false);\n});\n\ntest('startsWith returns all matching words', () => {\n  const t = new Trie();\n  ['cat','car','card','care','dog'].forEach(w => t.insert(w));\n  const result = t.startsWith('car').sort();\n  expect(result).toEqual(['car','card','care']);\n});\n\ntest('startsWith returns empty array for no matches', () => {\n  const t = new Trie();\n  t.insert('hello');\n  expect(t.startsWith('xyz')).toEqual([]);\n});\n\n// __hidden__\ntest('search distinguishes prefix from full word', () => {\n  const t = new Trie();\n  t.insert('app');\n  t.insert('apple');\n  expect(t.search('app')).toBe(true);\n  expect(t.search('appl')).toBe(false);\n  expect(t.search('apple')).toBe(true);\n});",
+  "solution": "export class Trie {\n  constructor() {\n    this.root = { children: {}, isEnd: false };\n  }\n\n  insert(word) {\n    let node = this.root;\n    for (const ch of word) {\n      if (!node.children[ch]) node.children[ch] = { children: {}, isEnd: false };\n      node = node.children[ch];\n    }\n    node.isEnd = true;\n  }\n\n  search(word) {\n    let node = this.root;\n    for (const ch of word) {\n      if (!node.children[ch]) return false;\n      node = node.children[ch];\n    }\n    return node.isEnd;\n  }\n\n  startsWith(prefix) {\n    let node = this.root;\n    for (const ch of prefix) {\n      if (!node.children[ch]) return [];\n      node = node.children[ch];\n    }\n    const results = [];\n    const dfs = (n, word) => {\n      if (n.isEnd) results.push(word);\n      for (const [ch, child] of Object.entries(n.children)) dfs(child, word + ch);\n    };\n    dfs(node, prefix);\n    return results;\n  }\n}",
+  "ai_context": "Common mistake: `search` returning true for a prefix that was never inserted as a complete word — forgetting to check `isEnd`. Also, learners often skip the DFS for `startsWith` and only return the prefix itself.",
+  "xp_reward": 400,
+  "tags": ["trie", "data-structures", "strings", "algorithms"],
+  "order_index": 50
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "infer-first",
+  "title": "Infer First Tuple Element",
+  "description": "Implement a `First<T>` type that extracts the first element type from a tuple.\n\nAlso implement `Last<T>` that extracts the last element type, and `Tail<T>` that returns the tuple without its first element.\n\n**Example:**\n```ts\ntype A = First<[number, string, boolean]>  // number\ntype B = Last<[number, string, boolean]>   // boolean\ntype C = Tail<[number, string, boolean]>   // [string, boolean]\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export type First<T extends any[]> = // your type here\nexport type Last<T extends any[]> = // your type here\nexport type Tail<T extends any[]> = // your type here\n\n// Test helpers (do not change)\nexport type CheckFirst = First<[number, string]>;\nexport type CheckLast = Last<[number, string]>;\nexport type CheckTail = Tail<[number, string, boolean]>;",
+  "test_suite": "test('First extracts number from [number, string]', () => {\n  type T = First<[number, string]>;\n  const check: T = 42;\n  expect(check).toBe(42);\n});\n\ntest('Last extracts string from [number, string]', () => {\n  type T = Last<[number, string]>;\n  const check: T = 'hello';\n  expect(check).toBe('hello');\n});\n\ntest('Tail of [1,2,3] tuple is [2,3] shaped', () => {\n  type T = Tail<[number, string, boolean]>;\n  const check: T = ['hello', true];\n  expect(check).toEqual(['hello', true]);\n});\n\n// __hidden__\ntest('First of single-element tuple', () => {\n  type T = First<[42]>;\n  const check: T = 42;\n  expect(check).toBe(42);\n});",
+  "solution": "export type First<T extends any[]> = T extends [infer F, ...any[]] ? F : never;\nexport type Last<T extends any[]> = T extends [...any[], infer L] ? L : never;\nexport type Tail<T extends any[]> = T extends [any, ...infer R] ? R : never;",
+  "ai_context": "Common mistake: using T[0] for First (works for arrays but not tuples with infer). The spread rest pattern with infer is the idiomatic solution for tuple manipulation.",
+  "xp_reward": 300,
+  "tags": ["infer", "tuples", "generics"],
+  "order_index": 16
+}

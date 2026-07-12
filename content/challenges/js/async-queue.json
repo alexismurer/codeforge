@@ -1,0 +1,15 @@
+{
+  "slug": "async-queue",
+  "title": "Async Queue",
+  "description": "Implement an `AsyncQueue` class that runs async tasks sequentially — one at a time. Adding a task returns a Promise that resolves with the task's return value.\n\n**Example:**\n```js\nconst queue = new AsyncQueue();\nconst p1 = queue.add(() => fetch('/a'));\nconst p2 = queue.add(() => fetch('/b')); // starts only after p1 settles\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export class AsyncQueue {\n  // your code here\n}",
+  "test_suite": "test('runs a single task and returns its value', async () => {\n  const queue = new AsyncQueue();\n  const result = await queue.add(() => Promise.resolve(42));\n  expect(result).toBe(42);\n});\n\ntest('tasks run sequentially, not concurrently', async () => {\n  const queue = new AsyncQueue();\n  const order = [];\n  const delay = ms => new Promise(r => setTimeout(r, ms));\n  queue.add(async () => { await delay(20); order.push(1); });\n  queue.add(async () => { order.push(2); });\n  await queue.add(async () => { order.push(3); });\n  expect(order).toEqual([1, 2, 3]);\n});\n\ntest('each add resolves with correct value', async () => {\n  const queue = new AsyncQueue();\n  const p1 = queue.add(() => Promise.resolve('a'));\n  const p2 = queue.add(() => Promise.resolve('b'));\n  expect(await p1).toBe('a');\n  expect(await p2).toBe('b');\n});\n\n// __hidden__\ntest('queue continues after a task rejects', async () => {\n  const queue = new AsyncQueue();\n  const p1 = queue.add(() => Promise.reject(new Error('boom')));\n  const p2 = queue.add(() => Promise.resolve('ok'));\n  await expect(p1).rejects.toThrow('boom');\n  expect(await p2).toBe('ok');\n});",
+  "solution": "export class AsyncQueue {\n  constructor() {\n    this.chain = Promise.resolve();\n  }\n  add(fn) {\n    const result = this.chain.then(() => fn());\n    this.chain = result.catch(() => {});\n    return result;\n  }\n}",
+  "ai_context": "Common mistake: not chaining onto a shared promise (using a separate array of tasks with complex drain logic instead). The elegant solution uses a single chain promise, swallowing errors on the chain itself so rejections don't break the queue.",
+  "xp_reward": 200,
+  "tags": ["async", "promises", "queues", "concurrency"],
+  "order_index": 29
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "throttle",
+  "title": "Throttle",
+  "description": "Implement a `throttle` function that ensures `fn` is called at most once per `limit` ms. The first call fires immediately; subsequent calls within the window are ignored.\n\n**Example:**\n```js\nconst log = throttle(() => console.log('tick'), 200);\nlog(); // fires immediately\nlog(); // ignored (within 200ms)\nsetTimeout(log, 200); // fires again\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export function throttle(fn, limit) {\n  // your code here\n}",
+  "test_suite": "test('fires immediately on first call', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const t = throttle(fn, 200);\n  t();\n  expect(fn).toHaveBeenCalledTimes(1);\n  vi.useRealTimers();\n});\n\ntest('ignores calls within limit window', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const t = throttle(fn, 200);\n  t(); t(); t();\n  expect(fn).toHaveBeenCalledTimes(1);\n  vi.useRealTimers();\n});\n\ntest('fires again after limit window passes', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const t = throttle(fn, 200);\n  t();\n  vi.advanceTimersByTime(200);\n  t();\n  expect(fn).toHaveBeenCalledTimes(2);\n  vi.useRealTimers();\n});\n\n// __hidden__\ntest('passes arguments to fn', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const t = throttle(fn, 100);\n  t('a', 1);\n  expect(fn).toHaveBeenCalledWith('a', 1);\n  vi.useRealTimers();\n});",
+  "solution": "export function throttle(fn, limit) {\n  let lastCall = 0;\n  return function(...args) {\n    const now = Date.now();\n    if (now - lastCall >= limit) {\n      lastCall = now;\n      fn(...args);\n    }\n  };\n}",
+  "ai_context": "Common mistake: using setTimeout to schedule future calls instead of simply tracking the last call timestamp. Also forgetting to fire on the first call immediately.",
+  "xp_reward": 200,
+  "tags": ["closures", "timers", "performance"],
+  "order_index": 24
+}

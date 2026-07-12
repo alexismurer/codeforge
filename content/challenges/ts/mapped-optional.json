@@ -1,0 +1,15 @@
+{
+  "slug": "mapped-optional",
+  "title": "Mapped Optional",
+  "description": "Implement two mapped types:\n- `MapOptional<T>` — makes all properties optional (like `Partial<T>`)\n- `MapRequired<T>` — makes all properties required (like `Required<T>`)\n\nDo not use the built-in utility types.\n\n**Example:**\n```ts\ntype O = MapOptional<{ a: number; b: string }>; // { a?: number; b?: string }\ntype R = MapRequired<{ a?: number; b?: string }>; // { a: number; b: string }\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export type MapOptional<T> = // your type here\n\nexport type MapRequired<T> = // your type here",
+  "test_suite": "test('type-level: MapOptional makes props optional', () => {\n  type T = MapOptional<{ x: number; y: string }>;\n  type Check = T extends { x?: number; y?: string } ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: MapRequired makes props required', () => {\n  type T = MapRequired<{ x?: number; y?: string }>;\n  type Check = T extends { x: number; y: string } ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: MapOptional matches Partial', () => {\n  type T = { a: boolean; b: number };\n  type Check = MapOptional<T> extends Partial<T> ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: MapRequired matches Required', () => {\n  type T = { a?: boolean; b?: number };\n  type Check = MapRequired<T> extends Required<T> ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\n// __hidden__\ntest('type-level: round-trip optional then required', () => {\n  type T = { name: string; age: number };\n  type Check = MapRequired<MapOptional<T>> extends T ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});",
+  "solution": "export type MapOptional<T> = { [K in keyof T]?: T[K] };\n\nexport type MapRequired<T> = { [K in keyof T]-?: T[K] };",
+  "ai_context": "Common mistake: confusing `?` (add optional) with `-?` (remove optional). The `-` modifier prefix is a mapped type modifier that explicitly strips the optional flag.",
+  "xp_reward": 200,
+  "tags": ["mapped-types", "conditional-types"],
+  "order_index": 14
+}

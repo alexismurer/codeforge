@@ -1,0 +1,15 @@
+{
+  "slug": "compose",
+  "title": "Compose",
+  "description": "Implement a `compose` function that combines functions right-to-left. `compose(f, g)(x)` is equivalent to `f(g(x))`.\n\n**Example:**\n```js\nconst double = x => x * 2;\nconst addOne = x => x + 1;\ncompose(double, addOne)(3) // double(addOne(3)) = 8\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export function compose(...fns) {\n  // your code here\n}",
+  "test_suite": "test('applies functions right-to-left', () => {\n  const double = x => x * 2;\n  const addOne = x => x + 1;\n  expect(compose(double, addOne)(3)).toBe(8);\n});\n\ntest('single function acts as identity wrapper', () => {\n  const double = x => x * 2;\n  expect(compose(double)(5)).toBe(10);\n});\n\ntest('composes three functions', () => {\n  const triple = x => x * 3;\n  const addTwo = x => x + 2;\n  const negate = x => -x;\n  expect(compose(triple, addTwo, negate)(4)).toBe(-6);\n});\n\ntest('rightmost function receives the initial value', () => {\n  const calls = [];\n  const tag = name => x => { calls.push(name); return x; };\n  compose(tag('first'), tag('second'))(0);\n  expect(calls).toEqual(['second', 'first']);\n});\n\n// __hidden__\ntest('works with string transforms', () => {\n  const trim = s => s.trim();\n  const upper = s => s.toUpperCase();\n  expect(compose(trim, upper)('  hello  ')).toBe('HELLO');\n});",
+  "solution": "export function compose(...fns) {\n  return function(x) {\n    return fns.reduceRight((acc, fn) => fn(acc), x);\n  };\n}",
+  "ai_context": "The key insight is right-to-left execution — learners who implement with `reduce` instead of `reduceRight` get `pipe` instead of `compose`. When no functions are passed, `reduceRight` with an initial value correctly returns the initial value, making the edge case safe.",
+  "xp_reward": 100,
+  "tags": ["functional", "higher-order", "reduce"],
+  "order_index": 15
+}

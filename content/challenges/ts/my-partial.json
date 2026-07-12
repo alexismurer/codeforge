@@ -1,0 +1,15 @@
+{
+  "slug": "my-partial",
+  "title": "MyPartial",
+  "description": "Implement `MyPartial<T>` — a mapped type that makes all properties of `T` optional — without using the built-in `Partial<T>`.\n\nAlso implement `partialize<T>(obj: T): MyPartial<T>` that returns the same object typed as `MyPartial<T>`.\n\n**Example:**\n```ts\ntype User = { name: string; age: number };\ntype PartialUser = MyPartial<User>;\n// { name?: string; age?: number }\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export type MyPartial<T> = // your type here\n\nexport function partialize<T>(obj: T): MyPartial<T> {\n  return obj as MyPartial<T>;\n}",
+  "test_suite": "test('partialize returns the same object', () => {\n  const obj = { name: 'Alice', age: 30 };\n  expect(partialize(obj)).toEqual(obj);\n});\n\ntest('type-level: all properties become optional', () => {\n  type T = MyPartial<{ a: number; b: string }>;\n  type Check = T extends { a?: number; b?: string } ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: MyPartial matches built-in Partial', () => {\n  type T = { x: boolean; y: number };\n  type Check = MyPartial<T> extends Partial<T> ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\n// __hidden__\ntest('accepts partial object at runtime', () => {\n  const partial: MyPartial<{ name: string; age: number }> = { name: 'Bob' };\n  expect(partial.name).toBe('Bob');\n  expect(partial.age).toBeUndefined();\n});",
+  "solution": "export type MyPartial<T> = { [K in keyof T]?: T[K] };\n\nexport function partialize<T>(obj: T): MyPartial<T> {\n  return obj as MyPartial<T>;\n}",
+  "ai_context": "Common mistake: using `Partial<T>` internally (defeats the purpose) or forgetting the `?` modifier. The `[K in keyof T]?` pattern adds optionality to each mapped key.",
+  "xp_reward": 100,
+  "tags": ["mapped-types", "generics"],
+  "order_index": 9
+}

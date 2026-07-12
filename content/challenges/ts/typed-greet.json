@@ -1,0 +1,15 @@
+{
+  "slug": "typed-greet",
+  "title": "Typed Greet",
+  "description": "Write a `greet` function that takes `name: string` and optional `greeting: string` (default `'Hello'`) and returns `'<greeting>, <name>!'`.\n\n**Example:**\n```ts\ngreet('Alice')        // 'Hello, Alice!'\ngreet('Bob', 'Hi')   // 'Hi, Bob!'\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export function greet(name: string, greeting?: string): string {\n  // your code here\n}",
+  "test_suite": "test('uses default greeting', () => {\n  expect(greet('Alice')).toBe('Hello, Alice!');\n});\n\ntest('uses custom greeting', () => {\n  expect(greet('Bob', 'Hi')).toBe('Hi, Bob!');\n});\n\ntest('includes exclamation mark', () => {\n  expect(greet('World')).toContain('!');\n});\n\n// __hidden__\ntest('comma separator', () => {\n  expect(greet('X', 'Hey')).toBe('Hey, X!');\n});",
+  "solution": "export function greet(name: string, greeting = 'Hello'): string {\n  return `${greeting}, ${name}!`;\n}",
+  "ai_context": "Common mistake: using `greeting?: string` and then `greeting || 'Hello'` inside the body, which fails for explicit empty string. Default parameter syntax is cleaner and correct.",
+  "xp_reward": 50,
+  "tags": ["types", "functions"],
+  "order_index": 2
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "partial",
+  "title": "Partial Application",
+  "description": "Implement a `partial` function that pre-fills some arguments of a function and returns a new function expecting the remaining arguments.\n\n**Example:**\n```js\nconst add = (a, b) => a + b;\nconst add5 = partial(add, 5);\nadd5(3)  // 8\nadd5(10) // 15\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export function partial(fn, ...presetArgs) {\n  // your code here\n}",
+  "test_suite": "test('pre-fills a single argument', () => {\n  const add = (a, b) => a + b;\n  const add5 = partial(add, 5);\n  expect(add5(3)).toBe(8);\n});\n\ntest('pre-fills multiple arguments', () => {\n  const sum3 = (a, b, c) => a + b + c;\n  const sumFrom10 = partial(sum3, 10, 20);\n  expect(sumFrom10(5)).toBe(35);\n});\n\ntest('pre-fills all arguments', () => {\n  const multiply = (a, b) => a * b;\n  const triple = partial(multiply, 3, 4);\n  expect(triple()).toBe(12);\n});\n\ntest('does not mutate the original function', () => {\n  const add = (a, b) => a + b;\n  partial(add, 5);\n  expect(add(1, 2)).toBe(3);\n});\n\n// __hidden__\ntest('works with a ternary function', () => {\n  const greet = (greeting, name, punctuation) => `${greeting}, ${name}${punctuation}`;\n  const hello = partial(greet, 'Hello');\n  expect(hello('World', '!')).toBe('Hello, World!');\n});",
+  "solution": "export function partial(fn, ...presetArgs) {\n  return function(...laterArgs) {\n    return fn(...presetArgs, ...laterArgs);\n  };\n}",
+  "ai_context": "Learners often hardcode the number of pre-set arguments instead of using rest/spread, limiting the function to a fixed arity. The elegant solution captures `presetArgs` in a closure and spreads them before the later arguments using the rest/spread operators.",
+  "xp_reward": 100,
+  "tags": ["closures", "functional", "higher-order"],
+  "order_index": 18
+}

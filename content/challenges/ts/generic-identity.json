@@ -1,0 +1,15 @@
+{
+  "slug": "generic-identity",
+  "title": "Generic Identity Function",
+  "description": "Implement a generic `identity<T>` function that returns its argument unchanged, and a generic `swap<A, B>` function that swaps a tuple.\n\n**Example:**\n```ts\nidentity(42)         // 42 (type: number)\nidentity('hello')    // 'hello' (type: string)\nswap([1, 'a'])       // ['a', 1] (type: [string, number])\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export function identity<T>(value: T): T {\n  // your code here\n}\n\nexport function swap<A, B>(pair: [A, B]): [B, A] {\n  // your code here\n}",
+  "test_suite": "test('identity returns number', () => {\n  expect(identity(42)).toBe(42);\n});\n\ntest('identity returns string', () => {\n  expect(identity('hello')).toBe('hello');\n});\n\ntest('identity preserves object reference', () => {\n  const obj = { x: 1 };\n  expect(identity(obj)).toBe(obj);\n});\n\ntest('swap reverses tuple', () => {\n  expect(swap([1, 'a'])).toEqual(['a', 1]);\n});\n\n// __hidden__\ntest('swap with objects', () => {\n  expect(swap([{n:1}, true])).toEqual([true, {n:1}]);\n});",
+  "solution": "export function identity<T>(value: T): T {\n  return value;\n}\n\nexport function swap<A, B>(pair: [A, B]): [B, A] {\n  return [pair[1], pair[0]];\n}",
+  "ai_context": "Common mistake: not adding the type parameter <T> to the function, making it return `any`. TypeScript generics are declared before the parameter list.",
+  "xp_reward": 100,
+  "tags": ["generics"],
+  "order_index": 7
+}

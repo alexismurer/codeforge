@@ -1,0 +1,15 @@
+{
+  "slug": "reverse-string",
+  "title": "Reverse String",
+  "description": "Write a function `reverseString` that returns a string reversed.\n\n**Example:**\n```js\nreverseString('hello') // 'olleh'\nreverseString('') // ''\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export function reverseString(str) {\n  // your code here\n}",
+  "test_suite": "test('reverses a string', () => {\n  expect(reverseString('hello')).toBe('olleh');\n});\n\ntest('returns empty string unchanged', () => {\n  expect(reverseString('')).toBe('');\n});\n\ntest('handles single character', () => {\n  expect(reverseString('a')).toBe('a');\n});\n\ntest('reverses with spaces', () => {\n  expect(reverseString('hello world')).toBe('dlrow olleh');\n});\n\n// __hidden__\ntest('reverses a palindrome correctly', () => {\n  expect(reverseString('racecar')).toBe('racecar');\n});",
+  "solution": "export function reverseString(str) {\n  return str.split('').reverse().join('');\n}",
+  "ai_context": "Strings are immutable in JavaScript — you cannot reverse them in place. The classic split/reverse/join pattern works but creates two intermediate arrays. Learners sometimes try to mutate the string directly with index assignment, which silently fails.",
+  "xp_reward": 50,
+  "tags": ["strings", "arrays"],
+  "order_index": 5
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "nullable-guard",
+  "title": "Nullable Type Guard",
+  "description": "Implement a generic type guard `isNonNull<T>(val: T | null | undefined): val is T` that returns `true` when the value is neither `null` nor `undefined`.\n\n**Example:**\n```ts\nisNonNull('hello')    // true\nisNonNull(0)          // true\nisNonNull(null)       // false\nisNonNull(undefined)  // false\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export function isNonNull<T>(val: T | null | undefined): val is T {\n  // your code here\n}",
+  "test_suite": "test('returns true for string', () => {\n  expect(isNonNull('hello')).toBe(true);\n});\n\ntest('returns true for zero', () => {\n  expect(isNonNull(0)).toBe(true);\n});\n\ntest('returns false for null', () => {\n  expect(isNonNull(null)).toBe(false);\n});\n\ntest('returns false for undefined', () => {\n  expect(isNonNull(undefined)).toBe(false);\n});\n\n// __hidden__\ntest('returns true for false boolean', () => {\n  expect(isNonNull(false)).toBe(true);\n});",
+  "solution": "export function isNonNull<T>(val: T | null | undefined): val is T {\n  return val !== null && val !== undefined;\n}",
+  "ai_context": "Common mistake: using `!!val` which returns false for falsy values like `0`, `false`, and `''`. Type guards must distinguish null/undefined from other falsy values.",
+  "xp_reward": 50,
+  "tags": ["type-guards", "generics", "null-safety"],
+  "order_index": 5
+}

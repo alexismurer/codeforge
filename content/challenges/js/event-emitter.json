@@ -1,0 +1,15 @@
+{
+  "slug": "event-emitter",
+  "title": "EventEmitter",
+  "description": "Implement an `EventEmitter` class with `on(event, listener)`, `off(event, listener)`, and `emit(event, ...args)` methods.\n\n**Example:**\n```js\nconst emitter = new EventEmitter();\nconst handler = (msg) => console.log(msg);\nemitter.on('greet', handler);\nemitter.emit('greet', 'hello'); // logs 'hello'\nemitter.off('greet', handler);\nemitter.emit('greet', 'hello'); // nothing\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export class EventEmitter {\n  // your code here\n}",
+  "test_suite": "test('listener fires on emit', () => {\n  const emitter = new EventEmitter();\n  const fn = vi.fn();\n  emitter.on('data', fn);\n  emitter.emit('data', 42);\n  expect(fn).toHaveBeenCalledWith(42);\n});\n\ntest('listener removed with off', () => {\n  const emitter = new EventEmitter();\n  const fn = vi.fn();\n  emitter.on('data', fn);\n  emitter.off('data', fn);\n  emitter.emit('data', 42);\n  expect(fn).not.toHaveBeenCalled();\n});\n\ntest('multiple listeners on same event', () => {\n  const emitter = new EventEmitter();\n  const fn1 = vi.fn();\n  const fn2 = vi.fn();\n  emitter.on('data', fn1);\n  emitter.on('data', fn2);\n  emitter.emit('data', 1);\n  expect(fn1).toHaveBeenCalledTimes(1);\n  expect(fn2).toHaveBeenCalledTimes(1);\n});\n\n// __hidden__\ntest('emit with no listeners does not throw', () => {\n  const emitter = new EventEmitter();\n  expect(() => emitter.emit('noop')).not.toThrow();\n});",
+  "solution": "export class EventEmitter {\n  constructor() {\n    this.listeners = {};\n  }\n  on(event, listener) {\n    if (!this.listeners[event]) this.listeners[event] = [];\n    this.listeners[event].push(listener);\n  }\n  off(event, listener) {\n    if (!this.listeners[event]) return;\n    this.listeners[event] = this.listeners[event].filter(l => l !== listener);\n  }\n  emit(event, ...args) {\n    if (!this.listeners[event]) return;\n    this.listeners[event].forEach(l => l(...args));\n  }\n}",
+  "ai_context": "Common mistakes: forgetting to guard against undefined listener arrays in emit/off, and mutating the array while iterating in off (use filter instead).",
+  "xp_reward": 200,
+  "tags": ["classes", "events", "pub-sub"],
+  "order_index": 26
+}

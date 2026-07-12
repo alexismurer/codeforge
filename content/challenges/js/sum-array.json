@@ -1,0 +1,15 @@
+{
+  "slug": "sum-array",
+  "title": "Sum Array",
+  "description": "Write a function `sumArray` that returns the sum of all numbers in an array. Return `0` for an empty array.\n\n**Example:**\n```js\nsumArray([1, 2, 3]) // 6\nsumArray([]) // 0\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export function sumArray(arr) {\n  // your code here\n}",
+  "test_suite": "test('sums positive numbers', () => {\n  expect(sumArray([1, 2, 3])).toBe(6);\n});\n\ntest('returns 0 for empty array', () => {\n  expect(sumArray([])).toBe(0);\n});\n\ntest('handles single element', () => {\n  expect(sumArray([42])).toBe(42);\n});\n\ntest('handles negative numbers', () => {\n  expect(sumArray([-1, -2, 3])).toBe(0);\n});\n\n// __hidden__\ntest('large array', () => {\n  expect(sumArray([10, 20, 30, 40])).toBe(100);\n});",
+  "solution": "export function sumArray(arr) {\n  return arr.reduce((sum, n) => sum + n, 0);\n}",
+  "ai_context": "Common mistake: forgetting the initial value 0 in reduce, which throws on empty arrays and uses the first element as accumulator on non-empty ones.",
+  "xp_reward": 50,
+  "tags": ["arrays", "reduce"],
+  "order_index": 3
+}

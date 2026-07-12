@@ -1,0 +1,15 @@
+{
+  "slug": "string-to-union",
+  "title": "String to Union",
+  "description": "Implement a recursive `Split<S, D>` type that splits a string literal type `S` by delimiter `D` into a union of the parts.\n\n**Example:**\n```ts\ntype A = Split<'a,b,c', ','>  // 'a' | 'b' | 'c'\ntype B = Split<'x|y', '|'>    // 'x' | 'y'\ntype C = Split<'solo', ','>   // 'solo'\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 5,
+  "starter_code": "export type Split<S extends string, D extends string> = // your type here",
+  "test_suite": "test('type-level: splits comma-separated string', () => {\n  type T = Split<'a,b,c', ','>;\n  const check: T = 'a';\n  expect(['a', 'b', 'c']).toContain(check);\n});\n\ntest('type-level: single segment returns itself', () => {\n  type T = Split<'solo', ','>;\n  const check: T = 'solo';\n  expect(check).toBe('solo');\n});\n\ntest('type-level: splits by pipe delimiter', () => {\n  type T = Split<'x|y|z', '|'>;\n  const v1: T = 'x';\n  const v2: T = 'y';\n  const v3: T = 'z';\n  expect([v1, v2, v3]).toEqual(['x', 'y', 'z']);\n});\n\ntest('type-level: two parts', () => {\n  type T = Split<'hello:world', ':'>;\n  const v1: T = 'hello';\n  const v2: T = 'world';\n  expect(v1).toBe('hello');\n  expect(v2).toBe('world');\n});\n\n// __hidden__\ntest('type-level: empty second part', () => {\n  type T = Split<'a,', ','>;\n  const check: T = '';\n  expect(check).toBe('');\n});",
+  "solution": "export type Split<S extends string, D extends string> = S extends `${infer H}${D}${infer T}` ? H | Split<T, D> : S;",
+  "ai_context": "Common mistake: not making Split recursive — only splitting the first occurrence. The `H | Split<T, D>` recursion is required to continue splitting the tail. Also ensure the base case returns `S` (not `never`) for strings with no delimiter.",
+  "xp_reward": 400,
+  "tags": ["template-literal-types", "recursive-types", "infer"],
+  "order_index": 22
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "async-batch",
+  "title": "Async Batch",
+  "description": "Implement `asyncBatch(items, batchSize, process)` that splits `items` into groups of `batchSize` and calls `process(batch)` for each group sequentially, awaiting each before starting the next.\n\n**Example:**\n```js\nawait asyncBatch([1,2,3,4,5], 2, async (batch) => {\n  await saveToDb(batch); // called with [1,2], then [3,4], then [5]\n});\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export async function asyncBatch(items, batchSize, process) {\n  // your code here\n}",
+  "test_suite": "test('calls process with groups of batchSize', async () => {\n  const batches = [];\n  await asyncBatch([1, 2, 3, 4], 2, async (batch) => { batches.push(batch); });\n  expect(batches).toEqual([[1, 2], [3, 4]]);\n});\n\ntest('last batch can be smaller', async () => {\n  const batches = [];\n  await asyncBatch([1, 2, 3], 2, async (batch) => { batches.push(batch); });\n  expect(batches).toEqual([[1, 2], [3]]);\n});\n\ntest('processes batches sequentially', async () => {\n  const order = [];\n  await asyncBatch([1, 2, 3], 1, async (batch) => {\n    order.push(batch[0]);\n  });\n  expect(order).toEqual([1, 2, 3]);\n});\n\n// __hidden__\ntest('empty items array calls process zero times', async () => {\n  const process = vi.fn();\n  await asyncBatch([], 2, process);\n  expect(process).not.toHaveBeenCalled();\n});",
+  "solution": "export async function asyncBatch(items, batchSize, process) {\n  for (let i = 0; i < items.length; i += batchSize) {\n    await process(items.slice(i, i + batchSize));\n  }\n}",
+  "ai_context": "Common mistake: using Promise.all to run batches concurrently instead of sequentially. The key requirement is to await each batch before starting the next.",
+  "xp_reward": 300,
+  "tags": ["async", "arrays", "batch-processing"],
+  "order_index": 40
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "signal",
+  "title": "Signal Primitive",
+  "description": "Implement a `signal(initial)` function that returns a reactive signal object with three methods:\n\n- `get()` — returns the current value\n- `set(value)` — updates the value and notifies all subscribers\n- `subscribe(fn)` — registers a callback called on every future change; returns an unsubscribe function\n\n**Example:**\n```js\nconst count = signal(0);\nconst unsub = count.subscribe(v => console.log('count:', v));\ncount.set(1); // logs: count: 1\ncount.set(2); // logs: count: 2\nunsub();\ncount.set(3); // no log\nconsole.log(count.get()); // 3\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 5,
+  "starter_code": "export function signal(initial) {\n  // your code here\n}",
+  "test_suite": "test('get returns initial value', () => {\n  const s = signal(42);\n  expect(s.get()).toBe(42);\n});\n\ntest('set updates the value', () => {\n  const s = signal(0);\n  s.set(99);\n  expect(s.get()).toBe(99);\n});\n\ntest('subscribe is called on set', () => {\n  const s = signal(0);\n  const log = [];\n  s.subscribe(v => log.push(v));\n  s.set(1);\n  s.set(2);\n  expect(log).toEqual([1, 2]);\n});\n\ntest('unsubscribe stops delivery', () => {\n  const s = signal(0);\n  const log = [];\n  const unsub = s.subscribe(v => log.push(v));\n  s.set(1);\n  unsub();\n  s.set(2);\n  expect(log).toEqual([1]);\n});\n\n// __hidden__\ntest('multiple independent subscribers each receive updates', () => {\n  const s = signal('a');\n  const a = [], b = [];\n  s.subscribe(v => a.push(v));\n  s.subscribe(v => b.push(v));\n  s.set('b');\n  s.set('c');\n  expect(a).toEqual(['b', 'c']);\n  expect(b).toEqual(['b', 'c']);\n});",
+  "solution": "export function signal(initial) {\n  let value = initial;\n  const subscribers = new Set();\n\n  return {\n    get() {\n      return value;\n    },\n    set(newValue) {\n      value = newValue;\n      subscribers.forEach(fn => fn(value));\n    },\n    subscribe(fn) {\n      subscribers.add(fn);\n      return () => subscribers.delete(fn);\n    }\n  };\n}",
+  "ai_context": "Common mistake: calling subscribers with the old value instead of the new one, or forgetting to return the unsubscribe function. Also, learners sometimes use an array and splice for unsubscribe — a Set with delete is cleaner and O(1).",
+  "xp_reward": 400,
+  "tags": ["reactivity", "observer-pattern", "closures", "state-management"],
+  "order_index": 48
+}

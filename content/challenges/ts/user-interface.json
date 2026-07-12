@@ -1,0 +1,15 @@
+{
+  "slug": "user-interface",
+  "title": "User Interface",
+  "description": "Define a `User` interface with fields `id: number`, `name: string`, `email: string`, and `role: 'admin' | 'user'`.\n\nThen implement `createUser(data: Omit<User, 'id'>): User` that assigns an auto-incrementing `id` starting at 1.\n\n**Example:**\n```ts\nconst u1 = createUser({ name: 'Alice', email: 'a@x.com', role: 'admin' });\n// { id: 1, name: 'Alice', email: 'a@x.com', role: 'admin' }\nconst u2 = createUser({ name: 'Bob', email: 'b@x.com', role: 'user' });\n// { id: 2, ... }\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export interface User {\n  // your fields here\n}\n\nlet nextId = 1;\n\nexport function createUser(data: Omit<User, 'id'>): User {\n  // your code here\n}",
+  "test_suite": "test('createUser returns object with numeric id', () => {\n  const u = createUser({ name: 'Alice', email: 'a@x.com', role: 'admin' });\n  expect(typeof u.id).toBe('number');\n});\n\ntest('id increments with each call', () => {\n  const a = createUser({ name: 'A', email: 'a@x.com', role: 'user' });\n  const b = createUser({ name: 'B', email: 'b@x.com', role: 'user' });\n  expect(b.id).toBe(a.id + 1);\n});\n\ntest('role is literal union type at runtime', () => {\n  const u = createUser({ name: 'C', email: 'c@x.com', role: 'admin' });\n  expect(['admin', 'user']).toContain(u.role);\n});\n\ntest('all fields are preserved', () => {\n  const u = createUser({ name: 'Diana', email: 'd@x.com', role: 'user' });\n  expect(u.name).toBe('Diana');\n  expect(u.email).toBe('d@x.com');\n});\n\n// __hidden__\ntest('role admin is preserved', () => {\n  const u = createUser({ name: 'Eve', email: 'e@x.com', role: 'admin' });\n  expect(u.role).toBe('admin');\n});",
+  "solution": "export interface User {\n  id: number;\n  name: string;\n  email: string;\n  role: 'admin' | 'user';\n}\n\nlet nextId = 1;\n\nexport function createUser(data: Omit<User, 'id'>): User {\n  return { id: nextId++, ...data };\n}",
+  "ai_context": "Common mistake: using `role: string` instead of the literal union `'admin' | 'user'`, which loses type safety. Also forgetting `Omit<User, 'id'>` and manually re-typing all fields.",
+  "xp_reward": 50,
+  "tags": ["interfaces", "types", "omit"],
+  "order_index": 3
+}

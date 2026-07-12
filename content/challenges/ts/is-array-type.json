@@ -1,0 +1,15 @@
+{
+  "slug": "is-array-type",
+  "title": "IsArray Type",
+  "description": "Implement a conditional type `IsArray<T>` that evaluates to `true` when `T` is an array type, and `false` otherwise.\n\n**Example:**\n```ts\ntype A = IsArray<number[]>   // true\ntype B = IsArray<string>     // false\ntype C = IsArray<[1, 2, 3]>  // true (tuple is an array)\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export type IsArray<T> = // your type here\n\n// Test helper (do not change)\nexport function checkIsArray<T>(val: T): IsArray<T> {\n  return Array.isArray(val) as IsArray<T>;\n}",
+  "test_suite": "test('IsArray<number[]> is true', () => {\n  type T = IsArray<number[]>;\n  const check: T = true;\n  expect(check).toBe(true);\n});\n\ntest('IsArray<string> is false', () => {\n  type T = IsArray<string>;\n  const check: T = false;\n  expect(check).toBe(false);\n});\n\ntest('IsArray<boolean[]> is true', () => {\n  type T = IsArray<boolean[]>;\n  const check: T = true;\n  expect(check).toBe(true);\n});\n\ntest('checkIsArray returns correct runtime value', () => {\n  expect(checkIsArray([1, 2, 3])).toBe(true);\n  expect(checkIsArray('hello')).toBe(false);\n});\n\n// __hidden__\ntest('IsArray<object> is false', () => {\n  type T = IsArray<object>;\n  const check: T = false;\n  expect(check).toBe(false);\n});",
+  "solution": "export type IsArray<T> = T extends any[] ? true : false;\n\nexport function checkIsArray<T>(val: T): IsArray<T> {\n  return Array.isArray(val) as IsArray<T>;\n}",
+  "ai_context": "Common mistake: using `T extends Array<infer U>` which is more verbose and the same. The simpler `T extends any[]` is idiomatic. Also note tuples extend `any[]` so they return true.",
+  "xp_reward": 200,
+  "tags": ["conditional-types", "generics"],
+  "order_index": 13
+}

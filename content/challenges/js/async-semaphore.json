@@ -1,0 +1,15 @@
+{
+  "slug": "async-semaphore",
+  "title": "Async Semaphore",
+  "description": "Implement a `Semaphore` class that limits concurrency. `acquire()` resolves when a slot is available; `release()` frees a slot and wakes a waiter.\n\n**Example:**\n```js\nconst sem = new Semaphore(2);\nawait sem.acquire(); // slot 1\nawait sem.acquire(); // slot 2\n// sem.acquire() would now wait until release() is called\nsem.release();\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export class Semaphore {\n  constructor(limit) {\n    // your code here\n  }\n\n  async acquire() {\n    // your code here\n  }\n\n  release() {\n    // your code here\n  }\n}",
+  "test_suite": "test('allows up to limit concurrent acquires', async () => {\n  const sem = new Semaphore(2);\n  await sem.acquire();\n  await sem.acquire();\n  let resolved = false;\n  const p = sem.acquire().then(() => { resolved = true; });\n  await Promise.resolve();\n  expect(resolved).toBe(false);\n  sem.release();\n  await p;\n  expect(resolved).toBe(true);\n});\n\ntest('release allows next waiter to proceed', async () => {\n  const sem = new Semaphore(1);\n  await sem.acquire();\n  const order = [];\n  const p = sem.acquire().then(() => order.push('second'));\n  order.push('first');\n  sem.release();\n  await p;\n  expect(order).toEqual(['first', 'second']);\n});\n\n// __hidden__\ntest('semaphore of limit 1 serializes tasks', async () => {\n  const sem = new Semaphore(1);\n  const results = [];\n  async function task(id) {\n    await sem.acquire();\n    results.push(id);\n    sem.release();\n  }\n  await Promise.all([task(1), task(2), task(3)]);\n  expect(results.length).toBe(3);\n});",
+  "solution": "export class Semaphore {\n  constructor(limit) {\n    this.limit = limit;\n    this.count = 0;\n    this.queue = [];\n  }\n  async acquire() {\n    if (this.count < this.limit) {\n      this.count++;\n      return;\n    }\n    await new Promise(resolve => this.queue.push(resolve));\n    this.count++;\n  }\n  release() {\n    this.count--;\n    if (this.queue.length > 0) {\n      const next = this.queue.shift();\n      next();\n    }\n  }\n}",
+  "ai_context": "Common mistake: incrementing count inside the queued promise resolver instead of after acquire resolves, causing a double-increment. Also forgetting to store the resolve callback rather than the full Promise.",
+  "xp_reward": 300,
+  "tags": ["async", "concurrency", "semaphore", "promises"],
+  "order_index": 36
+}

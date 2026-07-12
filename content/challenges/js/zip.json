@@ -1,0 +1,15 @@
+{
+  "slug": "zip",
+  "title": "Zip Arrays",
+  "description": "Implement a `zip` function that combines two arrays into an array of pairs. The result length is determined by the shorter array.\n\n**Example:**\n```js\nzip([1, 2, 3], ['a', 'b', 'c']) // [[1, 'a'], [2, 'b'], [3, 'c']]\nzip([1, 2], ['a', 'b', 'c'])   // [[1, 'a'], [2, 'b']]\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export function zip(a, b) {\n  // your code here\n}",
+  "test_suite": "test('zips two equal-length arrays', () => {\n  expect(zip([1, 2, 3], ['a', 'b', 'c'])).toEqual([[1, 'a'], [2, 'b'], [3, 'c']]);\n});\n\ntest('stops at shorter array', () => {\n  expect(zip([1, 2], ['a', 'b', 'c'])).toEqual([[1, 'a'], [2, 'b']]);\n});\n\ntest('returns empty array when either input is empty', () => {\n  expect(zip([], [1, 2, 3])).toEqual([]);\n});\n\ntest('handles single-element arrays', () => {\n  expect(zip([42], ['x'])).toEqual([[42, 'x']]);\n});\n\n// __hidden__\ntest('works with mixed types', () => {\n  expect(zip([true, null], [1, 2])).toEqual([[true, 1], [null, 2]]);\n});",
+  "solution": "export function zip(a, b) {\n  const length = Math.min(a.length, b.length);\n  return Array.from({ length }, (_, i) => [a[i], b[i]]);\n}",
+  "ai_context": "Learners often iterate over the longer array, causing `undefined` entries for out-of-bounds indices of the shorter array. The fix is to use `Math.min(a.length, b.length)` as the loop bound. Using `Array.from` with a length is cleaner than a for loop but both are correct.",
+  "xp_reward": 100,
+  "tags": ["arrays", "iteration", "functional"],
+  "order_index": 22
+}

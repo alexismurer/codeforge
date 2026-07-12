@@ -1,0 +1,15 @@
+{
+  "slug": "curry",
+  "title": "Curry",
+  "description": "Implement a `curry` function that transforms a binary function (two arguments) into a curried form.\n\n**Example:**\n```js\nconst add = (a, b) => a + b;\nconst curriedAdd = curry(add);\ncurriedAdd(1)(2) // 3\ncurriedAdd(5)(10) // 15\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export function curry(fn) {\n  // your code here\n}",
+  "test_suite": "test('curries addition', () => {\n  const add = curry((a, b) => a + b);\n  expect(add(1)(2)).toBe(3);\n});\n\ntest('curries multiplication', () => {\n  const multiply = curry((a, b) => a * b);\n  expect(multiply(3)(4)).toBe(12);\n});\n\ntest('first call returns a function', () => {\n  const curried = curry((a, b) => a + b);\n  expect(typeof curried(1)).toBe('function');\n});\n\ntest('works with string concatenation', () => {\n  const concat = curry((a, b) => a + b);\n  expect(concat('hello')(' world')).toBe('hello world');\n});\n\n// __hidden__\ntest('each partial application is independent', () => {\n  const add = curry((a, b) => a + b);\n  const add5 = add(5);\n  expect(add5(3)).toBe(8);\n  expect(add5(10)).toBe(15);\n});",
+  "solution": "export function curry(fn) {\n  return function(a) {\n    return function(b) {\n      return fn(a, b);\n    };\n  };\n}",
+  "ai_context": "Learners often try to build a generic variadic curry instead of the simpler binary form. For a binary curry, two nested closures is all you need. A subtle pitfall: forgetting that each partial application must return a new function, not share state with other partial applications.",
+  "xp_reward": 100,
+  "tags": ["closures", "functional", "higher-order"],
+  "order_index": 14
+}

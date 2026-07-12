@@ -1,0 +1,15 @@
+{
+  "slug": "find-max",
+  "title": "Find Maximum",
+  "description": "Write a function `findMax` that returns the largest number in an array. Return `null` for an empty array.\n\n**Example:**\n```js\nfindMax([3, 1, 4, 1, 5]) // 5\nfindMax([]) // null\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export function findMax(arr) {\n  // your code here\n}",
+  "test_suite": "test('returns largest value', () => {\n  expect(findMax([3, 1, 4, 1, 5])).toBe(5);\n});\n\ntest('returns null for empty array', () => {\n  expect(findMax([])).toBeNull();\n});\n\ntest('handles all negative numbers', () => {\n  expect(findMax([-3, -1, -4])).toBe(-1);\n});\n\ntest('handles single element', () => {\n  expect(findMax([7])).toBe(7);\n});\n\n// __hidden__\ntest('handles array with duplicates of max', () => {\n  expect(findMax([5, 5, 5])).toBe(5);\n});",
+  "solution": "export function findMax(arr) {\n  if (arr.length === 0) return null;\n  return Math.max(...arr);\n}",
+  "ai_context": "Common mistake: using Math.max() without arguments returns -Infinity, not null. Also spreading a large array into Math.max can cause a stack overflow — for very large arrays, reduce is safer.",
+  "xp_reward": 50,
+  "tags": ["arrays", "math"],
+  "order_index": 4
+}

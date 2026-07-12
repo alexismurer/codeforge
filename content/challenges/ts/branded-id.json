@@ -1,0 +1,15 @@
+{
+  "slug": "branded-id",
+  "title": "Branded ID",
+  "description": "Implement nominal typing using a brand pattern. Create a `Brand<T, B>` type and use it to define `UserId` and `PostId` types that are both `string` at runtime but incompatible at the type level.\n\nAlso implement `createUserId(s: string): UserId` and `createPostId(s: string): PostId`.\n\n**Example:**\n```ts\nconst uid: UserId = createUserId('user-1');\nconst pid: PostId = createPostId('post-1');\n// uid and pid are strings at runtime but won't cross-assign at compile time\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "export type Brand<T, B> = // your type here\nexport type UserId = Brand<string, 'UserId'>;\nexport type PostId = Brand<string, 'PostId'>;\n\nexport function createUserId(s: string): UserId {\n  // your code here\n}\n\nexport function createPostId(s: string): PostId {\n  // your code here\n}",
+  "test_suite": "test('createUserId returns a string at runtime', () => {\n  const uid = createUserId('user-123');\n  expect(typeof uid).toBe('string');\n  expect(uid).toBe('user-123');\n});\n\ntest('createPostId returns a string at runtime', () => {\n  const pid = createPostId('post-456');\n  expect(typeof pid).toBe('string');\n  expect(pid).toBe('post-456');\n});\n\ntest('type-level: UserId extends string', () => {\n  type Check = UserId extends string ? true : false;\n  const check: Check = true;\n  expect(check).toBe(true);\n});\n\ntest('type-level: UserId is not assignable to PostId', () => {\n  type Check = UserId extends PostId ? true : false;\n  const check: Check = false;\n  expect(check).toBe(false);\n});\n\n// __hidden__\ntest('type-level: PostId is not assignable to UserId', () => {\n  type Check = PostId extends UserId ? true : false;\n  const check: Check = false;\n  expect(check).toBe(false);\n});",
+  "solution": "export type Brand<T, B> = T & { readonly __brand: B };\nexport type UserId = Brand<string, 'UserId'>;\nexport type PostId = Brand<string, 'PostId'>;\n\nexport function createUserId(s: string): UserId {\n  return s as UserId;\n}\n\nexport function createPostId(s: string): PostId {\n  return s as PostId;\n}",
+  "ai_context": "Common mistake: using `type Brand<T, B> = T` (no intersection), which makes all brands identical to the base type. The `& { readonly __brand: B }` intersection is what makes the types structurally distinct.",
+  "xp_reward": 300,
+  "tags": ["branded-types", "nominal-typing", "generics"],
+  "order_index": 19
+}
