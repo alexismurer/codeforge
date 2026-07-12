@@ -1,0 +1,15 @@
+{
+  "slug": "use-multi-step",
+  "title": "useMultiStep",
+  "description": "Implement a multi-step wizard hook. Steps are 1-indexed. `next()` advances to the next step (clamped at `totalSteps`), `prev()` goes back (clamped at 1), and `goTo(n)` sets the step directly.\n\n**Example:**\n```tsx\nconst { step, next, prev, isFirst, isLast, goTo } = useMultiStep(3);\n// step === 1, isFirst === true, isLast === false\nnext(); // step === 2\ngoTo(3); // step === 3, isLast === true\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "import { useState } from 'react';\n\nexport function useMultiStep(totalSteps: number) {\n  // your code here\n}",
+  "test_suite": "test('starts at step 1', () => {\n  const { result } = renderHook(() => useMultiStep(3));\n  expect(result.current.step).toBe(1);\n});\n\ntest('next advances the step', () => {\n  const { result } = renderHook(() => useMultiStep(3));\n  act(() => result.current.next());\n  expect(result.current.step).toBe(2);\n});\n\ntest('prev goes back', () => {\n  const { result } = renderHook(() => useMultiStep(3));\n  act(() => result.current.next());\n  act(() => result.current.prev());\n  expect(result.current.step).toBe(1);\n});\n\ntest('isFirst and isLast correct', () => {\n  const { result } = renderHook(() => useMultiStep(2));\n  expect(result.current.isFirst).toBe(true);\n  expect(result.current.isLast).toBe(false);\n  act(() => result.current.next());\n  expect(result.current.isFirst).toBe(false);\n  expect(result.current.isLast).toBe(true);\n});\n\ntest('goTo sets step directly', () => {\n  const { result } = renderHook(() => useMultiStep(5));\n  act(() => result.current.goTo(4));\n  expect(result.current.step).toBe(4);\n});\n\n// __hidden__\ntest('next clamps at totalSteps', () => {\n  const { result } = renderHook(() => useMultiStep(2));\n  act(() => result.current.next());\n  act(() => result.current.next());\n  expect(result.current.step).toBe(2);\n});\n\n// __hidden__\ntest('prev clamps at 1', () => {\n  const { result } = renderHook(() => useMultiStep(3));\n  act(() => result.current.prev());\n  expect(result.current.step).toBe(1);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useMultiStep(totalSteps: number) {\n  const [step, setStep] = useState(1);\n\n  const next = () => setStep(s => Math.min(s + 1, totalSteps));\n  const prev = () => setStep(s => Math.max(s - 1, 1));\n  const goTo = (n: number) => setStep(Math.max(1, Math.min(n, totalSteps)));\n\n  return {\n    step,\n    next,\n    prev,\n    goTo,\n    isFirst: step === 1,\n    isLast: step === totalSteps,\n  };\n}",
+  "ai_context": "Common mistake: not clamping next/prev at the boundaries, allowing step to go below 1 or above totalSteps. Also: forgetting goTo should also be clamped.",
+  "xp_reward": 200,
+  "tags": ["hooks", "useState"],
+  "order_index": 63
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "use-memo-sort",
+  "title": "useMemoSort",
+  "description": "Implement a hook that returns a sorted copy of an array using `useMemo`. The original array must not be mutated, and the sort is only recomputed when `items` or `compareFn` changes.\n\n**Example:**\n```tsx\nconst sorted = useMemoSort([3, 1, 2], (a, b) => a - b);\n// sorted === [1, 2, 3]\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "import { useMemo } from 'react';\n\nexport function useMemoSort<T>(items: T[], compareFn: (a: T, b: T) => number): T[] {\n  // your code here\n}",
+  "test_suite": "test('sorts numbers ascending', () => {\n  const { result } = renderHook(() => useMemoSort([3, 1, 4, 1, 5], (a, b) => a - b));\n  expect(result.current).toEqual([1, 1, 3, 4, 5]);\n});\n\ntest('sorts strings alphabetically', () => {\n  const { result } = renderHook(() =>\n    useMemoSort(['banana', 'apple', 'cherry'], (a, b) => a.localeCompare(b))\n  );\n  expect(result.current).toEqual(['apple', 'banana', 'cherry']);\n});\n\ntest('sorts descending', () => {\n  const { result } = renderHook(() => useMemoSort([1, 3, 2], (a, b) => b - a));\n  expect(result.current).toEqual([3, 2, 1]);\n});\n\ntest('does not mutate original array', () => {\n  const items = [3, 1, 2];\n  renderHook(() => useMemoSort(items, (a, b) => a - b));\n  expect(items).toEqual([3, 1, 2]);\n});\n\n// __hidden__\ntest('returns empty array for empty input', () => {\n  const { result } = renderHook(() => useMemoSort([], (a, b) => (a as number) - (b as number)));\n  expect(result.current).toEqual([]);\n});",
+  "solution": "import { useMemo } from 'react';\n\nexport function useMemoSort<T>(items: T[], compareFn: (a: T, b: T) => number): T[] {\n  return useMemo(() => [...items].sort(compareFn), [items, compareFn]);\n}",
+  "ai_context": "Common mistake: calling items.sort(compareFn) directly, which mutates the original array. Always spread or slice first: [...items].sort(compareFn).",
+  "xp_reward": 200,
+  "tags": ["hooks", "useMemo"],
+  "order_index": 58
+}

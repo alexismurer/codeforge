@@ -1,0 +1,15 @@
+{
+  "slug": "use-ref-measure",
+  "title": "useRefMeasure",
+  "description": "Implement a hook that attaches a ref to a DOM element and reads its `offsetWidth` and `offsetHeight` after it mounts. Returns `{ ref, width, height }` where `width` and `height` start at `0`.\n\n**Example:**\n```tsx\nfunction Box() {\n  const { ref, width, height } = useRefMeasure();\n  return <div ref={ref}>{width}x{height}</div>;\n}\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "import { useRef, useState, useEffect } from 'react';\n\nexport function useRefMeasure() {\n  // your code here\n}",
+  "test_suite": "test('returns width and height starting at 0', () => {\n  const { result } = renderHook(() => useRefMeasure());\n  expect(result.current.width).toBe(0);\n  expect(result.current.height).toBe(0);\n});\n\ntest('returns a ref object', () => {\n  const { result } = renderHook(() => useRefMeasure());\n  expect(result.current.ref).toBeDefined();\n  expect(typeof result.current.ref).toBe('object');\n});\n\ntest('updates dimensions when ref is attached to element', () => {\n  const el = document.createElement('div');\n  Object.defineProperty(el, 'offsetWidth', { value: 200, configurable: true });\n  Object.defineProperty(el, 'offsetHeight', { value: 100, configurable: true });\n  const { result } = renderHook(() => useRefMeasure());\n  act(() => {\n    result.current.ref.current = el;\n  });\n  expect(result.current.width).toBe(0);\n  expect(result.current.height).toBe(0);\n});\n\ntest('width and height are numbers', () => {\n  const { result } = renderHook(() => useRefMeasure());\n  expect(typeof result.current.width).toBe('number');\n  expect(typeof result.current.height).toBe('number');\n});\n\n// __hidden__\ntest('ref.current is initially null', () => {\n  const { result } = renderHook(() => useRefMeasure());\n  expect(result.current.ref.current).toBeNull();\n});",
+  "solution": "import { useRef, useState, useEffect } from 'react';\n\nexport function useRefMeasure() {\n  const ref = useRef<HTMLElement>(null);\n  const [size, setSize] = useState({ width: 0, height: 0 });\n\n  useEffect(() => {\n    if (ref.current) {\n      setSize({\n        width: ref.current.offsetWidth,\n        height: ref.current.offsetHeight,\n      });\n    }\n  }, []);\n\n  return { ref, width: size.width, height: size.height };\n}",
+  "ai_context": "Common mistake: accessing ref.current.offsetWidth synchronously during render (before mount) — always read inside useEffect so the DOM is available. Also: not initializing to 0.",
+  "xp_reward": 200,
+  "tags": ["hooks", "useRef", "useState", "useEffect"],
+  "order_index": 60
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "use-imperative-focus",
+  "title": "useImperativeFocus",
+  "description": "Create a `FocusableInput` component that accepts a `ref` via `forwardRef` and exposes a `focus()` method on that ref using `useImperativeHandle`. Calling `ref.current.focus()` should focus the underlying `<input>` element.\n\n**Example:**\n```tsx\nconst ref = useRef<{ focus: () => void }>(null);\n<FocusableInput ref={ref} />\n// later:\nref.current?.focus();\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "import { forwardRef, useRef, useImperativeHandle } from 'react';\n\nexport const FocusableInput = forwardRef(function FocusableInput(_props, ref) {\n  // your code here\n});",
+  "test_suite": "test('renders an input element', () => {\n  const { container } = render(<FocusableInput />);\n  expect(container.querySelector('input')).toBeTruthy();\n});\n\ntest('ref is defined after mount', () => {\n  const ref = { current: null } as any;\n  render(<FocusableInput ref={ref} />);\n  expect(ref.current).not.toBeNull();\n});\n\ntest('ref exposes focus method', () => {\n  const ref = { current: null } as any;\n  render(<FocusableInput ref={ref} />);\n  expect(typeof ref.current.focus).toBe('function');\n});\n\ntest('calling ref.current.focus() focuses the input', () => {\n  const ref = { current: null } as any;\n  const { container } = render(<FocusableInput ref={ref} />);\n  const input = container.querySelector('input') as HTMLInputElement;\n  const focusSpy = vi.spyOn(input, 'focus');\n  act(() => ref.current.focus());\n  expect(focusSpy).toHaveBeenCalled();\n});\n\n// __hidden__\ntest('does not expose other internal methods on ref', () => {\n  const ref = { current: null } as any;\n  render(<FocusableInput ref={ref} />);\n  const keys = Object.keys(ref.current);\n  expect(keys).toEqual(['focus']);\n});",
+  "solution": "import { forwardRef, useRef, useImperativeHandle } from 'react';\n\nexport const FocusableInput = forwardRef(function FocusableInput(_props, ref) {\n  const inputRef = useRef<HTMLInputElement>(null);\n\n  useImperativeHandle(ref, () => ({\n    focus() {\n      inputRef.current?.focus();\n    },\n  }));\n\n  return <input ref={inputRef} />;\n});",
+  "ai_context": "Common mistake: passing the forwarded ref directly to the input element instead of using useImperativeHandle to expose a controlled API. The whole point is to expose only specific methods, not the raw DOM node.",
+  "xp_reward": 200,
+  "tags": ["hooks", "useImperativeHandle", "useRef", "forwardRef"],
+  "order_index": 61
+}

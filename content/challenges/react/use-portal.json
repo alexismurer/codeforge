@@ -1,0 +1,15 @@
+{
+  "slug": "use-portal",
+  "title": "usePortal",
+  "description": "Implement a `usePortal` hook that returns a `Portal` component. `Portal` renders its children into a given `container` element (defaults to `document.body`) using `ReactDOM.createPortal`.\n\n**Example:**\n```tsx\nconst { Portal } = usePortal();\nreturn (\n  <div>\n    <Portal>\n      <Modal />\n    </Portal>\n  </div>\n);\n// Modal is rendered into document.body, not inside the div\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "import { useMemo } from 'react';\nimport { createPortal } from 'react-dom';\nimport type { ReactNode } from 'react';\n\nexport function usePortal(container?: Element) {\n  // your code here\n}",
+  "test_suite": "test('Portal renders children into document.body by default', () => {\n  const { Portal } = renderHook(() => usePortal()).result.current;\n  render(<Portal><div data-testid=\"portal-child\">Hello</div></Portal>);\n  expect(document.body.querySelector('[data-testid=\"portal-child\"]')).toBeTruthy();\n});\n\ntest('Portal renders into provided container', () => {\n  const container = document.createElement('div');\n  document.body.appendChild(container);\n  const { Portal } = renderHook(() => usePortal(container)).result.current;\n  render(<Portal><span data-testid=\"child\">X</span></Portal>);\n  expect(container.querySelector('[data-testid=\"child\"]')).toBeTruthy();\n  document.body.removeChild(container);\n});\n\ntest('Portal is a React component (function)', () => {\n  const { result } = renderHook(() => usePortal());\n  expect(typeof result.current.Portal).toBe('function');\n});\n\ntest('Portal renders multiple children', () => {\n  const { Portal } = renderHook(() => usePortal()).result.current;\n  render(<Portal><div id=\"a\" /><div id=\"b\" /></Portal>);\n  expect(document.body.querySelector('#a')).toBeTruthy();\n  expect(document.body.querySelector('#b')).toBeTruthy();\n});\n\n// __hidden__\ntest('children do not appear in parent component DOM tree', () => {\n  const { Portal } = renderHook(() => usePortal()).result.current;\n  const { container } = render(<div id=\"parent\"><Portal><div id=\"teleported\" /></Portal></div>);\n  expect(container.querySelector('#teleported')).toBeNull();\n});",
+  "solution": "import { useMemo } from 'react';\nimport { createPortal } from 'react-dom';\nimport type { ReactNode } from 'react';\n\nexport function usePortal(container?: Element) {\n  const Portal = useMemo(() => {\n    return function Portal({ children }: { children: ReactNode }) {\n      return createPortal(children, container ?? document.body);\n    };\n  }, [container]);\n\n  return { Portal };\n}",
+  "ai_context": "Common mistake: creating the Portal component inside the render function without useMemo, causing it to be recreated on every render and unmounting/remounting portal children unnecessarily.",
+  "xp_reward": 200,
+  "tags": ["hooks", "useMemo", "createPortal"],
+  "order_index": 70
+}

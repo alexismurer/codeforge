@@ -1,0 +1,15 @@
+{
+  "slug": "use-memo-filter",
+  "title": "useMemoFilter",
+  "description": "Implement a hook that filters a list using `useMemo` so the filtered result is only recomputed when `items` or `predicate` changes.\n\n**Example:**\n```tsx\nconst evens = useMemoFilter([1, 2, 3, 4], n => n % 2 === 0);\n// evens === [2, 4]\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "import { useMemo } from 'react';\n\nexport function useMemoFilter<T>(items: T[], predicate: (item: T) => boolean): T[] {\n  // your code here\n}",
+  "test_suite": "test('returns items matching predicate', () => {\n  const { result } = renderHook(() => useMemoFilter([1, 2, 3, 4, 5], n => n % 2 === 0));\n  expect(result.current).toEqual([2, 4]);\n});\n\ntest('returns empty array when nothing matches', () => {\n  const { result } = renderHook(() => useMemoFilter([1, 3, 5], n => n % 2 === 0));\n  expect(result.current).toEqual([]);\n});\n\ntest('returns all items when predicate always true', () => {\n  const { result } = renderHook(() => useMemoFilter(['a', 'b', 'c'], () => true));\n  expect(result.current).toEqual(['a', 'b', 'c']);\n});\n\ntest('works with object arrays', () => {\n  const items = [{ name: 'Alice', active: true }, { name: 'Bob', active: false }];\n  const { result } = renderHook(() => useMemoFilter(items, u => u.active));\n  expect(result.current).toHaveLength(1);\n  expect(result.current[0].name).toBe('Alice');\n});\n\n// __hidden__\ntest('does not mutate original array', () => {\n  const items = [1, 2, 3];\n  const { result } = renderHook(() => useMemoFilter(items, n => n > 1));\n  expect(result.current).toEqual([2, 3]);\n  expect(items).toEqual([1, 2, 3]);\n});",
+  "solution": "import { useMemo } from 'react';\n\nexport function useMemoFilter<T>(items: T[], predicate: (item: T) => boolean): T[] {\n  return useMemo(() => items.filter(predicate), [items, predicate]);\n}",
+  "ai_context": "Common mistake: forgetting to wrap in useMemo at all, making it a simple passthrough. Also: passing items.length instead of items as a dependency, which misses mutations.",
+  "xp_reward": 200,
+  "tags": ["hooks", "useMemo"],
+  "order_index": 57
+}

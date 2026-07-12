@@ -1,0 +1,15 @@
+{
+  "slug": "use-reducer-counter",
+  "title": "useReducer Counter",
+  "description": "Implement a counter using `useReducer` instead of `useState`. The hook should return `{ count, dispatch }` where dispatch accepts `{ type: 'increment' | 'decrement' | 'reset' }` actions.\n\n**Example:**\n```tsx\nconst { count, dispatch } = useReducerCounter(0);\ndispatch({ type: 'increment' });\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "import { useReducer } from 'react';\n\ntype Action = { type: 'increment' | 'decrement' | 'reset' };\n\nexport function useReducerCounter(initialValue = 0) {\n  // your code here\n}",
+  "test_suite": "test('starts at initial value', () => {\n  const { result } = renderHook(() => useReducerCounter(5));\n  expect(result.current.count).toBe(5);\n});\n\ntest('increment action', () => {\n  const { result } = renderHook(() => useReducerCounter());\n  act(() => result.current.dispatch({ type: 'increment' }));\n  expect(result.current.count).toBe(1);\n});\n\ntest('decrement action', () => {\n  const { result } = renderHook(() => useReducerCounter(5));\n  act(() => result.current.dispatch({ type: 'decrement' }));\n  expect(result.current.count).toBe(4);\n});\n\ntest('reset action', () => {\n  const { result } = renderHook(() => useReducerCounter(3));\n  act(() => result.current.dispatch({ type: 'increment' }));\n  act(() => result.current.dispatch({ type: 'reset' }));\n  expect(result.current.count).toBe(3);\n});\n\n// __hidden__\ntest('unknown action leaves state unchanged', () => {\n  const { result } = renderHook(() => useReducerCounter(10));\n  act(() => result.current.dispatch({ type: 'noop' as any }));\n  expect(result.current.count).toBe(10);\n});",
+  "solution": "import { useReducer } from 'react';\n\ntype Action = { type: 'increment' | 'decrement' | 'reset' };\n\nfunction reducer(state: number, action: Action, initial: number): number {\n  switch (action.type) {\n    case 'increment': return state + 1;\n    case 'decrement': return state - 1;\n    case 'reset': return initial;\n    default: return state;\n  }\n}\n\nexport function useReducerCounter(initialValue = 0) {\n  const [count, dispatch] = useReducer((s: number, a: Action) => reducer(s, a, initialValue), initialValue);\n  return { count, dispatch };\n}",
+  "ai_context": "Common mistake: forgetting the default case in the switch statement. Also: not threading initialValue into the reducer closure for reset.",
+  "xp_reward": 200,
+  "tags": ["hooks", "useReducer"],
+  "order_index": 51
+}

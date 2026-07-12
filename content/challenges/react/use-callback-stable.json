@@ -1,0 +1,15 @@
+{
+  "slug": "use-callback-stable",
+  "title": "useCallbackStable",
+  "description": "Implement a hook that wraps a function with `useCallback` so it returns the same function reference when `deps` haven't changed, and a new reference when they have.\n\n**Example:**\n```tsx\nconst handleClick = useCallbackStable(() => console.log(count), [count]);\n// handleClick reference stays stable while count is unchanged\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "import { useCallback } from 'react';\n\nexport function useCallbackStable<T extends (...args: any[]) => any>(fn: T, deps: any[]): T {\n  // your code here\n}",
+  "test_suite": "test('returns the wrapped function', () => {\n  const fn = vi.fn();\n  const { result } = renderHook(() => useCallbackStable(fn, []));\n  result.current();\n  expect(fn).toHaveBeenCalledTimes(1);\n});\n\ntest('returns same reference when deps unchanged', () => {\n  const fn = () => {};\n  const { result, rerender } = renderHook(() => useCallbackStable(fn, [1, 2]));\n  const first = result.current;\n  rerender();\n  expect(result.current).toBe(first);\n});\n\ntest('returns new reference when deps change', () => {\n  let dep = 1;\n  const { result, rerender } = renderHook(() => useCallbackStable(() => dep, [dep]));\n  const first = result.current;\n  dep = 2;\n  rerender();\n  expect(result.current).not.toBe(first);\n});\n\ntest('passes arguments to underlying function', () => {\n  const fn = vi.fn((x: number) => x * 2);\n  const { result } = renderHook(() => useCallbackStable(fn, []));\n  const val = result.current(5);\n  expect(val).toBe(10);\n});\n\n// __hidden__\ntest('stable reference with empty deps across multiple rerenders', () => {\n  const fn = () => 42;\n  const { result, rerender } = renderHook(() => useCallbackStable(fn, []));\n  const first = result.current;\n  rerender();\n  rerender();\n  rerender();\n  expect(result.current).toBe(first);\n});",
+  "solution": "import { useCallback } from 'react';\n\nexport function useCallbackStable<T extends (...args: any[]) => any>(fn: T, deps: any[]): T {\n  // eslint-disable-next-line react-hooks/exhaustive-deps\n  return useCallback(fn, deps);\n}",
+  "ai_context": "Common mistake: not using useCallback at all (just returning fn), which would always return a new reference. The whole point is memoizing the function reference based on deps.",
+  "xp_reward": 200,
+  "tags": ["hooks", "useCallback"],
+  "order_index": 59
+}
