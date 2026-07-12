@@ -1,0 +1,15 @@
+{
+  "slug": "use-store",
+  "title": "useStore — Mini Global State",
+  "description": "Implement a `createStore` factory that returns a `useStore` hook. The store holds state, supports a `setState` updater, and notifies all subscribers on change — similar to Zustand.\n\n**Example:**\n```tsx\nconst useCount = createStore({ count: 0 });\nconst { count, setState } = useCount();\nsetState(s => ({ ...s, count: s.count + 1 }));\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 5,
+  "starter_code": "import { useSyncExternalStore, useCallback } from 'react';\n\nexport function createStore<T>(initialState: T) {\n  // your code here\n  // return a useStore hook\n}",
+  "test_suite": "test('returns initial state', () => {\n  const useCount = createStore({ count: 0 });\n  const { result } = renderHook(() => useCount());\n  expect(result.current.count).toBe(0);\n});\n\ntest('setState updates state', () => {\n  const useCount = createStore({ count: 0 });\n  const { result } = renderHook(() => useCount());\n  act(() => result.current.setState(s => ({ count: s.count + 1 })));\n  expect(result.current.count).toBe(1);\n});\n\ntest('two hooks share same state', () => {\n  const useCount = createStore({ count: 0 });\n  const { result: a } = renderHook(() => useCount());\n  const { result: b } = renderHook(() => useCount());\n  act(() => a.current.setState(() => ({ count: 42 })));\n  expect(b.current.count).toBe(42);\n});\n\n// __hidden__\ntest('each createStore creates independent state', () => {\n  const useA = createStore({ n: 0 });\n  const useB = createStore({ n: 0 });\n  const { result: a } = renderHook(() => useA());\n  const { result: b } = renderHook(() => useB());\n  act(() => a.current.setState(() => ({ n: 9 })));\n  expect(b.current.n).toBe(0);\n});",
+  "solution": "import { useSyncExternalStore, useCallback } from 'react';\n\nexport function createStore<T>(initialState: T) {\n  let state = initialState;\n  const listeners = new Set<() => void>();\n  const subscribe = (listener: () => void) => {\n    listeners.add(listener);\n    return () => listeners.delete(listener);\n  };\n  const getSnapshot = () => state;\n  return function useStore() {\n    const currentState = useSyncExternalStore(subscribe, getSnapshot);\n    const setState = useCallback((updater: (s: T) => T) => {\n      state = updater(state);\n      listeners.forEach(l => l());\n    }, []);\n    return { ...currentState, setState } as T & { setState: (updater: (s:T)=>T) => void };\n  };\n}",
+  "ai_context": "Common mistake: using useState inside the factory instead of useSyncExternalStore, which breaks cross-component state sharing. Also forgetting to call listeners after state update.",
+  "xp_reward": 400,
+  "tags": ["hooks", "useSyncExternalStore", "state-management"],
+  "order_index": 97
+}
