@@ -1,0 +1,15 @@
+{
+  "slug": "use-debounce-fn",
+  "title": "useDebounceFn Hook",
+  "description": "Implement a `useDebounceFn` hook that returns a debounced version of `fn`. The debounced function waits `delay` ms after the last call before invoking `fn`. Rapid successive calls reset the timer.\n\n**Example:**\n```tsx\nconst debouncedSearch = useDebounceFn((q: string) => search(q), 300);\n<input onChange={e => debouncedSearch(e.target.value)} />\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useCallback, useEffect, useRef } from 'react';\n\nexport function useDebounceFn<T extends unknown[]>(\n  fn: (...args: T) => void,\n  delay: number\n): (...args: T) => void {\n  // your code here\n}",
+  "test_suite": "test('does not call immediately', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const { result } = renderHook(() => useDebounceFn(fn, 300));\n  act(() => result.current('hello'));\n  expect(fn).not.toHaveBeenCalled();\n  vi.useRealTimers();\n});\n\ntest('calls after delay', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const { result } = renderHook(() => useDebounceFn(fn, 300));\n  act(() => result.current('hello'));\n  vi.advanceTimersByTime(300);\n  expect(fn).toHaveBeenCalledWith('hello');\n  vi.useRealTimers();\n});\n\ntest('cancels previous call on rapid invocation', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const { result } = renderHook(() => useDebounceFn(fn, 300));\n  act(() => result.current('a'));\n  act(() => result.current('b'));\n  act(() => result.current('c'));\n  vi.advanceTimersByTime(300);\n  expect(fn).toHaveBeenCalledTimes(1);\n  expect(fn).toHaveBeenCalledWith('c');\n  vi.useRealTimers();\n});\n\n// __hidden__\ntest('always uses latest fn reference', () => {\n  vi.useFakeTimers();\n  let result = '';\n  const { rerender, result: hookResult } = renderHook(({ f }) => useDebounceFn(f, 100), {\n    initialProps: { f: () => { result = 'old'; } }\n  });\n  rerender({ f: () => { result = 'new'; } });\n  act(() => hookResult.current());\n  vi.advanceTimersByTime(100);\n  expect(result).toBe('new');\n  vi.useRealTimers();\n});",
+  "solution": "import { useCallback, useEffect, useRef } from 'react';\n\nexport function useDebounceFn<T extends unknown[]>(\n  fn: (...args: T) => void,\n  delay: number\n): (...args: T) => void {\n  const savedFn = useRef(fn);\n  useEffect(() => { savedFn.current = fn; });\n  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);\n\n  return useCallback((...args: T) => {\n    if (timerRef.current) clearTimeout(timerRef.current);\n    timerRef.current = setTimeout(() => savedFn.current(...args), delay);\n  }, [delay]);\n}",
+  "ai_context": "A common mistake is omitting the ref for fn, causing a stale closure where the debounced call always uses the fn from the first render rather than the latest prop.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "debounce", "performance"],
+  "order_index": 47
+}

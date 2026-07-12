@@ -1,0 +1,15 @@
+{
+  "slug": "use-effect-once",
+  "title": "useEffectOnce Hook",
+  "description": "Implement a `useEffectOnce` hook that runs an effect exactly once on mount. If the effect returns a cleanup function, that cleanup must be called on unmount. The effect must NOT re-run on rerenders.\n\n**Example:**\n```tsx\nuseEffectOnce(() => {\n  analytics.track('page_view');\n  return () => analytics.flush();\n});\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect } from 'react';\n\nexport function useEffectOnce(effect: () => void | (() => void)): void {\n  // your code here\n}",
+  "test_suite": "test('effect fires on mount', () => {\n  const effect = vi.fn();\n  renderHook(() => useEffectOnce(effect));\n  expect(effect).toHaveBeenCalledTimes(1);\n});\n\ntest('effect does NOT fire on rerender', () => {\n  const effect = vi.fn();\n  const { rerender } = renderHook(() => useEffectOnce(effect));\n  rerender();\n  rerender();\n  expect(effect).toHaveBeenCalledTimes(1);\n});\n\ntest('cleanup fires on unmount', () => {\n  const cleanup = vi.fn();\n  const { unmount } = renderHook(() => useEffectOnce(() => cleanup));\n  unmount();\n  expect(cleanup).toHaveBeenCalledTimes(1);\n});\n\n// __hidden__\ntest('cleanup does NOT fire on rerender', () => {\n  const cleanup = vi.fn();\n  const { rerender } = renderHook(() => useEffectOnce(() => cleanup));\n  rerender();\n  rerender();\n  expect(cleanup).not.toHaveBeenCalled();\n});",
+  "solution": "import { useEffect } from 'react';\n\nexport function useEffectOnce(effect: () => void | (() => void)): void {\n  useEffect(effect, []);\n}",
+  "ai_context": "The challenge seems trivial but learners realise the real lesson is understanding why useEffect with [] only runs once — and that React Strict Mode double-invokes it in development. The empty array IS the correct solution here.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "lifecycle", "mount"],
+  "order_index": 33
+}

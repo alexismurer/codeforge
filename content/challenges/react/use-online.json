@@ -1,0 +1,15 @@
+{
+  "slug": "use-online",
+  "title": "useOnline Hook",
+  "description": "Implement a `useOnline` hook that returns `true` when the browser is online and `false` when offline. It should initialise from `navigator.onLine` and update when `online` / `offline` events fire on `window`.\n\n**Example:**\n```tsx\nconst isOnline = useOnline();\nreturn isOnline ? <App /> : <OfflineBanner />;\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect, useState } from 'react';\n\nexport function useOnline(): boolean {\n  // your code here\n}",
+  "test_suite": "test('returns a boolean', () => {\n  const { result } = renderHook(() => useOnline());\n  expect(typeof result.current).toBe('boolean');\n});\n\ntest('returns true when navigator.onLine is true', () => {\n  Object.defineProperty(navigator, 'onLine', { writable: true, configurable: true, value: true });\n  const { result } = renderHook(() => useOnline());\n  expect(result.current).toBe(true);\n});\n\ntest('updates to false on offline event', () => {\n  Object.defineProperty(navigator, 'onLine', { writable: true, configurable: true, value: true });\n  const { result } = renderHook(() => useOnline());\n  act(() => {\n    Object.defineProperty(navigator, 'onLine', { writable: true, configurable: true, value: false });\n    window.dispatchEvent(new Event('offline'));\n  });\n  expect(result.current).toBe(false);\n});\n\ntest('updates to true on online event', () => {\n  Object.defineProperty(navigator, 'onLine', { writable: true, configurable: true, value: false });\n  const { result } = renderHook(() => useOnline());\n  act(() => {\n    Object.defineProperty(navigator, 'onLine', { writable: true, configurable: true, value: true });\n    window.dispatchEvent(new Event('online'));\n  });\n  expect(result.current).toBe(true);\n});\n\n// __hidden__\ntest('removes event listeners on unmount', () => {\n  const spy = vi.spyOn(window, 'removeEventListener');\n  const { unmount } = renderHook(() => useOnline());\n  unmount();\n  const calls = spy.mock.calls.map(c => c[0]);\n  expect(calls).toContain('online');\n  expect(calls).toContain('offline');\n  spy.mockRestore();\n});",
+  "solution": "import { useEffect, useState } from 'react';\n\nexport function useOnline(): boolean {\n  const [online, setOnline] = useState(navigator.onLine);\n\n  useEffect(() => {\n    const goOnline = () => setOnline(true);\n    const goOffline = () => setOnline(false);\n    window.addEventListener('online', goOnline);\n    window.addEventListener('offline', goOffline);\n    return () => {\n      window.removeEventListener('online', goOnline);\n      window.removeEventListener('offline', goOffline);\n    };\n  }, []);\n\n  return online;\n}",
+  "ai_context": "Learners sometimes listen to a single custom event instead of the separate 'online' and 'offline' browser events, or forget to initialise from navigator.onLine causing the hook to always start as true.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "network", "online"],
+  "order_index": 41
+}

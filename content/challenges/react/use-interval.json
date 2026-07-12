@@ -1,0 +1,15 @@
+{
+  "slug": "use-interval",
+  "title": "useInterval Hook",
+  "description": "Implement a `useInterval` hook that calls `callback` on a repeating interval of `delay` ms. The interval clears automatically on unmount, and resets when `delay` changes.\n\n**Example:**\n```tsx\nuseInterval(() => setCount(c => c + 1), 1000);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect, useRef } from 'react';\n\nexport function useInterval(callback: () => void, delay: number): void {\n  // your code here\n}",
+  "test_suite": "test('calls callback after delay', () => {\n  vi.useFakeTimers();\n  const cb = vi.fn();\n  renderHook(() => useInterval(cb, 100));\n  vi.advanceTimersByTime(100);\n  expect(cb).toHaveBeenCalledTimes(1);\n  vi.useRealTimers();\n});\n\ntest('calls callback multiple times', () => {\n  vi.useFakeTimers();\n  const cb = vi.fn();\n  renderHook(() => useInterval(cb, 100));\n  vi.advanceTimersByTime(350);\n  expect(cb).toHaveBeenCalledTimes(3);\n  vi.useRealTimers();\n});\n\ntest('clears interval on unmount', () => {\n  vi.useFakeTimers();\n  const cb = vi.fn();\n  const { unmount } = renderHook(() => useInterval(cb, 100));\n  unmount();\n  vi.advanceTimersByTime(300);\n  expect(cb).not.toHaveBeenCalled();\n  vi.useRealTimers();\n});\n\n// __hidden__\ntest('resets timer when delay changes', () => {\n  vi.useFakeTimers();\n  const cb = vi.fn();\n  const { rerender } = renderHook(({ d }) => useInterval(cb, d), { initialProps: { d: 100 } });\n  rerender({ d: 500 });\n  vi.advanceTimersByTime(200);\n  expect(cb).toHaveBeenCalledTimes(0);\n  vi.useRealTimers();\n});\n\n// __hidden__\ntest('always uses latest callback reference', () => {\n  vi.useFakeTimers();\n  let value = 0;\n  const { rerender } = renderHook(({ v }) => useInterval(() => { value = v; }, 100), { initialProps: { v: 1 } });\n  rerender({ v: 42 });\n  vi.advanceTimersByTime(100);\n  expect(value).toBe(42);\n  vi.useRealTimers();\n});",
+  "solution": "import { useEffect, useRef } from 'react';\n\nexport function useInterval(callback: () => void, delay: number): void {\n  const savedCallback = useRef(callback);\n  useEffect(() => { savedCallback.current = callback; });\n  useEffect(() => {\n    const id = setInterval(() => savedCallback.current(), delay);\n    return () => clearInterval(id);\n  }, [delay]);\n}",
+  "ai_context": "Common mistake: putting callback directly in the dependency array, causing the interval to reset on every render when callback is an inline function. The useRef pattern stabilises the reference so only delay changes restart the interval.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "timers", "setInterval"],
+  "order_index": 27
+}

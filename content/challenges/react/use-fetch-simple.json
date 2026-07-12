@@ -1,0 +1,15 @@
+{
+  "slug": "use-fetch-simple",
+  "title": "useFetchSimple Hook",
+  "description": "Implement a `useFetchSimple` hook that fetches data from `url` on mount and returns `{ data, loading, error }`. Use the Fetch API. Assume `url` does not change after mount.\n\n**Example:**\n```tsx\nconst { data, loading, error } = useFetchSimple<User[]>('/api/users');\nif (loading) return <Spinner />;\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect, useState } from 'react';\n\nexport function useFetchSimple<T>(url: string) {\n  // return { data, loading, error }\n}",
+  "test_suite": "test('loading is true immediately', () => {\n  global.fetch = vi.fn(() => new Promise(() => {}));\n  const { result } = renderHook(() => useFetchSimple('/api/test'));\n  expect(result.current.loading).toBe(true);\n});\n\ntest('populates data on successful fetch', async () => {\n  global.fetch = vi.fn(() =>\n    Promise.resolve({ ok: true, json: () => Promise.resolve({ id: 1 }) } as Response)\n  );\n  const { result } = renderHook(() => useFetchSimple('/api/test'));\n  await act(async () => {});\n  expect(result.current.loading).toBe(false);\n  expect(result.current.data).toEqual({ id: 1 });\n});\n\ntest('sets error when fetch rejects', async () => {\n  global.fetch = vi.fn(() => Promise.reject(new Error('network error')));\n  const { result } = renderHook(() => useFetchSimple('/api/fail'));\n  await act(async () => {});\n  expect(result.current.error).toBeInstanceOf(Error);\n  expect(result.current.loading).toBe(false);\n});\n\n// __hidden__\ntest('sets error when response is not ok', async () => {\n  global.fetch = vi.fn(() =>\n    Promise.resolve({ ok: false, status: 404, json: () => Promise.resolve({}) } as Response)\n  );\n  const { result } = renderHook(() => useFetchSimple('/api/missing'));\n  await act(async () => {});\n  expect(result.current.error).toBeTruthy();\n});",
+  "solution": "import { useEffect, useState } from 'react';\n\nexport function useFetchSimple<T>(url: string) {\n  const [data, setData] = useState<T | undefined>(undefined);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState<unknown>(undefined);\n\n  useEffect(() => {\n    let cancelled = false;\n    (async () => {\n      try {\n        const res = await fetch(url);\n        if (!res.ok) throw new Error(`HTTP ${res.status}`);\n        const json = await res.json();\n        if (!cancelled) setData(json);\n      } catch (e) {\n        if (!cancelled) setError(e);\n      } finally {\n        if (!cancelled) setLoading(false);\n      }\n    })();\n    return () => { cancelled = true; };\n  }, [url]);\n\n  return { data, loading, error };\n}",
+  "ai_context": "Learners frequently forget the cancellation flag, so if the component unmounts before the fetch resolves they attempt to call setState on an unmounted component.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "fetch", "async", "loading-state"],
+  "order_index": 35
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "use-copy-to-clipboard",
+  "title": "useCopyToClipboard Hook",
+  "description": "Implement a `useCopyToClipboard` hook that returns `{ copy, copied }`. Calling `copy(text)` writes `text` to the clipboard. `copied` is `true` for 2000 ms after a successful copy, then resets to `false`.\n\n**Example:**\n```tsx\nconst { copy, copied } = useCopyToClipboard();\n<button onClick={() => copy(code)}>{copied ? 'Copied!' : 'Copy'}</button>\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useState, useCallback, useEffect, useRef } from 'react';\n\nexport function useCopyToClipboard() {\n  // return { copy, copied }\n}",
+  "test_suite": "test('copied is false initially', () => {\n  const { result } = renderHook(() => useCopyToClipboard());\n  expect(result.current.copied).toBe(false);\n});\n\ntest('copied is true after copy()', async () => {\n  vi.useFakeTimers();\n  Object.assign(navigator, { clipboard: { writeText: vi.fn(() => Promise.resolve()) } });\n  const { result } = renderHook(() => useCopyToClipboard());\n  await act(async () => { await result.current.copy('hello'); });\n  expect(result.current.copied).toBe(true);\n  vi.useRealTimers();\n});\n\ntest('copied resets to false after 2000ms', async () => {\n  vi.useFakeTimers();\n  Object.assign(navigator, { clipboard: { writeText: vi.fn(() => Promise.resolve()) } });\n  const { result } = renderHook(() => useCopyToClipboard());\n  await act(async () => { await result.current.copy('hello'); });\n  act(() => vi.advanceTimersByTime(2000));\n  expect(result.current.copied).toBe(false);\n  vi.useRealTimers();\n});\n\n// __hidden__\ntest('copy calls navigator.clipboard.writeText with correct text', async () => {\n  const writeText = vi.fn(() => Promise.resolve());\n  Object.assign(navigator, { clipboard: { writeText } });\n  const { result } = renderHook(() => useCopyToClipboard());\n  await act(async () => { await result.current.copy('test-value'); });\n  expect(writeText).toHaveBeenCalledWith('test-value');\n});",
+  "solution": "import { useState, useCallback, useEffect, useRef } from 'react';\n\nexport function useCopyToClipboard() {\n  const [copied, setCopied] = useState(false);\n  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);\n\n  useEffect(() => () => {\n    if (timerRef.current) clearTimeout(timerRef.current);\n  }, []);\n\n  const copy = useCallback(async (text: string) => {\n    await navigator.clipboard.writeText(text);\n    setCopied(true);\n    if (timerRef.current) clearTimeout(timerRef.current);\n    timerRef.current = setTimeout(() => setCopied(false), 2000);\n  }, []);\n\n  return { copy, copied };\n}",
+  "ai_context": "Learners often start a new timeout on every copy without clearing the old one, so rapidly clicking copy can cause the copied state to reset unexpectedly early.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "clipboard", "async"],
+  "order_index": 43
+}

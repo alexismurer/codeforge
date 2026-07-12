@@ -1,0 +1,15 @@
+{
+  "slug": "use-timeout",
+  "title": "useTimeout Hook",
+  "description": "Implement a `useTimeout` hook that fires `callback` once after `delay` ms and returns `{ reset, clear }` controls. Calling `reset()` cancels any pending timer and starts a fresh one. Calling `clear()` cancels without restarting.\n\n**Example:**\n```tsx\nconst { reset, clear } = useTimeout(() => setSaved(true), 2000);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useCallback, useEffect, useRef } from 'react';\n\nexport function useTimeout(callback: () => void, delay: number) {\n  // return { reset, clear }\n}",
+  "test_suite": "test('fires callback once after delay', () => {\n  vi.useFakeTimers();\n  const cb = vi.fn();\n  renderHook(() => useTimeout(cb, 200));\n  vi.advanceTimersByTime(200);\n  expect(cb).toHaveBeenCalledTimes(1);\n  vi.useRealTimers();\n});\n\ntest('does not fire if cleared before delay', () => {\n  vi.useFakeTimers();\n  const cb = vi.fn();\n  const { result } = renderHook(() => useTimeout(cb, 200));\n  act(() => result.current.clear());\n  vi.advanceTimersByTime(300);\n  expect(cb).not.toHaveBeenCalled();\n  vi.useRealTimers();\n});\n\ntest('reset() restarts the timer', () => {\n  vi.useFakeTimers();\n  const cb = vi.fn();\n  const { result } = renderHook(() => useTimeout(cb, 200));\n  vi.advanceTimersByTime(100);\n  act(() => result.current.reset());\n  vi.advanceTimersByTime(100);\n  expect(cb).not.toHaveBeenCalled();\n  vi.advanceTimersByTime(100);\n  expect(cb).toHaveBeenCalledTimes(1);\n  vi.useRealTimers();\n});\n\ntest('clears on unmount', () => {\n  vi.useFakeTimers();\n  const cb = vi.fn();\n  const { unmount } = renderHook(() => useTimeout(cb, 200));\n  unmount();\n  vi.advanceTimersByTime(300);\n  expect(cb).not.toHaveBeenCalled();\n  vi.useRealTimers();\n});\n\n// __hidden__\ntest('does not fire twice after delay elapses', () => {\n  vi.useFakeTimers();\n  const cb = vi.fn();\n  renderHook(() => useTimeout(cb, 100));\n  vi.advanceTimersByTime(500);\n  expect(cb).toHaveBeenCalledTimes(1);\n  vi.useRealTimers();\n});",
+  "solution": "import { useCallback, useEffect, useRef } from 'react';\n\nexport function useTimeout(callback: () => void, delay: number) {\n  const savedCallback = useRef(callback);\n  useEffect(() => { savedCallback.current = callback; });\n  const idRef = useRef<ReturnType<typeof setTimeout> | null>(null);\n\n  const clear = useCallback(() => {\n    if (idRef.current !== null) clearTimeout(idRef.current);\n  }, []);\n\n  const reset = useCallback(() => {\n    clear();\n    idRef.current = setTimeout(() => savedCallback.current(), delay);\n  }, [clear, delay]);\n\n  useEffect(() => {\n    reset();\n    return clear;\n  }, [reset, clear]);\n\n  return { reset, clear };\n}",
+  "ai_context": "Learners often forget to reset the timer inside reset() by clearing the old timeout first, leading to multiple simultaneous timers and callback firing more than once.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "timers", "setTimeout"],
+  "order_index": 28
+}

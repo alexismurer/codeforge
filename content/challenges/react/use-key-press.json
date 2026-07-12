@@ -1,0 +1,15 @@
+{
+  "slug": "use-key-press",
+  "title": "useKeyPress Hook",
+  "description": "Implement a `useKeyPress` hook that returns `true` while a specific key is held down and `false` otherwise. It should listen to `keydown` to set true and `keyup` to set false.\n\n**Example:**\n```tsx\nconst isEnterPressed = useKeyPress('Enter');\nconst isEscPressed = useKeyPress('Escape');\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect, useState } from 'react';\n\nexport function useKeyPress(targetKey: string): boolean {\n  // your code here\n}",
+  "test_suite": "test('returns false initially', () => {\n  const { result } = renderHook(() => useKeyPress('Enter'));\n  expect(result.current).toBe(false);\n});\n\ntest('returns true when target key is pressed', () => {\n  const { result } = renderHook(() => useKeyPress('Enter'));\n  act(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' })));\n  expect(result.current).toBe(true);\n});\n\ntest('returns false after key is released', () => {\n  const { result } = renderHook(() => useKeyPress('Enter'));\n  act(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' })));\n  act(() => window.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter' })));\n  expect(result.current).toBe(false);\n});\n\ntest('does not trigger for a different key', () => {\n  const { result } = renderHook(() => useKeyPress('Enter'));\n  act(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })));\n  expect(result.current).toBe(false);\n});\n\n// __hidden__\ntest('removes listeners on unmount', () => {\n  const { result, unmount } = renderHook(() => useKeyPress('a'));\n  unmount();\n  act(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'a' })));\n  expect(result.current).toBe(false);\n});",
+  "solution": "import { useEffect, useState } from 'react';\n\nexport function useKeyPress(targetKey: string): boolean {\n  const [pressed, setPressed] = useState(false);\n\n  useEffect(() => {\n    const onDown = (e: KeyboardEvent) => { if (e.key === targetKey) setPressed(true); };\n    const onUp = (e: KeyboardEvent) => { if (e.key === targetKey) setPressed(false); };\n    window.addEventListener('keydown', onDown);\n    window.addEventListener('keyup', onUp);\n    return () => {\n      window.removeEventListener('keydown', onDown);\n      window.removeEventListener('keyup', onUp);\n    };\n  }, [targetKey]);\n\n  return pressed;\n}",
+  "ai_context": "A frequent mistake is not including targetKey in the dependency array, which means the closure captures the initial key and never updates if the prop changes.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "keyboard", "events"],
+  "order_index": 44
+}

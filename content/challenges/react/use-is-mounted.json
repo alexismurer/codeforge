@@ -1,0 +1,15 @@
+{
+  "slug": "use-is-mounted",
+  "title": "useIsMounted Hook",
+  "description": "Implement a `useIsMounted` hook that returns a stable getter function. Calling the getter returns `true` while the component is mounted and `false` after it unmounts. Use a ref — do NOT use state.\n\n**Example:**\n```tsx\nconst isMounted = useIsMounted();\nfetch('/api/data').then(res => {\n  if (isMounted()) setState(res);\n});\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect, useRef, useCallback } from 'react';\n\nexport function useIsMounted(): () => boolean {\n  // your code here\n}",
+  "test_suite": "test('returns a function', () => {\n  const { result } = renderHook(() => useIsMounted());\n  expect(typeof result.current).toBe('function');\n});\n\ntest('getter returns true while mounted', () => {\n  const { result } = renderHook(() => useIsMounted());\n  expect(result.current()).toBe(true);\n});\n\ntest('getter returns false after unmount', () => {\n  const { result, unmount } = renderHook(() => useIsMounted());\n  unmount();\n  expect(result.current()).toBe(false);\n});\n\n// __hidden__\ntest('getter stays stable across rerenders', () => {\n  const { result, rerender } = renderHook(() => useIsMounted());\n  const first = result.current;\n  rerender();\n  expect(result.current).toBe(first);\n});",
+  "solution": "import { useEffect, useRef, useCallback } from 'react';\n\nexport function useIsMounted(): () => boolean {\n  const mountedRef = useRef(false);\n\n  useEffect(() => {\n    mountedRef.current = true;\n    return () => { mountedRef.current = false; };\n  }, []);\n\n  return useCallback(() => mountedRef.current, []);\n}",
+  "ai_context": "A common mistake is using useState instead of useRef, which causes a re-render when the component unmounts — potentially triggering the 'cannot update state on unmounted component' warning.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "useRef", "lifecycle"],
+  "order_index": 31
+}

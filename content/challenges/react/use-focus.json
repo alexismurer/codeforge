@@ -1,0 +1,15 @@
+{
+  "slug": "use-focus",
+  "title": "useFocus Hook",
+  "description": "Implement a `useFocus` hook that returns a `[ref, isFocused]` tuple. Attach the ref to a focusable element and `isFocused` will be `true` while that element has focus.\n\n**Example:**\n```tsx\nconst [ref, isFocused] = useFocus();\nreturn <input ref={ref} placeholder={isFocused ? 'Typing...' : 'Click me'} />;\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect, useRef, useState } from 'react';\n\nexport function useFocus<T extends Element>(): [React.RefObject<T>, boolean] {\n  // your code here\n}",
+  "test_suite": "test('isFocused is false initially', () => {\n  const { result } = renderHook(() => useFocus());\n  expect(result.current[1]).toBe(false);\n});\n\ntest('isFocused is true after focus event', () => {\n  const { result } = renderHook(() => useFocus());\n  const input = document.createElement('input');\n  result.current[0].current = input;\n  act(() => input.dispatchEvent(new FocusEvent('focus')));\n  expect(result.current[1]).toBe(true);\n});\n\ntest('isFocused is false after blur event', () => {\n  const { result } = renderHook(() => useFocus());\n  const input = document.createElement('input');\n  result.current[0].current = input;\n  act(() => input.dispatchEvent(new FocusEvent('focus')));\n  act(() => input.dispatchEvent(new FocusEvent('blur')));\n  expect(result.current[1]).toBe(false);\n});\n\n// __hidden__\ntest('listener removed on unmount', () => {\n  const { result, unmount } = renderHook(() => useFocus());\n  const input = document.createElement('input');\n  result.current[0].current = input;\n  unmount();\n  act(() => input.dispatchEvent(new FocusEvent('focus')));\n  expect(result.current[1]).toBe(false);\n});",
+  "solution": "import { useEffect, useRef, useState } from 'react';\n\nexport function useFocus<T extends Element>(): [React.RefObject<T>, boolean] {\n  const ref = useRef<T>(null);\n  const [isFocused, setIsFocused] = useState(false);\n\n  useEffect(() => {\n    const el = ref.current;\n    if (!el) return;\n    const onFocus = () => setIsFocused(true);\n    const onBlur = () => setIsFocused(false);\n    el.addEventListener('focus', onFocus);\n    el.addEventListener('blur', onBlur);\n    return () => {\n      el.removeEventListener('focus', onFocus);\n      el.removeEventListener('blur', onBlur);\n    };\n  }, []);\n\n  return [ref, isFocused];\n}",
+  "ai_context": "Learners sometimes use `document.activeElement === ref.current` inside a polling effect instead of listening to focus/blur events directly on the element, which is brittle and inefficient.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "focus", "form"],
+  "order_index": 39
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "use-hover",
+  "title": "useHover Hook",
+  "description": "Implement a `useHover` hook that returns a `[ref, isHovered]` tuple. Attach the ref to any element and `isHovered` will be `true` while the pointer is over the element.\n\n**Example:**\n```tsx\nconst [ref, isHovered] = useHover();\nreturn <div ref={ref}>{isHovered ? 'Hovering!' : 'Hover me'}</div>;\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect, useRef, useState } from 'react';\n\nexport function useHover<T extends Element>(): [React.RefObject<T>, boolean] {\n  // your code here\n}",
+  "test_suite": "test('isHovered is false initially', () => {\n  const { result } = renderHook(() => useHover());\n  expect(result.current[1]).toBe(false);\n});\n\ntest('isHovered is true after mouseenter', () => {\n  const { result } = renderHook(() => useHover());\n  const div = document.createElement('div');\n  result.current[0].current = div;\n  act(() => div.dispatchEvent(new MouseEvent('mouseenter')));\n  expect(result.current[1]).toBe(true);\n});\n\ntest('isHovered is false after mouseleave', () => {\n  const { result } = renderHook(() => useHover());\n  const div = document.createElement('div');\n  result.current[0].current = div;\n  act(() => div.dispatchEvent(new MouseEvent('mouseenter')));\n  act(() => div.dispatchEvent(new MouseEvent('mouseleave')));\n  expect(result.current[1]).toBe(false);\n});\n\n// __hidden__\ntest('ref is a RefObject', () => {\n  const { result } = renderHook(() => useHover());\n  expect(result.current[0]).toHaveProperty('current');\n});",
+  "solution": "import { useEffect, useRef, useState } from 'react';\n\nexport function useHover<T extends Element>(): [React.RefObject<T>, boolean] {\n  const ref = useRef<T>(null);\n  const [isHovered, setIsHovered] = useState(false);\n\n  useEffect(() => {\n    const el = ref.current;\n    if (!el) return;\n    const enter = () => setIsHovered(true);\n    const leave = () => setIsHovered(false);\n    el.addEventListener('mouseenter', enter);\n    el.addEventListener('mouseleave', leave);\n    return () => {\n      el.removeEventListener('mouseenter', enter);\n      el.removeEventListener('mouseleave', leave);\n    };\n  }, []);\n\n  return [ref, isHovered];\n}",
+  "ai_context": "Learners sometimes try to observe the ref in the dependency array, but ref.current is mutable and doesn't trigger re-runs. The listeners should be attached after mount when ref.current is available.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "hover", "mouse-events"],
+  "order_index": 38
+}

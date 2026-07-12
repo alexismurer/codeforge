@@ -1,0 +1,15 @@
+{
+  "slug": "use-throttle-fn",
+  "title": "useThrottleFn Hook",
+  "description": "Implement a `useThrottleFn` hook that returns a throttled version of `fn`. The throttled function fires immediately on the first call and ignores subsequent calls within the `limit` ms window.\n\n**Example:**\n```tsx\nconst throttledScroll = useThrottleFn(handleScroll, 100);\nwindow.addEventListener('scroll', throttledScroll);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useCallback, useRef } from 'react';\n\nexport function useThrottleFn<T extends unknown[]>(\n  fn: (...args: T) => void,\n  limit: number\n): (...args: T) => void {\n  // your code here\n}",
+  "test_suite": "test('fires immediately on first call', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const { result } = renderHook(() => useThrottleFn(fn, 200));\n  act(() => result.current());\n  expect(fn).toHaveBeenCalledTimes(1);\n  vi.useRealTimers();\n});\n\ntest('ignores calls within the limit window', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const { result } = renderHook(() => useThrottleFn(fn, 200));\n  act(() => result.current());\n  act(() => result.current());\n  act(() => result.current());\n  expect(fn).toHaveBeenCalledTimes(1);\n  vi.useRealTimers();\n});\n\ntest('fires again after limit window expires', () => {\n  vi.useFakeTimers();\n  const fn = vi.fn();\n  const { result } = renderHook(() => useThrottleFn(fn, 200));\n  act(() => result.current());\n  vi.advanceTimersByTime(200);\n  act(() => result.current());\n  expect(fn).toHaveBeenCalledTimes(2);\n  vi.useRealTimers();\n});\n\n// __hidden__\ntest('always uses latest fn reference', () => {\n  vi.useFakeTimers();\n  let val = '';\n  const { rerender, result } = renderHook(({ f }) => useThrottleFn(f, 200), {\n    initialProps: { f: () => { val = 'old'; } }\n  });\n  rerender({ f: () => { val = 'new'; } });\n  vi.advanceTimersByTime(200);\n  act(() => result.current());\n  expect(val).toBe('new');\n  vi.useRealTimers();\n});",
+  "solution": "import { useCallback, useRef } from 'react';\n\nexport function useThrottleFn<T extends unknown[]>(\n  fn: (...args: T) => void,\n  limit: number\n): (...args: T) => void {\n  const savedFn = useRef(fn);\n  savedFn.current = fn;\n  const lastRun = useRef<number>(0);\n\n  return useCallback((...args: T) => {\n    const now = Date.now();\n    if (now - lastRun.current >= limit) {\n      lastRun.current = now;\n      savedFn.current(...args);\n    }\n  }, [limit]);\n}",
+  "ai_context": "Learners often confuse throttle with debounce — throttle fires immediately and drops calls within the window, while debounce delays and resets. Using Date.now() timestamps is simpler and more reliable than setTimeout for throttle.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useCallback", "throttle", "performance"],
+  "order_index": 48
+}

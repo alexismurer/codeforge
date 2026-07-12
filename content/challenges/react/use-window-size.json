@@ -1,0 +1,15 @@
+{
+  "slug": "use-window-size",
+  "title": "useWindowSize Hook",
+  "description": "Implement a `useWindowSize` hook that returns the current `{ width, height }` of the browser window and updates the values whenever a `resize` event fires.\n\n**Example:**\n```tsx\nconst { width, height } = useWindowSize();\nreturn <p>{width} x {height}</p>;\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect, useState } from 'react';\n\nexport function useWindowSize(): { width: number; height: number } {\n  // your code here\n}",
+  "test_suite": "test('returns numeric width and height', () => {\n  const { result } = renderHook(() => useWindowSize());\n  expect(typeof result.current.width).toBe('number');\n  expect(typeof result.current.height).toBe('number');\n});\n\ntest('updates when resize event fires', () => {\n  const { result } = renderHook(() => useWindowSize());\n  act(() => {\n    Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 1024 });\n    Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 768 });\n    window.dispatchEvent(new Event('resize'));\n  });\n  expect(result.current.width).toBe(1024);\n  expect(result.current.height).toBe(768);\n});\n\ntest('removes resize listener on unmount', () => {\n  const spy = vi.spyOn(window, 'removeEventListener');\n  const { unmount } = renderHook(() => useWindowSize());\n  unmount();\n  expect(spy).toHaveBeenCalledWith('resize', expect.any(Function));\n  spy.mockRestore();\n});\n\n// __hidden__\ntest('initial values match window dimensions', () => {\n  Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 800 });\n  Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 600 });\n  const { result } = renderHook(() => useWindowSize());\n  expect(result.current.width).toBe(800);\n  expect(result.current.height).toBe(600);\n});",
+  "solution": "import { useEffect, useState } from 'react';\n\nexport function useWindowSize(): { width: number; height: number } {\n  const [size, setSize] = useState({ width: window.innerWidth, height: window.innerHeight });\n\n  useEffect(() => {\n    const handler = () => setSize({ width: window.innerWidth, height: window.innerHeight });\n    window.addEventListener('resize', handler);\n    return () => window.removeEventListener('resize', handler);\n  }, []);\n\n  return size;\n}",
+  "ai_context": "Learners sometimes initialise state with { width: 0, height: 0 } and forget to sync on mount, causing a flash of wrong dimensions before the first resize fires.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "window", "resize"],
+  "order_index": 30
+}

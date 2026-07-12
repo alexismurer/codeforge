@@ -1,0 +1,15 @@
+{
+  "slug": "use-previous",
+  "title": "usePrevious Hook",
+  "description": "Implement a `usePrevious` hook that returns the value from the **previous** render. On the first render it returns `undefined`.\n\n**Example:**\n```tsx\nconst prev = usePrevious(count);\n// first render: undefined\n// after count changes from 0 → 1: prev is 0\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect, useRef } from 'react';\n\nexport function usePrevious<T>(value: T): T | undefined {\n  // your code here\n}",
+  "test_suite": "test('returns undefined on first render', () => {\n  const { result } = renderHook(() => usePrevious(42));\n  expect(result.current).toBeUndefined();\n});\n\ntest('returns previous value after rerender', () => {\n  const { result, rerender } = renderHook(({ v }) => usePrevious(v), { initialProps: { v: 1 } });\n  rerender({ v: 2 });\n  expect(result.current).toBe(1);\n});\n\ntest('updates correctly over multiple rerenders', () => {\n  const { result, rerender } = renderHook(({ v }) => usePrevious(v), { initialProps: { v: 'a' } });\n  rerender({ v: 'b' });\n  rerender({ v: 'c' });\n  expect(result.current).toBe('b');\n});\n\n// __hidden__\ntest('works with object values', () => {\n  const obj1 = { x: 1 };\n  const obj2 = { x: 2 };\n  const { result, rerender } = renderHook(({ v }) => usePrevious(v), { initialProps: { v: obj1 } });\n  rerender({ v: obj2 });\n  expect(result.current).toBe(obj1);\n});",
+  "solution": "import { useEffect, useRef } from 'react';\n\nexport function usePrevious<T>(value: T): T | undefined {\n  const ref = useRef<T | undefined>(undefined);\n  useEffect(() => {\n    ref.current = value;\n  });\n  return ref.current;\n}",
+  "ai_context": "Learners often update the ref synchronously instead of inside useEffect, which means ref.current holds the current value rather than the previous one when the component renders.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "useRef", "previous-value"],
+  "order_index": 32
+}

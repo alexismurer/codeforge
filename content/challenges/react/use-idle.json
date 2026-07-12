@@ -1,0 +1,15 @@
+{
+  "slug": "use-idle",
+  "title": "useIdle Hook",
+  "description": "Implement a `useIdle` hook that returns `true` when the user has been inactive for `timeout` ms, and resets to `false` when they interact again. Listen to `mousemove`, `keydown`, `mousedown`, and `touchstart` events on the document.\n\n**Example:**\n```tsx\nconst isIdle = useIdle(30_000);\nif (isIdle) lockScreen();\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect, useState, useRef } from 'react';\n\nexport function useIdle(timeout: number): boolean {\n  // your code here\n}",
+  "test_suite": "test('returns false initially', () => {\n  vi.useFakeTimers();\n  const { result } = renderHook(() => useIdle(1000));\n  expect(result.current).toBe(false);\n  vi.useRealTimers();\n});\n\ntest('returns true after timeout with no activity', () => {\n  vi.useFakeTimers();\n  const { result } = renderHook(() => useIdle(1000));\n  act(() => vi.advanceTimersByTime(1000));\n  expect(result.current).toBe(true);\n  vi.useRealTimers();\n});\n\ntest('resets to false on mousemove', () => {\n  vi.useFakeTimers();\n  const { result } = renderHook(() => useIdle(1000));\n  act(() => vi.advanceTimersByTime(1000));\n  expect(result.current).toBe(true);\n  act(() => document.dispatchEvent(new MouseEvent('mousemove')));\n  expect(result.current).toBe(false);\n  vi.useRealTimers();\n});\n\ntest('resets to false on keydown', () => {\n  vi.useFakeTimers();\n  const { result } = renderHook(() => useIdle(1000));\n  act(() => vi.advanceTimersByTime(1000));\n  act(() => document.dispatchEvent(new KeyboardEvent('keydown')));\n  expect(result.current).toBe(false);\n  vi.useRealTimers();\n});\n\n// __hidden__\ntest('removes listeners on unmount', () => {\n  vi.useFakeTimers();\n  const spy = vi.spyOn(document, 'removeEventListener');\n  const { unmount } = renderHook(() => useIdle(1000));\n  unmount();\n  expect(spy).toHaveBeenCalled();\n  spy.mockRestore();\n  vi.useRealTimers();\n});",
+  "solution": "import { useEffect, useState, useRef, useCallback } from 'react';\n\nexport function useIdle(timeout: number): boolean {\n  const [idle, setIdle] = useState(false);\n  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);\n\n  const reset = useCallback(() => {\n    setIdle(false);\n    if (timerRef.current) clearTimeout(timerRef.current);\n    timerRef.current = setTimeout(() => setIdle(true), timeout);\n  }, [timeout]);\n\n  useEffect(() => {\n    const events = ['mousemove', 'keydown', 'mousedown', 'touchstart'];\n    events.forEach(e => document.addEventListener(e, reset));\n    reset();\n    return () => {\n      events.forEach(e => document.removeEventListener(e, reset));\n      if (timerRef.current) clearTimeout(timerRef.current);\n    };\n  }, [reset]);\n\n  return idle;\n}",
+  "ai_context": "Learners often forget to start the idle timer on mount (before any user activity), so the hook only becomes idle after the user has interacted at least once.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "idle", "activity", "timers"],
+  "order_index": 50
+}

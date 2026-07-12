@@ -1,0 +1,15 @@
+{
+  "slug": "use-is-first-render",
+  "title": "useIsFirstRender Hook",
+  "description": "Implement a `useIsFirstRender` hook that returns `true` on the very first render and `false` on every subsequent render. Use a ref — do NOT use state (state would trigger an extra render).\n\n**Example:**\n```tsx\nconst isFirstRender = useIsFirstRender();\nif (!isFirstRender) trackPageView();\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useRef, useEffect } from 'react';\n\nexport function useIsFirstRender(): boolean {\n  // your code here\n}",
+  "test_suite": "test('returns true on first render', () => {\n  const { result } = renderHook(() => useIsFirstRender());\n  expect(result.current).toBe(true);\n});\n\ntest('returns false on second render', () => {\n  const { result, rerender } = renderHook(() => useIsFirstRender());\n  rerender();\n  expect(result.current).toBe(false);\n});\n\ntest('returns false on every subsequent render', () => {\n  const { result, rerender } = renderHook(() => useIsFirstRender());\n  rerender();\n  rerender();\n  rerender();\n  expect(result.current).toBe(false);\n});\n\n// __hidden__\ntest('independent instances do not share state', () => {\n  const { result: r1 } = renderHook(() => useIsFirstRender());\n  const { result: r2, rerender: rerender2 } = renderHook(() => useIsFirstRender());\n  rerender2();\n  expect(r1.current).toBe(true);\n  expect(r2.current).toBe(false);\n});",
+  "solution": "import { useRef } from 'react';\n\nexport function useIsFirstRender(): boolean {\n  const isFirst = useRef(true);\n  if (isFirst.current) {\n    isFirst.current = false;\n    return true;\n  }\n  return false;\n}",
+  "ai_context": "Learners often use useState(true) and an effect to flip it false, which causes an extra render cycle. Using a ref and reading/writing it synchronously during render is the correct pattern here.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useRef", "lifecycle", "first-render"],
+  "order_index": 46
+}

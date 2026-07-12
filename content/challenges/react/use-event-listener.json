@@ -1,0 +1,15 @@
+{
+  "slug": "use-event-listener",
+  "title": "useEventListener Hook",
+  "description": "Implement a `useEventListener` hook that attaches an event listener to a target element (defaulting to `window`) and removes it on unmount. The handler should always reflect the latest function reference without re-subscribing.\n\n**Example:**\n```tsx\nuseEventListener('keydown', (e) => console.log(e.key));\nuseEventListener('click', handler, buttonRef);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect, useRef } from 'react';\n\nexport function useEventListener(\n  eventName: string,\n  handler: (event: Event) => void,\n  element?: React.RefObject<Element> | null\n): void {\n  // your code here\n}",
+  "test_suite": "test('handler fires when event is dispatched on window', () => {\n  const handler = vi.fn();\n  renderHook(() => useEventListener('click', handler));\n  act(() => window.dispatchEvent(new MouseEvent('click')));\n  expect(handler).toHaveBeenCalledTimes(1);\n});\n\ntest('listener is removed on unmount', () => {\n  const handler = vi.fn();\n  const { unmount } = renderHook(() => useEventListener('click', handler));\n  unmount();\n  act(() => window.dispatchEvent(new MouseEvent('click')));\n  expect(handler).not.toHaveBeenCalled();\n});\n\ntest('uses latest handler without re-subscribing', () => {\n  let calls = 0;\n  const h1 = () => { calls += 1; };\n  const h2 = () => { calls += 10; };\n  const { rerender } = renderHook(({ h }) => useEventListener('click', h), { initialProps: { h: h1 } });\n  rerender({ h: h2 });\n  act(() => window.dispatchEvent(new MouseEvent('click')));\n  expect(calls).toBe(10);\n});\n\n// __hidden__\ntest('attaches to ref element when provided', () => {\n  const div = document.createElement('div');\n  const ref = { current: div };\n  const handler = vi.fn();\n  renderHook(() => useEventListener('click', handler, ref));\n  act(() => div.dispatchEvent(new MouseEvent('click', { bubbles: false })));\n  expect(handler).toHaveBeenCalledTimes(1);\n});",
+  "solution": "import { useEffect, useRef } from 'react';\n\nexport function useEventListener(\n  eventName: string,\n  handler: (event: Event) => void,\n  element?: React.RefObject<Element> | null\n): void {\n  const savedHandler = useRef(handler);\n  useEffect(() => { savedHandler.current = handler; });\n\n  useEffect(() => {\n    const target = element?.current ?? window;\n    if (!target?.addEventListener) return;\n    const listener = (event: Event) => savedHandler.current(event);\n    target.addEventListener(eventName, listener);\n    return () => target.removeEventListener(eventName, listener);\n  }, [eventName, element]);\n}",
+  "ai_context": "Learners often put handler directly in the dependency array, causing the listener to be torn down and re-added on every render when handler is an inline function. Storing handler in a ref avoids this churn.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "events", "addEventListener"],
+  "order_index": 29
+}

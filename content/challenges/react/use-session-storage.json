@@ -1,0 +1,15 @@
+{
+  "slug": "use-session-storage",
+  "title": "useSessionStorage Hook",
+  "description": "Implement a `useSessionStorage` hook that mirrors `useState` but persists the value in `sessionStorage` under the given key. If a value already exists in `sessionStorage` for that key, use it as the initial state instead of `initialValue`.\n\n**Example:**\n```tsx\nconst [theme, setTheme] = useSessionStorage('theme', 'light');\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useState, useEffect } from 'react';\n\nexport function useSessionStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {\n  // your code here\n}",
+  "test_suite": "test('uses initialValue when key is absent', () => {\n  sessionStorage.clear();\n  const { result } = renderHook(() => useSessionStorage('x', 'default'));\n  expect(result.current[0]).toBe('default');\n});\n\ntest('reads existing value from sessionStorage', () => {\n  sessionStorage.setItem('y', JSON.stringify('stored'));\n  const { result } = renderHook(() => useSessionStorage('y', 'default'));\n  expect(result.current[0]).toBe('stored');\n});\n\ntest('writes to sessionStorage on set', () => {\n  sessionStorage.clear();\n  const { result } = renderHook(() => useSessionStorage('z', 0));\n  act(() => result.current[1](99));\n  expect(JSON.parse(sessionStorage.getItem('z')!)).toBe(99);\n});\n\ntest('returns updated value after set', () => {\n  sessionStorage.clear();\n  const { result } = renderHook(() => useSessionStorage('w', 'a'));\n  act(() => result.current[1]('b'));\n  expect(result.current[0]).toBe('b');\n});\n\n// __hidden__\ntest('handles object values', () => {\n  sessionStorage.clear();\n  const { result } = renderHook(() => useSessionStorage('obj', { count: 0 }));\n  act(() => result.current[1]({ count: 5 }));\n  expect(result.current[0]).toEqual({ count: 5 });\n  expect(JSON.parse(sessionStorage.getItem('obj')!)).toEqual({ count: 5 });\n});",
+  "solution": "import { useState, useEffect } from 'react';\n\nexport function useSessionStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {\n  const [storedValue, setStoredValue] = useState<T>(() => {\n    try {\n      const item = sessionStorage.getItem(key);\n      return item !== null ? JSON.parse(item) : initialValue;\n    } catch {\n      return initialValue;\n    }\n  });\n\n  const setValue = (value: T) => {\n    setStoredValue(value);\n    sessionStorage.setItem(key, JSON.stringify(value));\n  };\n\n  return [storedValue, setValue];\n}",
+  "ai_context": "Learners often initialise state eagerly (not lazily), running sessionStorage.getItem on every render. Passing an initialiser function to useState ensures the storage read happens only once.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "storage", "sessionStorage", "persistence"],
+  "order_index": 36
+}

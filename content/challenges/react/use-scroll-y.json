@@ -1,0 +1,15 @@
+{
+  "slug": "use-scroll-y",
+  "title": "useScrollY Hook",
+  "description": "Implement a `useScrollY` hook that returns the current vertical scroll position (`window.scrollY`) and updates it whenever the user scrolls.\n\n**Example:**\n```tsx\nconst scrollY = useScrollY();\nreturn <header className={scrollY > 50 ? 'sticky' : ''}>...</header>;\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect, useState } from 'react';\n\nexport function useScrollY(): number {\n  // your code here\n}",
+  "test_suite": "test('returns a number', () => {\n  const { result } = renderHook(() => useScrollY());\n  expect(typeof result.current).toBe('number');\n});\n\ntest('returns 0 when scrollY is 0', () => {\n  Object.defineProperty(window, 'scrollY', { writable: true, configurable: true, value: 0 });\n  const { result } = renderHook(() => useScrollY());\n  expect(result.current).toBe(0);\n});\n\ntest('updates when scroll event fires', () => {\n  Object.defineProperty(window, 'scrollY', { writable: true, configurable: true, value: 0 });\n  const { result } = renderHook(() => useScrollY());\n  act(() => {\n    Object.defineProperty(window, 'scrollY', { writable: true, configurable: true, value: 250 });\n    window.dispatchEvent(new Event('scroll'));\n  });\n  expect(result.current).toBe(250);\n});\n\n// __hidden__\ntest('removes scroll listener on unmount', () => {\n  const spy = vi.spyOn(window, 'removeEventListener');\n  const { unmount } = renderHook(() => useScrollY());\n  unmount();\n  expect(spy).toHaveBeenCalledWith('scroll', expect.any(Function));\n  spy.mockRestore();\n});",
+  "solution": "import { useEffect, useState } from 'react';\n\nexport function useScrollY(): number {\n  const [scrollY, setScrollY] = useState(window.scrollY);\n\n  useEffect(() => {\n    const handler = () => setScrollY(window.scrollY);\n    window.addEventListener('scroll', handler);\n    return () => window.removeEventListener('scroll', handler);\n  }, []);\n\n  return scrollY;\n}",
+  "ai_context": "Learners frequently forget to read the initial scrollY value on mount, so the hook starts at 0 even if the page is already scrolled when the component appears.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "scroll", "window"],
+  "order_index": 40
+}

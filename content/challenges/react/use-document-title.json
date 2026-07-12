@@ -1,0 +1,15 @@
+{
+  "slug": "use-document-title",
+  "title": "useDocumentTitle Hook",
+  "description": "Implement a `useDocumentTitle` hook that sets `document.title` to the given string after each render where `title` changes.\n\n**Example:**\n```tsx\nuseDocumentTitle(`${user.name} — Code Forge`);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "import { useEffect } from 'react';\n\nexport function useDocumentTitle(title: string): void {\n  // your code here\n}",
+  "test_suite": "test('sets document.title on mount', () => {\n  renderHook(() => useDocumentTitle('Hello'));\n  expect(document.title).toBe('Hello');\n});\n\ntest('updates document.title when title changes', () => {\n  const { rerender } = renderHook(({ t }) => useDocumentTitle(t), { initialProps: { t: 'First' } });\n  rerender({ t: 'Second' });\n  expect(document.title).toBe('Second');\n});\n\ntest('does not update if title is unchanged', () => {\n  let calls = 0;\n  const desc = Object.getOwnPropertyDescriptor(document, 'title');\n  Object.defineProperty(document, 'title', {\n    get: () => 'Same',\n    set: () => { calls++; },\n    configurable: true\n  });\n  const { rerender } = renderHook(({ t }) => useDocumentTitle(t), { initialProps: { t: 'Same' } });\n  const afterMount = calls;\n  rerender({ t: 'Same' });\n  expect(calls).toBe(afterMount);\n  if (desc) Object.defineProperty(document, 'title', desc);\n});\n\n// __hidden__\ntest('title reflects the latest value after multiple rerenders', () => {\n  const { rerender } = renderHook(({ t }) => useDocumentTitle(t), { initialProps: { t: 'A' } });\n  rerender({ t: 'B' });\n  rerender({ t: 'C' });\n  expect(document.title).toBe('C');\n});",
+  "solution": "import { useEffect } from 'react';\n\nexport function useDocumentTitle(title: string): void {\n  useEffect(() => {\n    document.title = title;\n  }, [title]);\n}",
+  "ai_context": "This is intentionally simple — the challenge teaches that useEffect with a dependency array is the correct pattern for synchronising a React value with an external system (the document title), not for data fetching.",
+  "xp_reward": 100,
+  "tags": ["hooks", "useEffect", "document", "title"],
+  "order_index": 42
+}
