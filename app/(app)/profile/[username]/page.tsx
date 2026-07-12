@@ -1,11 +1,12 @@
-export default function ProfilePage({
+export default async function ProfilePage({
   params,
 }: {
-  params: { username: string }
+  params: Promise<{ username: string }>
 }) {
+  const { username } = await params
   return (
     <div className="p-8 text-zinc-400">
-      Profile for @{params.username} — coming in Plan 4
+      Profile for @{username} — coming in Plan 4
     </div>
   )
 }
