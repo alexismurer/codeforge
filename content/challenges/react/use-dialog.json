@@ -1,0 +1,15 @@
+{
+  "slug": "use-dialog",
+  "title": "useDialog",
+  "description": "Implement `useDialog` — a hook that controls a native `<dialog>` element using its `showModal()` and `close()` methods, tracking open state.\n\n**Example:**\n```tsx\nconst { ref, open, close, isOpen } = useDialog();\nreturn (\n  <>\n    <button onClick={open}>Open</button>\n    <dialog ref={ref}>\n      <button onClick={close}>Close</button>\n    </dialog>\n  </>\n);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "import { useRef, useState, useCallback } from 'react';\n\nexport function useDialog() {\n  // your code here\n  // return { ref, open, close, isOpen }\n}",
+  "test_suite": "test('isOpen starts as false', () => {\n  const { result } = renderHook(() => useDialog());\n  expect(result.current.isOpen).toBe(false);\n});\n\ntest('open() calls showModal and sets isOpen true', () => {\n  const { result } = renderHook(() => useDialog());\n  const dialogEl = { showModal: vi.fn(), close: vi.fn() } as any;\n  result.current.ref.current = dialogEl;\n  act(() => result.current.open());\n  expect(dialogEl.showModal).toHaveBeenCalled();\n  expect(result.current.isOpen).toBe(true);\n});\n\ntest('close() calls close and sets isOpen false', () => {\n  const { result } = renderHook(() => useDialog());\n  const dialogEl = { showModal: vi.fn(), close: vi.fn() } as any;\n  result.current.ref.current = dialogEl;\n  act(() => result.current.open());\n  act(() => result.current.close());\n  expect(dialogEl.close).toHaveBeenCalled();\n  expect(result.current.isOpen).toBe(false);\n});\n\ntest('returns ref object', () => {\n  const { result } = renderHook(() => useDialog());\n  expect(result.current.ref).toBeDefined();\n  expect('current' in result.current.ref).toBe(true);\n});\n\n// __hidden__\ntest('open() does nothing if ref is not set', () => {\n  const { result } = renderHook(() => useDialog());\n  expect(() => act(() => result.current.open())).not.toThrow();\n  expect(result.current.isOpen).toBe(false);\n});",
+  "solution": "import { useRef, useState, useCallback } from 'react';\n\nexport function useDialog() {\n  const ref = useRef<HTMLDialogElement>(null);\n  const [isOpen, setIsOpen] = useState(false);\n\n  const open = useCallback(() => {\n    if (ref.current) {\n      ref.current.showModal();\n      setIsOpen(true);\n    }\n  }, []);\n\n  const close = useCallback(() => {\n    if (ref.current) {\n      ref.current.close();\n      setIsOpen(false);\n    }\n  }, []);\n\n  return { ref, open, close, isOpen };\n}",
+  "ai_context": "Common mistake: tracking isOpen with a useEffect that listens for 'close' events on the dialog, then getting out of sync when the user presses Escape. The robust solution also listens for the native 'close' event to sync isOpen back to false when the dialog is dismissed without calling your close() function.",
+  "xp_reward": 300,
+  "tags": ["hooks", "useRef", "useState", "useCallback", "DOM"],
+  "order_index": 81
+}

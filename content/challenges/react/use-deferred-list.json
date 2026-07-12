@@ -1,0 +1,15 @@
+{
+  "slug": "use-deferred-list",
+  "title": "useDeferredList",
+  "description": "Implement `useDeferredList` — a hook that wraps `useDeferredValue` to provide a deferred version of a list and a staleness flag. Useful for rendering large lists without blocking user interactions.\n\n**Example:**\n```tsx\nconst { deferredItems, isStale } = useDeferredList(expensiveItems);\n// isStale is true while React is preparing the deferred render\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "import { useDeferredValue } from 'react';\n\nexport function useDeferredList<T>(items: T[]) {\n  // your code here\n  // return { deferredItems, isStale }\n}",
+  "test_suite": "test('initially returns items and isStale false', () => {\n  const items = [1, 2, 3];\n  const { result } = renderHook(() => useDeferredList(items));\n  expect(result.current.deferredItems).toEqual([1, 2, 3]);\n  expect(result.current.isStale).toBe(false);\n});\n\ntest('deferredItems eventually matches items', () => {\n  const { result, rerender } = renderHook(\n    ({ items }) => useDeferredList(items),\n    { initialProps: { items: [1, 2, 3] } }\n  );\n  rerender({ items: [4, 5, 6] });\n  expect(result.current.deferredItems).toBeDefined();\n});\n\ntest('isStale is boolean', () => {\n  const { result } = renderHook(() => useDeferredList([1, 2]));\n  expect(typeof result.current.isStale).toBe('boolean');\n});\n\ntest('returns empty array for empty input', () => {\n  const { result } = renderHook(() => useDeferredList([]));\n  expect(result.current.deferredItems).toEqual([]);\n});\n\n// __hidden__\ntest('deferredItems is the deferred version of items', () => {\n  const items = ['a', 'b', 'c'];\n  const { result } = renderHook(() => useDeferredList(items));\n  expect(Array.isArray(result.current.deferredItems)).toBe(true);\n  expect(result.current.deferredItems.length).toBe(3);\n});",
+  "solution": "import { useDeferredValue } from 'react';\n\nexport function useDeferredList<T>(items: T[]) {\n  const deferredItems = useDeferredValue(items);\n  const isStale = deferredItems !== items;\n  return { deferredItems, isStale };\n}",
+  "ai_context": "Common mistake: computing isStale with a deep comparison instead of referential equality (===). React's useDeferredValue returns the same reference when up to date and the old reference while deferred — referential equality is the correct and cheap staleness check.",
+  "xp_reward": 300,
+  "tags": ["hooks", "useDeferredValue", "concurrency", "performance"],
+  "order_index": 78
+}

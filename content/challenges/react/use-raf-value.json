@@ -1,0 +1,15 @@
+{
+  "slug": "use-raf-value",
+  "title": "useRafValue",
+  "description": "Implement `useRafValue` — a hook that animates a value from 0 to 1 over a given duration using `requestAnimationFrame`. Returns controls to start and reset the animation.\n\n**Example:**\n```tsx\nconst { value, start, reset, isRunning } = useRafValue(500);\n// value goes from 0 to 1 over 500ms after start() is called\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "import { useState, useRef, useCallback } from 'react';\n\nexport function useRafValue(duration: number) {\n  // your code here\n  // return { value, start, reset, isRunning }\n}",
+  "test_suite": "test('initial value is 0', () => {\n  const { result } = renderHook(() => useRafValue(500));\n  expect(result.current.value).toBe(0);\n});\n\ntest('isRunning starts false', () => {\n  const { result } = renderHook(() => useRafValue(500));\n  expect(result.current.isRunning).toBe(false);\n});\n\ntest('reset() sets value back to 0', () => {\n  const { result } = renderHook(() => useRafValue(500));\n  act(() => result.current.start());\n  act(() => result.current.reset());\n  expect(result.current.value).toBe(0);\n  expect(result.current.isRunning).toBe(false);\n});\n\ntest('start() sets isRunning to true', () => {\n  const { result } = renderHook(() => useRafValue(1000));\n  act(() => result.current.start());\n  expect(result.current.isRunning).toBe(true);\n});\n\n// __hidden__\ntest('value is between 0 and 1', () => {\n  const { result } = renderHook(() => useRafValue(100));\n  expect(result.current.value).toBeGreaterThanOrEqual(0);\n  expect(result.current.value).toBeLessThanOrEqual(1);\n});",
+  "solution": "import { useState, useRef, useCallback } from 'react';\n\nexport function useRafValue(duration: number) {\n  const [value, setValue] = useState(0);\n  const [isRunning, setIsRunning] = useState(false);\n  const startTime = useRef<number | null>(null);\n  const rafId = useRef<number>(0);\n\n  const start = useCallback(() => {\n    setIsRunning(true);\n    startTime.current = null;\n    const animate = (now: number) => {\n      if (startTime.current === null) startTime.current = now;\n      const elapsed = now - startTime.current;\n      const progress = Math.min(elapsed / duration, 1);\n      setValue(progress);\n      if (progress < 1) {\n        rafId.current = requestAnimationFrame(animate);\n      } else {\n        setIsRunning(false);\n      }\n    };\n    rafId.current = requestAnimationFrame(animate);\n  }, [duration]);\n\n  const reset = useCallback(() => {\n    cancelAnimationFrame(rafId.current);\n    startTime.current = null;\n    setValue(0);\n    setIsRunning(false);\n  }, []);\n\n  return { value, start, reset, isRunning };\n}",
+  "ai_context": "Common mistake: using Date.now() for timing instead of the rAF timestamp argument. The rAF timestamp is synchronized to the display refresh rate and accounts for tab visibility pauses, while Date.now() can drift and cause animations to skip or overshoot.",
+  "xp_reward": 300,
+  "tags": ["hooks", "useState", "useRef", "useCallback", "animation", "rAF"],
+  "order_index": 87
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "use-sync-store",
+  "title": "useSyncStore",
+  "description": "Implement `useSyncStore` — a hook that wraps `useSyncExternalStore` to subscribe to any external store that exposes `subscribe` and `getSnapshot` methods.\n\n**Example:**\n```tsx\nconst value = useSyncStore({\n  subscribe: (cb) => { window.addEventListener('online', cb); return () => window.removeEventListener('online', cb); },\n  getSnapshot: () => navigator.onLine,\n});\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "import { useSyncExternalStore } from 'react';\n\ninterface Store<T> {\n  subscribe: (callback: () => void) => () => void;\n  getSnapshot: () => T;\n}\n\nexport function useSyncStore<T>(store: Store<T>): T {\n  // your code here\n}",
+  "test_suite": "function createStore<T>(initial: T) {\n  let value = initial;\n  const listeners = new Set<() => void>();\n  return {\n    subscribe: (cb: () => void) => { listeners.add(cb); return () => listeners.delete(cb); },\n    getSnapshot: () => value,\n    set: (next: T) => { value = next; listeners.forEach(cb => cb()); },\n  };\n}\n\ntest('returns initial snapshot value', () => {\n  const store = createStore(42);\n  const { result } = renderHook(() => useSyncStore(store));\n  expect(result.current).toBe(42);\n});\n\ntest('re-renders when store notifies', () => {\n  const store = createStore(0);\n  const { result } = renderHook(() => useSyncStore(store));\n  act(() => store.set(99));\n  expect(result.current).toBe(99);\n});\n\ntest('works with string values', () => {\n  const store = createStore('hello');\n  const { result } = renderHook(() => useSyncStore(store));\n  act(() => store.set('world'));\n  expect(result.current).toBe('world');\n});\n\ntest('returns correct value after multiple updates', () => {\n  const store = createStore(0);\n  const { result } = renderHook(() => useSyncStore(store));\n  act(() => store.set(1));\n  act(() => store.set(2));\n  act(() => store.set(3));\n  expect(result.current).toBe(3);\n});\n\n// __hidden__\ntest('cleans up subscription on unmount', () => {\n  const listeners = new Set<() => void>();\n  const store = {\n    subscribe: vi.fn((cb: () => void) => { listeners.add(cb); return () => listeners.delete(cb); }),\n    getSnapshot: () => 1,\n  };\n  const { unmount } = renderHook(() => useSyncStore(store));\n  expect(listeners.size).toBe(1);\n  unmount();\n  expect(listeners.size).toBe(0);\n});",
+  "solution": "import { useSyncExternalStore } from 'react';\n\ninterface Store<T> {\n  subscribe: (callback: () => void) => () => void;\n  getSnapshot: () => T;\n}\n\nexport function useSyncStore<T>(store: Store<T>): T {\n  return useSyncExternalStore(store.subscribe, store.getSnapshot);\n}",
+  "ai_context": "Common mistake: implementing the subscription manually with useState + useEffect instead of using useSyncExternalStore, which handles tearing prevention, concurrent mode safety, and proper cleanup automatically.",
+  "xp_reward": 300,
+  "tags": ["hooks", "useSyncExternalStore", "external-store", "concurrency"],
+  "order_index": 79
+}

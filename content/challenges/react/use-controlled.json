@@ -1,0 +1,15 @@
+{
+  "slug": "use-controlled",
+  "title": "useControlled",
+  "description": "Implement `useControlled` — a hook that bridges controlled and uncontrolled component patterns. Uses the `controlled` value when provided, otherwise manages its own internal state.\n\n**Example:**\n```tsx\n// Controlled: parent drives value\nconst [value, setValue] = useControlled({ controlled: props.value, default: '' });\n// Uncontrolled: internal state\nconst [value, setValue] = useControlled({ controlled: undefined, default: '' });\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "import { useState, useCallback } from 'react';\n\nexport function useControlled<T>({\n  controlled,\n  default: defaultValue,\n}: {\n  controlled?: T;\n  default: T;\n}): [T, (v: T) => void] {\n  // your code here\n}",
+  "test_suite": "test('uses controlled value when provided', () => {\n  const [value] = renderHook(() =>\n    useControlled({ controlled: 'external', default: 'internal' })\n  ).result.current;\n  expect(value).toBe('external');\n});\n\ntest('uses default when controlled is undefined', () => {\n  const [value] = renderHook(() =>\n    useControlled({ controlled: undefined, default: 'fallback' })\n  ).result.current;\n  expect(value).toBe('fallback');\n});\n\ntest('uncontrolled setter updates internal state', () => {\n  const { result } = renderHook(() =>\n    useControlled({ controlled: undefined, default: 0 })\n  );\n  act(() => result.current[1](99));\n  expect(result.current[0]).toBe(99);\n});\n\ntest('controlled value updates when prop changes', () => {\n  const { result, rerender } = renderHook(\n    ({ v }) => useControlled({ controlled: v, default: 'x' }),\n    { initialProps: { v: 'a' as string } }\n  );\n  rerender({ v: 'b' });\n  expect(result.current[0]).toBe('b');\n});\n\n// __hidden__\ntest('setter is a function', () => {\n  const [, setter] = renderHook(() =>\n    useControlled({ controlled: undefined, default: '' })\n  ).result.current;\n  expect(typeof setter).toBe('function');\n});",
+  "solution": "import { useState, useCallback } from 'react';\n\nexport function useControlled<T>({\n  controlled,\n  default: defaultValue,\n}: {\n  controlled?: T;\n  default: T;\n}): [T, (v: T) => void] {\n  const isControlled = controlled !== undefined;\n  const [internalValue, setInternalValue] = useState<T>(defaultValue);\n\n  const setValue = useCallback((v: T) => {\n    if (!isControlled) setInternalValue(v);\n  }, [isControlled]);\n\n  return [isControlled ? controlled : internalValue, setValue];\n}",
+  "ai_context": "Common mistake: checking `controlled !== undefined` inside the setter instead of at render time. This causes the hook to switch between controlled/uncontrolled mid-lifecycle. The isControlled determination must happen during render, not lazily inside callbacks.",
+  "xp_reward": 300,
+  "tags": ["hooks", "useState", "useCallback", "controlled-components", "patterns"],
+  "order_index": 91
+}

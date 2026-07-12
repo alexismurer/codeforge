@@ -1,0 +1,15 @@
+{
+  "slug": "use-callback-ref",
+  "title": "useCallbackRef",
+  "description": "Implement `useCallbackRef` — a hook that returns a callback ref (a function, not an object) which fires the provided callback with the element when it mounts, and with `null` when it unmounts.\n\n**Example:**\n```tsx\nconst ref = useCallbackRef((el) => {\n  if (el) el.focus();\n});\nreturn <input ref={ref} />;\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "import { useCallback, useRef } from 'react';\n\ntype RefCallback<T> = (element: T | null) => void;\n\nexport function useCallbackRef<T extends Element>(callback: (el: T | null) => void): RefCallback<T> {\n  // your code here\n}",
+  "test_suite": "test('returns a function', () => {\n  const { result } = renderHook(() => useCallbackRef(vi.fn()));\n  expect(typeof result.current).toBe('function');\n});\n\ntest('callback fires with element when called with element', () => {\n  const cb = vi.fn();\n  const { result } = renderHook(() => useCallbackRef(cb));\n  const el = document.createElement('div');\n  result.current(el);\n  expect(cb).toHaveBeenCalledWith(el);\n});\n\ntest('callback fires with null when called with null', () => {\n  const cb = vi.fn();\n  const { result } = renderHook(() => useCallbackRef(cb));\n  result.current(null);\n  expect(cb).toHaveBeenCalledWith(null);\n});\n\ntest('always calls latest version of callback', () => {\n  const cb1 = vi.fn();\n  const cb2 = vi.fn();\n  const { result, rerender } = renderHook(\n    ({ cb }) => useCallbackRef(cb),\n    { initialProps: { cb: cb1 } }\n  );\n  rerender({ cb: cb2 });\n  const el = document.createElement('span');\n  result.current(el);\n  expect(cb2).toHaveBeenCalledWith(el);\n  expect(cb1).not.toHaveBeenCalled();\n});\n\n// __hidden__\ntest('returned ref function is stable across renders', () => {\n  const { result, rerender } = renderHook(({ cb }) => useCallbackRef(cb), {\n    initialProps: { cb: vi.fn() }\n  });\n  const first = result.current;\n  rerender({ cb: vi.fn() });\n  expect(result.current).toBe(first);\n});",
+  "solution": "import { useCallback, useRef } from 'react';\n\ntype RefCallback<T> = (element: T | null) => void;\n\nexport function useCallbackRef<T extends Element>(callback: (el: T | null) => void): RefCallback<T> {\n  const callbackRef = useRef(callback);\n  callbackRef.current = callback;\n  return useCallback((el: T | null) => callbackRef.current(el), []);\n}",
+  "ai_context": "Common mistake: returning the callback directly without wrapping in useCallback, which makes the ref function a new reference on every render. React detects this and calls the old ref with null then the new ref with the element on every render, causing unnecessary mount/unmount cycles.",
+  "xp_reward": 300,
+  "tags": ["hooks", "useCallback", "useRef", "refs", "DOM"],
+  "order_index": 84
+}

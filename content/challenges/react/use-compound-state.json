@@ -1,0 +1,15 @@
+{
+  "slug": "use-compound-state",
+  "title": "useCompoundState",
+  "description": "Implement `useCompoundState` — a hook that manages state alongside a memoized derived value computed from that state.\n\n**Example:**\n```tsx\nconst { state, derived, setState } = useCompoundState(\n  { items: [], filter: '' },\n  (s) => s.items.filter(i => i.includes(s.filter))\n);\n// derived is always in sync with state, memoized\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "import { useState, useMemo, useCallback } from 'react';\n\nexport function useCompoundState<T, D>(\n  initial: T,\n  derive: (state: T) => D\n) {\n  // your code here\n  // return { state, derived, setState }\n}",
+  "test_suite": "test('returns initial state', () => {\n  const { result } = renderHook(() =>\n    useCompoundState({ count: 0 }, s => s.count * 2)\n  );\n  expect(result.current.state).toEqual({ count: 0 });\n});\n\ntest('returns initial derived value', () => {\n  const { result } = renderHook(() =>\n    useCompoundState({ count: 5 }, s => s.count * 2)\n  );\n  expect(result.current.derived).toBe(10);\n});\n\ntest('derived updates when state changes', () => {\n  const { result } = renderHook(() =>\n    useCompoundState(3, n => n * n)\n  );\n  act(() => result.current.setState(4));\n  expect(result.current.derived).toBe(16);\n});\n\ntest('setState replaces state', () => {\n  const { result } = renderHook(() =>\n    useCompoundState('hello', s => s.toUpperCase())\n  );\n  act(() => result.current.setState('world'));\n  expect(result.current.state).toBe('world');\n  expect(result.current.derived).toBe('WORLD');\n});\n\n// __hidden__\ntest('derive is called with latest state on each change', () => {\n  const derive = vi.fn((n: number) => n + 1);\n  const { result } = renderHook(() => useCompoundState(0, derive));\n  act(() => result.current.setState(10));\n  expect(derive).toHaveBeenCalledWith(10);\n  expect(result.current.derived).toBe(11);\n});",
+  "solution": "import { useState, useMemo, useCallback } from 'react';\n\nexport function useCompoundState<T, D>(initial: T, derive: (state: T) => D) {\n  const [state, setState] = useState<T>(initial);\n  const derived = useMemo(() => derive(state), [state, derive]);\n  return { state, derived, setState };\n}",
+  "ai_context": "Common mistake: calling the derive function inside setState's updater function and storing the derived value in a second useState, which causes an extra render and can lead to derived/state being out of sync for one render cycle. useMemo is the correct tool — it runs synchronously during render.",
+  "xp_reward": 300,
+  "tags": ["hooks", "useState", "useMemo", "useCallback", "derived-state"],
+  "order_index": 92
+}

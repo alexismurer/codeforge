@@ -1,0 +1,15 @@
+{
+  "slug": "use-latest",
+  "title": "useLatest",
+  "description": "Implement `useLatest` — a hook that returns a ref whose `.current` always holds the most recent value, without triggering re-renders when the value changes. Useful for accessing the current value inside callbacks or effects.\n\n**Example:**\n```tsx\nconst countRef = useLatest(count);\nconst handleClick = useCallback(() => {\n  console.log(countRef.current); // always latest count\n}, []); // empty deps — no stale closure\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "import { useRef } from 'react';\n\nexport function useLatest<T>(value: T): React.MutableRefObject<T> {\n  // your code here\n}",
+  "test_suite": "test('ref.current holds the initial value', () => {\n  const { result } = renderHook(() => useLatest(42));\n  expect(result.current.current).toBe(42);\n});\n\ntest('ref.current updates when value changes', () => {\n  const { result, rerender } = renderHook(\n    ({ v }) => useLatest(v),\n    { initialProps: { v: 1 } }\n  );\n  rerender({ v: 99 });\n  expect(result.current.current).toBe(99);\n});\n\ntest('returns same ref object across renders', () => {\n  const { result, rerender } = renderHook(\n    ({ v }) => useLatest(v),\n    { initialProps: { v: 'a' } }\n  );\n  const first = result.current;\n  rerender({ v: 'b' });\n  expect(result.current).toBe(first);\n});\n\ntest('works with objects', () => {\n  const obj1 = { x: 1 };\n  const obj2 = { x: 2 };\n  const { result, rerender } = renderHook(\n    ({ v }) => useLatest(v),\n    { initialProps: { v: obj1 } }\n  );\n  rerender({ v: obj2 });\n  expect(result.current.current).toBe(obj2);\n});\n\n// __hidden__\ntest('works with null value', () => {\n  const { result, rerender } = renderHook(\n    ({ v }) => useLatest(v),\n    { initialProps: { v: 'hello' as string | null } }\n  );\n  rerender({ v: null });\n  expect(result.current.current).toBeNull();\n});",
+  "solution": "import { useRef } from 'react';\n\nexport function useLatest<T>(value: T): React.MutableRefObject<T> {\n  const ref = useRef(value);\n  ref.current = value;\n  return ref;\n}",
+  "ai_context": "Common mistake: updating the ref inside a useEffect, which causes one render where ref.current is stale. The correct approach updates ref.current synchronously during render — React allows reading/writing refs during render as long as you don't use the value to cause additional renders.",
+  "xp_reward": 300,
+  "tags": ["hooks", "useRef", "performance", "closures"],
+  "order_index": 85
+}

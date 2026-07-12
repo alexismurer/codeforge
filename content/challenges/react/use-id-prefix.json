@@ -1,0 +1,15 @@
+{
+  "slug": "use-id-prefix",
+  "title": "useIdPrefix",
+  "description": "Implement `useIdPrefix` — a hook that uses `useId` to generate a stable base ID and returns a function that appends a suffix. Useful for linking multiple related elements like label + input + description.\n\n**Example:**\n```tsx\nconst id = useIdPrefix('email');\n// id('input')  => 'email-:r0:-input'\n// id('label')  => 'email-:r0:-label'\n// Both are stable across renders\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "import { useId } from 'react';\n\nexport function useIdPrefix(prefix: string): (suffix: string) => string {\n  // your code here\n}",
+  "test_suite": "test('returns a function', () => {\n  const { result } = renderHook(() => useIdPrefix('form'));\n  expect(typeof result.current).toBe('function');\n});\n\ntest('generated IDs contain both prefix and suffix', () => {\n  const { result } = renderHook(() => useIdPrefix('email'));\n  const id = result.current('input');\n  expect(id).toContain('email');\n  expect(id).toContain('input');\n});\n\ntest('different suffixes produce different IDs', () => {\n  const { result } = renderHook(() => useIdPrefix('field'));\n  const a = result.current('label');\n  const b = result.current('input');\n  expect(a).not.toBe(b);\n});\n\ntest('same suffix always returns same ID', () => {\n  const { result } = renderHook(() => useIdPrefix('field'));\n  expect(result.current('label')).toBe(result.current('label'));\n});\n\n// __hidden__\ntest('returned function reference is stable across renders', () => {\n  const { result, rerender } = renderHook(() => useIdPrefix('stable'));\n  const first = result.current;\n  rerender();\n  expect(result.current).toBe(first);\n});",
+  "solution": "import { useId, useCallback } from 'react';\n\nexport function useIdPrefix(prefix: string): (suffix: string) => string {\n  const id = useId();\n  return useCallback((suffix: string) => `${prefix}-${id}-${suffix}`, [prefix, id]);\n}",
+  "ai_context": "Common mistake: forgetting to memoize the returned function with useCallback, causing child components that receive it to re-render unnecessarily. Also, generating IDs manually (e.g. Math.random()) instead of useId breaks server-side rendering hydration.",
+  "xp_reward": 300,
+  "tags": ["hooks", "useId", "useCallback", "accessibility"],
+  "order_index": 80
+}

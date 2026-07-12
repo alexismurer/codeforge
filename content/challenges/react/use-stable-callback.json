@@ -1,0 +1,15 @@
+{
+  "slug": "use-stable-callback",
+  "title": "useStableCallback",
+  "description": "Implement `useStableCallback` — a hook that wraps a function and always returns the same reference, but always calls the latest version of the function. Useful for passing to `React.memo` children without breaking memoization.\n\n**Example:**\n```tsx\nconst stableOnChange = useStableCallback(onChange);\n// stableOnChange reference never changes, but always calls latest onChange\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "import { useRef, useCallback, useEffect } from 'react';\n\nexport function useStableCallback<T extends (...args: any[]) => any>(fn: T): T {\n  // your code here\n}",
+  "test_suite": "test('returns same reference across renders', () => {\n  const { result, rerender } = renderHook(({ fn }) => useStableCallback(fn), {\n    initialProps: { fn: () => 1 }\n  });\n  const first = result.current;\n  rerender({ fn: () => 2 });\n  expect(result.current).toBe(first);\n});\n\ntest('calls latest version of fn', () => {\n  const { result, rerender } = renderHook(({ fn }) => useStableCallback(fn), {\n    initialProps: { fn: () => 1 }\n  });\n  rerender({ fn: () => 99 });\n  expect(result.current()).toBe(99);\n});\n\ntest('passes arguments through', () => {\n  const fn = vi.fn((x: number) => x * 2);\n  const { result } = renderHook(() => useStableCallback(fn));\n  expect(result.current(5)).toBe(10);\n});\n\n// __hidden__\ntest('does not call fn during render', () => {\n  const fn = vi.fn();\n  renderHook(() => useStableCallback(fn));\n  expect(fn).not.toHaveBeenCalled();\n});",
+  "solution": "import { useRef, useCallback, useEffect } from 'react';\n\nexport function useStableCallback<T extends (...args: any[]) => any>(fn: T): T {\n  const ref = useRef(fn);\n  useEffect(() => { ref.current = fn; });\n  return useCallback((...args: any[]) => ref.current(...args), []) as T;\n}",
+  "ai_context": "Common mistake: not using useCallback for the returned function, which makes the reference unstable. Or updating ref synchronously during render instead of in useEffect.",
+  "xp_reward": 300,
+  "tags": ["hooks", "useCallback", "useRef", "performance"],
+  "order_index": 74
+}
