@@ -71,7 +71,6 @@ alter table public.user_badges enable row level security;
 
 create policy "users_read_all"   on public.users for select using (true);
 create policy "users_insert_own" on public.users for insert with check (auth.uid() = id);
-create policy "users_update_own" on public.users for update using (auth.uid() = id);
 
 create policy "challenges_read"  on public.challenges for select using (auth.role() = 'authenticated');
 
@@ -87,19 +86,30 @@ create policy "badges_insert_own" on public.user_badges for insert with check (a
 
 -- Auto-create user profile on first OAuth sign-in
 create or replace function public.handle_new_user()
-returns trigger language plpgsql security definer as $$
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+declare
+  base_username text;
+  final_username text;
 begin
+  base_username := coalesce(
+    new.raw_user_meta_data->>'user_name',
+    new.raw_user_meta_data->>'name',
+    split_part(new.email, '@', 1)
+  );
+  final_username := base_username;
+
+  -- Disambiguate if username already taken by another user
+  if exists (select 1 from public.users where username = final_username and id != new.id) then
+    final_username := base_username || '_' || substr(replace(gen_random_uuid()::text, '-', ''), 1, 4);
+  end if;
+
   insert into public.users (id, username, avatar_url)
-  values (
-    new.id,
-    coalesce(
-      new.raw_user_meta_data->>'user_name',
-      new.raw_user_meta_data->>'name',
-      split_part(new.email, '@', 1)
-    ),
-    new.raw_user_meta_data->>'avatar_url'
-  )
+  values (new.id, final_username, new.raw_user_meta_data->>'avatar_url')
   on conflict (id) do nothing;
+
   return new;
 end;
 $$;
