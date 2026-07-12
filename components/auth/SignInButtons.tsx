@@ -4,14 +4,14 @@ import { useSignIn } from '@clerk/nextjs'
 import { GithubLogo, GoogleLogo } from '@phosphor-icons/react'
 
 export function SignInButtons() {
-  const { signIn, isLoaded } = useSignIn()
+  const { signIn } = useSignIn()
 
   const signInWith = async (strategy: 'oauth_github' | 'oauth_google') => {
-    if (!isLoaded || !signIn) return
-    await signIn.authenticateWithRedirect({
+    if (!signIn) return
+    await signIn.sso({
       strategy,
-      redirectUrl: `${window.location.origin}/sso-callback`,
-      redirectUrlComplete: '/challenges',
+      redirectCallbackUrl: `${window.location.origin}/sso-callback`,
+      redirectUrl: '/challenges',
     })
   }
 
