@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local todo file
+todo.txt
+
+# git worktrees
+.worktrees/
+
+# brainstorm visuals
+.superpowers/
