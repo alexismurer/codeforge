@@ -2,12 +2,13 @@
 
 import { useState, useRef, useCallback } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Play, Sparkle, ArrowCounterClockwise, CheckCircle } from '@phosphor-icons/react'
+import { ArrowLeft, Play, ArrowCounterClockwise, CheckCircle } from '@phosphor-icons/react'
 import { recordSubmission, type SubmitResult } from '@/lib/actions/submission'
 import { CodeEditor } from '@/components/editor/CodeEditor'
 import { IframeRunner, type IframeRunnerHandle } from '@/components/editor/IframeRunner'
 import { TestResults } from '@/components/editor/TestResults'
 import { ProblemPanel } from '@/components/editor/ProblemPanel'
+import { AiHintPanel } from '@/components/editor/AiHintPanel'
 import type { Challenge, ChallengeProgress, RunResult } from '@/lib/types'
 
 type Props = {
@@ -115,13 +116,14 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
             <Play size={13} weight="fill" />
             Run Tests
           </button>
-          <button
-            disabled={!runResult || runResult.passed}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 disabled:opacity-40 text-white text-xs font-medium transition-opacity"
-          >
-            <Sparkle size={13} weight="fill" />
-            AI Hint
-          </button>
+          <div className="relative">
+            <AiHintPanel
+              challenge={challenge}
+              code={code}
+              runResult={runResult}
+              onHintUsed={() => setAiHintUsed(true)}
+            />
+          </div>
         </div>
       </div>
 
@@ -140,7 +142,7 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
       )}
 
       {/* 3-panel layout */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
         {/* Problem panel */}
         <div className="w-[280px] flex-shrink-0 border-r border-zinc-800 overflow-y-auto">
           <ProblemPanel challenge={challenge} progress={progress} />
