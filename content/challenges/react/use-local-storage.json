@@ -1,0 +1,15 @@
+{
+  "slug": "use-local-storage",
+  "title": "useLocalStorage Hook",
+  "description": "Implement a `useLocalStorage<T>` hook that works like `useState` but persists the value to `localStorage` under the given key.\n\n**Signature:**\n```ts\nfunction useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void]\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "import { useState } from 'react';\n\nexport function useLocalStorage<T>(\n  key: string,\n  initialValue: T\n): [T, (value: T) => void] {\n  // your code here\n}",
+  "test_suite": "test('returns initial value when key not in storage', () => {\n  localStorage.clear();\n  const { result } = renderHook(() => useLocalStorage('test', 42));\n  expect(result.current[0]).toBe(42);\n});\n\ntest('persists value to localStorage', () => {\n  localStorage.clear();\n  const { result } = renderHook(() => useLocalStorage('test', 0));\n  act(() => result.current[1](99));\n  expect(localStorage.getItem('test')).toBe('99');\n});\n\ntest('reads existing value from localStorage', () => {\n  localStorage.setItem('theme', JSON.stringify('dark'));\n  const { result } = renderHook(() => useLocalStorage('theme', 'light'));\n  expect(result.current[0]).toBe('dark');\n});\n\n// __hidden__\ntest('setter updates state', () => {\n  localStorage.clear();\n  const { result } = renderHook(() => useLocalStorage('n', 1));\n  act(() => result.current[1](2));\n  expect(result.current[0]).toBe(2);\n});",
+  "solution": "import { useState } from 'react';\n\nexport function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {\n  const [storedValue, setStoredValue] = useState<T>(() => {\n    try {\n      const item = window.localStorage.getItem(key);\n      return item ? JSON.parse(item) : initialValue;\n    } catch {\n      return initialValue;\n    }\n  });\n\n  const setValue = (value: T) => {\n    try {\n      setStoredValue(value);\n      window.localStorage.setItem(key, JSON.stringify(value));\n    } catch {}\n  };\n\n  return [storedValue, setValue];\n}",
+  "ai_context": "Tests useState lazy initializer and localStorage API. Common mistakes: not JSON.parse/stringify, not using lazy initializer causing hydration issues.",
+  "xp_reward": 200,
+  "tags": ["hooks", "localStorage", "state"],
+  "order_index": 2
+}

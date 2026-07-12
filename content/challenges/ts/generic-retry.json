@@ -1,0 +1,15 @@
+{
+  "slug": "generic-retry",
+  "title": "Generic Retry",
+  "description": "Implement a `retry<T>` function that calls an async function up to `maxAttempts` times, returning the first successful result. If all attempts fail, throw the last error.\n\n**Signature:**\n```ts\nasync function retry<T>(fn: () => Promise<T>, maxAttempts: number): Promise<T>\n```",
+  "topic": "ts",
+  "type": "implement",
+  "difficulty": 3,
+  "starter_code": "export async function retry<T>(\n  fn: () => Promise<T>,\n  maxAttempts: number\n): Promise<T> {\n  // your code here\n}",
+  "test_suite": "test('returns value on first success', async () => {\n  const fn = async () => 42;\n  expect(await retry(fn, 3)).toBe(42);\n});\n\ntest('retries on failure then succeeds', async () => {\n  let calls = 0;\n  const fn = async () => {\n    calls++;\n    if (calls < 3) throw new Error('fail');\n    return 'ok';\n  };\n  expect(await retry(fn, 5)).toBe('ok');\n  expect(calls).toBe(3);\n});\n\ntest('throws after max attempts', async () => {\n  const fn = async () => { throw new Error('always fails'); };\n  await expect(retry(fn, 3)).rejects.toThrow('always fails');\n});\n\n// __hidden__\ntest('throws last error not first', async () => {\n  let calls = 0;\n  const fn = async () => { throw new Error(`error ${++calls}`); };\n  await expect(retry(fn, 2)).rejects.toThrow('error 2');\n});",
+  "solution": "export async function retry<T>(fn: () => Promise<T>, maxAttempts: number): Promise<T> {\n  let lastError: unknown;\n  for (let i = 0; i < maxAttempts; i++) {\n    try { return await fn(); } catch (e) { lastError = e; }\n  }\n  throw lastError;\n}",
+  "ai_context": "Tests async/await, generics, and error handling. The student likely knows try/catch but may not think to track the last error or use a for loop.",
+  "xp_reward": 200,
+  "tags": ["async", "generics", "error-handling"],
+  "order_index": 1
+}

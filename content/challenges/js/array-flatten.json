@@ -1,0 +1,15 @@
+{
+  "slug": "array-flatten",
+  "title": "Array Flatten",
+  "description": "Write a function `flatten` that takes a nested array of any depth and returns a single flat array containing all the values.\n\n**Example:**\n```js\nflatten([1, [2, [3, [4]]]]) // [1, 2, 3, 4]\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 2,
+  "starter_code": "export function flatten(arr) {\n  // your code here\n}",
+  "test_suite": "test('flattens one level deep', () => {\n  expect(flatten([1, [2, 3]])).toEqual([1, 2, 3]);\n});\n\ntest('flattens multiple levels', () => {\n  expect(flatten([1, [2, [3, [4]]]])).toEqual([1, 2, 3, 4]);\n});\n\ntest('handles empty array', () => {\n  expect(flatten([])).toEqual([]);\n});\n\n// __hidden__\ntest('preserves non-array primitives', () => {\n  expect(flatten([1, 'a', [true, null]])).toEqual([1, 'a', true, null]);\n});\n\ntest('handles deeply nested', () => {\n  expect(flatten([[[[[[42]]]]]])).toEqual([42]);\n});",
+  "solution": "export function flatten(arr) {\n  return arr.flat(Infinity);\n}",
+  "ai_context": "This challenge tests knowledge of Array.flat() or recursive array traversal. The student may not know about Array.flat(Infinity).",
+  "xp_reward": 100,
+  "tags": ["arrays", "recursion"],
+  "order_index": 1
+}

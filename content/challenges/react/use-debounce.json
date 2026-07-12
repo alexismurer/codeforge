@@ -1,0 +1,15 @@
+{
+  "slug": "use-debounce",
+  "title": "useDebounce Hook",
+  "description": "Implement a `useDebounce<T>` hook that returns a debounced version of a value — one that only updates after the value has stopped changing for `delay` milliseconds.\n\n**Example:**\n```tsx\nconst debouncedSearch = useDebounce(searchTerm, 300);\n```",
+  "topic": "react",
+  "type": "implement",
+  "difficulty": 4,
+  "starter_code": "import { useState, useEffect } from 'react';\n\nexport function useDebounce<T>(value: T, delay: number): T {\n  const [debouncedValue, setDebouncedValue] = useState<T>(value);\n\n  // your code here\n\n  return debouncedValue;\n}",
+  "test_suite": "// Tests use @testing-library/react renderHook via the iframe harness\ntest('returns initial value immediately', () => {\n  const { result } = renderHook(() => useDebounce('hello', 500));\n  expect(result.current).toBe('hello');\n});\n\ntest('delays update', async () => {\n  vi.useFakeTimers();\n  const { result, rerender } = renderHook(\n    ({ value }) => useDebounce(value, 300),\n    { initialProps: { value: 'a' } }\n  );\n  rerender({ value: 'b' });\n  expect(result.current).toBe('a');\n  vi.advanceTimersByTime(300);\n  expect(result.current).toBe('b');\n  vi.useRealTimers();\n});\n\n// __hidden__\ntest('cancels pending update on rapid change', async () => {\n  vi.useFakeTimers();\n  const { result, rerender } = renderHook(\n    ({ value }) => useDebounce(value, 300),\n    { initialProps: { value: 'a' } }\n  );\n  rerender({ value: 'b' });\n  vi.advanceTimersByTime(100);\n  rerender({ value: 'c' });\n  vi.advanceTimersByTime(300);\n  expect(result.current).toBe('c');\n  vi.useRealTimers();\n});",
+  "solution": "import { useState, useEffect } from 'react';\n\nexport function useDebounce<T>(value: T, delay: number): T {\n  const [debouncedValue, setDebouncedValue] = useState<T>(value);\n\n  useEffect(() => {\n    const timer = setTimeout(() => setDebouncedValue(value), delay);\n    return () => clearTimeout(timer);\n  }, [value, delay]);\n\n  return debouncedValue;\n}",
+  "ai_context": "Tests useEffect with cleanup. The student knows useState but likely forgot the cleanup function in useEffect, or forgot to put value/delay in the dependency array.",
+  "xp_reward": 300,
+  "tags": ["hooks", "useEffect", "timers"],
+  "order_index": 1
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "closures-counter",
+  "title": "Closure Counter",
+  "description": "Implement a `makeCounter` function that returns an object with `increment`, `decrement`, and `getCount` methods. Each call to `makeCounter` should create an independent counter.\n\n**Example:**\n```js\nconst c = makeCounter();\nc.increment(); c.increment();\nc.getCount(); // 2\n```",
+  "topic": "js",
+  "type": "implement",
+  "difficulty": 1,
+  "starter_code": "export function makeCounter() {\n  // your code here\n}",
+  "test_suite": "test('starts at zero', () => {\n  const c = makeCounter();\n  expect(c.getCount()).toBe(0);\n});\n\ntest('increments correctly', () => {\n  const c = makeCounter();\n  c.increment(); c.increment();\n  expect(c.getCount()).toBe(2);\n});\n\ntest('decrements correctly', () => {\n  const c = makeCounter();\n  c.increment(); c.decrement();\n  expect(c.getCount()).toBe(0);\n});\n\n// __hidden__\ntest('counters are independent', () => {\n  const a = makeCounter(); const b = makeCounter();\n  a.increment(); a.increment();\n  expect(b.getCount()).toBe(0);\n  expect(a.getCount()).toBe(2);\n});",
+  "solution": "export function makeCounter() {\n  let count = 0;\n  return {\n    increment: () => { count++; },\n    decrement: () => { count--; },\n    getCount: () => count,\n  };\n}",
+  "ai_context": "This tests understanding of closures and factory functions in JavaScript.",
+  "xp_reward": 50,
+  "tags": ["closures", "functions"],
+  "order_index": 2
+}
