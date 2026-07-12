@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Play, ArrowCounterClockwise, CheckCircle } from '@phosphor-icons/react'
 import { recordSubmission, type SubmitResult } from '@/lib/actions/submission'
+import { SolveAnimation } from '@/components/gamification/SolveAnimation'
 import { CodeEditor } from '@/components/editor/CodeEditor'
 import { IframeRunner, type IframeRunnerHandle } from '@/components/editor/IframeRunner'
 import { TestResults } from '@/components/editor/TestResults'
@@ -29,6 +30,7 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
   const [running, setRunning] = useState(false)
   const [solveResult, setSolveResult] = useState<SubmitResult | null>(null)
   const [aiHintUsed, setAiHintUsed] = useState(false)
+  const [showAnimation, setShowAnimation] = useState(false)
   const startTimeRef = useRef(Date.now())
 
   const runnerRef = useRef<IframeRunnerHandle>(null)
@@ -64,6 +66,7 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
 
         if (result.passed) {
           setSolveResult(submitResult)
+          setShowAnimation(true)
         }
       } catch (e) {
         console.error('Submission error:', e)
@@ -191,6 +194,13 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
 
       {/* Hidden iframe runner */}
       <IframeRunner ref={runnerRef} onResult={handleResult} onError={handleError} />
+
+      {showAnimation && solveResult && (
+        <SolveAnimation
+          xpEarned={solveResult.xpEarned}
+          onComplete={() => setShowAnimation(false)}
+        />
+      )}
     </div>
   )
 }

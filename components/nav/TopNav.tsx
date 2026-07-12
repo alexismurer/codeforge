@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   CodeBlock,
+  House,
   Trophy,
   UserCircle,
   Lightning,
@@ -26,6 +27,7 @@ export function TopNav({ user }: { user: NavUser | null }) {
   }
 
   const navLinks = [
+    { href: '/', icon: House, label: 'Home' },
     { href: '/challenges', icon: CodeBlock, label: 'Challenges' },
     { href: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
     {
@@ -54,7 +56,7 @@ export function TopNav({ user }: { user: NavUser | null }) {
               key={label}
               href={href}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-colors ${
-                pathname.startsWith(href.split('/').slice(0, 2).join('/'))
+                (href === '/' ? pathname === '/' : pathname.startsWith(href.split('/').slice(0, 2).join('/')))
                   ? 'bg-zinc-900 text-zinc-100'
                   : 'text-zinc-500 hover:bg-zinc-900 hover:text-zinc-200'
               }`}
