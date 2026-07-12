@@ -28,15 +28,20 @@ export default async function LandingPage() {
       </div>
 
       {/* Hero image — place generated image at public/images/hero.png (recommended 900×600) */}
-      <div className="relative w-full max-w-xl h-[420px] rounded-2xl overflow-hidden hidden lg:block flex-shrink-0 bg-gradient-to-br from-indigo-950 via-zinc-900 to-purple-950">
+      <div
+        className="relative w-full max-w-xl h-[420px] hidden lg:block flex-shrink-0"
+        style={{
+          maskImage: 'radial-gradient(ellipse 80% 75% at 55% 50%, black 20%, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 75% at 55% 50%, black 20%, transparent 80%)',
+        }}
+      >
         <Image
           src="/images/hero.png"
           alt="Code Forge — dark forge with glowing code"
           fill
-          style={{ objectFit: 'cover', opacity: 0.85 }}
+          style={{ objectFit: 'cover' }}
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/60 via-transparent to-transparent" />
       </div>
     </main>
   )
