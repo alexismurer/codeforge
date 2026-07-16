@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react'
 import Image from 'next/image'
 import { Tag, Lightning } from '@phosphor-icons/react/dist/ssr'
 import { DifficultyStars } from '@/components/challenges/DifficultyStars'
+import { CodeBlock } from '@/components/editor/CodeBlock'
 import type { Challenge, ChallengeProgress } from '@/lib/types'
 
 const TOPIC_LABELS: Record<string, string> = { js: 'JavaScript', ts: 'TypeScript', react: 'React' }
@@ -28,18 +30,40 @@ type Props = {
   progress: ChallengeProgress | null
 }
 
-function markdownToHtml(md: string): string {
-  return md
-    .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+function inlineHtml(text: string): string {
+  return text
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/\n/g, '<br>')
 }
 
+function renderDescription(md: string): ReactNode[] {
+  const codeBlockRegex = /```(?:\w+)?\n([\s\S]*?)```/g
+  const nodes: ReactNode[] = []
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+  let key = 0
+
+  while ((match = codeBlockRegex.exec(md)) !== null) {
+    if (match.index > lastIndex) {
+      const html = inlineHtml(md.slice(lastIndex, match.index))
+      nodes.push(<span key={key++} dangerouslySetInnerHTML={{ __html: html }} />)
+    }
+    nodes.push(<CodeBlock key={key++} code={match[1]} />)
+    lastIndex = match.index + match[0].length
+  }
+
+  if (lastIndex < md.length) {
+    const html = inlineHtml(md.slice(lastIndex))
+    nodes.push(<span key={key++} dangerouslySetInnerHTML={{ __html: html }} />)
+  }
+
+  return nodes
+}
+
 export function ProblemPanel({ challenge, progress }: Props) {
   return (
     <div className="flex flex-col gap-4 p-4 h-full overflow-y-auto">
-      {/* Topic banner — place generated images at public/images/topic-{js,ts,react}.png (recommended 560×160) */}
       <div className={`relative -mx-4 -mt-4 h-[88px] bg-gradient-to-br ${TOPIC_GRADIENTS[challenge.topic]} overflow-hidden`}>
         <Image
           src={TOPIC_IMAGES[challenge.topic]}
@@ -67,10 +91,9 @@ export function ProblemPanel({ challenge, progress }: Props) {
         </div>
       </div>
 
-      <div
-        className="text-sm text-zinc-400 leading-relaxed [&_code]:bg-zinc-800 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-purple-300 [&_code]:text-xs [&_pre]:bg-zinc-800 [&_pre]:p-3 [&_pre]:rounded-lg [&_pre]:text-xs [&_pre]:overflow-x-auto [&_strong]:text-zinc-300"
-        dangerouslySetInnerHTML={{ __html: markdownToHtml(challenge.description) }}
-      />
+      <div className="text-sm text-zinc-400 leading-relaxed [&_code]:bg-zinc-800 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-purple-300 [&_code]:text-xs [&_strong]:text-zinc-300">
+        {renderDescription(challenge.description)}
+      </div>
 
       {challenge.tags.length > 0 && (
         <div className="flex flex-col gap-1.5">
