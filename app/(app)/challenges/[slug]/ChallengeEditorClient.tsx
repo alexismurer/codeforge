@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Play, ArrowCounterClockwise, CheckCircle } from '@phosphor-icons/react'
 import { recordSubmission, type SubmitResult } from '@/lib/actions/submission'
@@ -94,6 +94,12 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
       passed: false,
       totalMs: 0,
     })
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
   }, [])
 
   const handleReset = () => {
