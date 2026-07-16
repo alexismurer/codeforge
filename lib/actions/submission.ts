@@ -134,6 +134,32 @@ export async function recordSubmission(params: SubmitParams): Promise<SubmitResu
 
   const noHintSolves = noHintRows?.length ?? 0
 
+  const difficulty4Solved = solvedChallenges.filter((c) => c.difficulty === 4).length
+
+  const { data: firstAttemptPassRows } = await admin
+    .from('submissions')
+    .select('challenge_id')
+    .eq('user_id', userId)
+    .eq('attempt_number', 1)
+    .eq('passed', true)
+
+  const refactorIds = new Set(
+    (challenges ?? []).filter((c) => c.type === 'refactor').map((c) => c.id)
+  )
+  const diff5Ids = new Set(
+    (challenges ?? []).filter((c) => c.difficulty === 5).map((c) => c.id)
+  )
+  const firstAttemptPasses = firstAttemptPassRows ?? []
+  const refactorFirstAttempts = firstAttemptPasses.filter((s) =>
+    refactorIds.has(s.challenge_id)
+  ).length
+  const difficulty5FirstAttempt = firstAttemptPasses.filter((s) =>
+    diff5Ids.has(s.challenge_id)
+  ).length
+
+  const newXp = profile.xp + xpEarned
+  const currentLevel = levelFromXp(newXp)
+
   const badgeCtx: BadgeContext = {
     totalSolved: solvedIds.size,
     streak: newStreak,
@@ -146,6 +172,10 @@ export async function recordSubmission(params: SubmitParams): Promise<SubmitResu
     noHintSolves,
     maxDifficultySolved: maxDifficulty,
     alreadyEarned: (earnedBadges ?? []).map((b) => b.badge_slug),
+    currentLevel,
+    refactorFirstAttempts,
+    difficulty4Solved,
+    difficulty5FirstAttempt,
   }
 
   const newBadges = evaluateBadges(badgeCtx)
@@ -156,8 +186,7 @@ export async function recordSubmission(params: SubmitParams): Promise<SubmitResu
     )
   }
 
-  const newXp = profile.xp + xpEarned
-  const newLevel = levelFromXp(newXp)
+  const newLevel = currentLevel
   const levelledUp = newLevel > profile.level
 
   await admin.from('users').update({

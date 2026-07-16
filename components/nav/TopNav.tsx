@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import {
   CodeBlock,
   Lightning,
@@ -26,6 +27,7 @@ type NavUser = {
 
 export function TopNav({ user }: { user: NavUser | null }) {
   const { signOut } = useClerk()
+  const router = useRouter()
 
   return (
     <nav className="h-[52px] bg-zinc-950 border-b border-zinc-900 flex items-center px-5 flex-shrink-0 z-50">
@@ -51,28 +53,28 @@ export function TopNav({ user }: { user: NavUser | null }) {
               {user.streak}
             </div>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="w-[30px] h-[30px] rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold cursor-pointer hover:opacity-90 transition-opacity">
-                  {user.username.charAt(0).toUpperCase()}
-                </button>
+              <DropdownMenuTrigger className="w-[30px] h-[30px] rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold cursor-pointer hover:opacity-90 transition-opacity">
+                {user.username.charAt(0).toUpperCase()}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
-                <DropdownMenuItem asChild>
-                  <Link href={`/profile/${user.username}`} className="flex items-center gap-2 cursor-pointer">
-                    <UserCircle size={15} />
-                    Profile
-                  </Link>
+                <DropdownMenuItem
+                  onClick={() => router.push(`/profile/${user.username}`)}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <UserCircle size={15} />
+                  Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/leaderboard" className="flex items-center gap-2 cursor-pointer">
-                    <Trophy size={15} />
-                    Leaderboard
-                  </Link>
+                <DropdownMenuItem
+                  onClick={() => router.push('/leaderboard')}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <Trophy size={15} />
+                  Leaderboard
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => signOut({ redirectUrl: '/' })}
-                  className="flex items-center gap-2 text-red-400 focus:text-red-400 cursor-pointer"
+                  className="flex items-center gap-2 text-red-400 cursor-pointer"
                 >
                   <SignOut size={15} />
                   Logout
