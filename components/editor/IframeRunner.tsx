@@ -29,6 +29,12 @@ function buildIframeDoc(code: string, testSuite: string): string {
 <html>
 <head>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"><\/script>
+<script>
+window.onerror = function(msg) {
+  window.parent.postMessage({ type: 'test-error', message: String(msg) }, '*');
+  return true;
+};
+<\/script>
 </head>
 <body>
 <script>
@@ -99,6 +105,7 @@ export const IframeRunner = forwardRef<IframeRunnerHandle, Props>(
       run(code: string, testSuite: string) {
         const iframe = iframeRef.current
         if (!iframe) return
+        iframe.srcdoc = ''
         iframe.srcdoc = buildIframeDoc(code, testSuite)
       },
     }))
