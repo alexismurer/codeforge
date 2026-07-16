@@ -32,10 +32,20 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
   const [aiHintUsed, setAiHintUsed] = useState(false)
   const [showAnimation, setShowAnimation] = useState(false)
   const startTimeRef = useRef(Date.now())
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const runnerRef = useRef<IframeRunnerHandle>(null)
 
   const handleRun = useCallback(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    timeoutRef.current = setTimeout(() => {
+      setRunning(false)
+      setRunResult({
+        results: [{ name: 'Timeout', passed: false, error: 'Tests timed out after 10s' }],
+        passed: false,
+        totalMs: 10000,
+      })
+    }, 10000)
     setRunning(true)
     setRunResult(null)
     runnerRef.current?.run(code, challenge.test_suite)
@@ -43,6 +53,7 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
 
   const handleResult = useCallback(
     async (result: RunResult) => {
+      if (timeoutRef.current) { clearTimeout(timeoutRef.current); timeoutRef.current = null }
       setRunning(false)
       setRunResult(result)
 
@@ -76,6 +87,7 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
   )
 
   const handleError = useCallback((msg: string) => {
+    if (timeoutRef.current) { clearTimeout(timeoutRef.current); timeoutRef.current = null }
     setRunning(false)
     setRunResult({
       results: [{ name: 'Execution error', passed: false, error: msg }],
