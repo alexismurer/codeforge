@@ -1,14 +1,8 @@
 import { describe, it, expect, test } from 'vitest'
 import { render } from '@testing-library/react'
 import { createRef } from 'react'
-import { buildIframeDoc } from '../IframeRunner'
-import { IframeRunner } from '../IframeRunner'
+import { buildIframeDoc, stripHiddenMarkers, IframeRunner } from '../IframeRunner'
 import type { IframeRunnerHandle } from '../IframeRunner'
-
-// Extract the functions for testing without rendering
-function stripHiddenMarkers(suite: string) {
-  return suite.replace(/\/\/ __hidden__\n?/g, '')
-}
 
 describe('stripHiddenMarkers', () => {
   it('removes __hidden__ comment markers', () => {

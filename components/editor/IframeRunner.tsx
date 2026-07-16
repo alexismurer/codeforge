@@ -12,7 +12,7 @@ type Props = {
   onError: (message: string) => void
 }
 
-function stripHiddenMarkers(suite: string) {
+export function stripHiddenMarkers(suite: string) {
   return suite.replace(/\/\/ __hidden__\n?/g, '')
 }
 
