@@ -2,7 +2,36 @@
 
 import { useRef, useState } from 'react'
 import { Sparkle, X } from '@phosphor-icons/react'
+import ReactMarkdown from 'react-markdown'
+import type { Components } from 'react-markdown'
 import type { Challenge, RunResult } from '@/lib/types'
+
+const mdComponents: Components = {
+  code({ className, children, ...props }) {
+    const isBlock = className?.startsWith('language-')
+    if (isBlock) {
+      return (
+        <pre className="my-2 rounded bg-zinc-800 px-3 py-2 overflow-x-auto text-xs font-mono text-zinc-200">
+          <code>{children}</code>
+        </pre>
+      )
+    }
+    return (
+      <code className="rounded bg-zinc-800 px-1 py-0.5 text-xs font-mono text-purple-300" {...props}>
+        {children}
+      </code>
+    )
+  },
+  p({ children }) {
+    return <p className="mb-2 last:mb-0">{children}</p>
+  },
+  ul({ children }) {
+    return <ul className="list-disc list-inside mb-2 space-y-0.5">{children}</ul>
+  },
+  ol({ children }) {
+    return <ol className="list-decimal list-inside mb-2 space-y-0.5">{children}</ol>
+  },
+}
 
 type Props = {
   challenge: Challenge
@@ -110,8 +139,12 @@ export function AiHintPanel({ challenge, code, runResult, onHintUsed }: Props) {
             <X size={14} />
           </button>
         </div>
-        <div className="px-4 py-3 text-sm text-zinc-300 leading-relaxed min-h-[60px] max-h-[160px] overflow-y-auto font-mono whitespace-pre-wrap">
-          {hint || (loading ? '' : 'No hint available.')}
+        <div className="px-4 py-3 text-sm text-zinc-300 leading-relaxed min-h-[60px] max-h-[160px] overflow-y-auto">
+          {hint ? (
+            <ReactMarkdown components={mdComponents}>{hint}</ReactMarkdown>
+          ) : loading ? null : (
+            'No hint available.'
+          )}
           {loading && <span className="inline-block w-1.5 h-3.5 bg-purple-400 animate-pulse ml-0.5 align-middle" />}
         </div>
       </div>
