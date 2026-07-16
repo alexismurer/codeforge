@@ -56,25 +56,25 @@ export function TopNav({ user }: { user: NavUser | null }) {
               <DropdownMenuTrigger className="w-[30px] h-[30px] rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold cursor-pointer hover:opacity-90 transition-opacity">
                 {user.username.charAt(0).toUpperCase()}
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuContent align="end" className="w-44 bg-zinc-900 border-zinc-800 text-zinc-300 shadow-xl shadow-black/40">
                 <DropdownMenuItem
                   onClick={() => router.push(`/profile/${user.username}`)}
-                  className="flex items-center gap-2 cursor-pointer"
+                  className="flex items-center gap-2 cursor-pointer text-zinc-300 hover:bg-zinc-800 focus:bg-zinc-800 hover:text-zinc-100 focus:text-zinc-100"
                 >
                   <UserCircle size={15} />
                   Profile
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => router.push('/leaderboard')}
-                  className="flex items-center gap-2 cursor-pointer"
+                  className="flex items-center gap-2 cursor-pointer text-zinc-300 hover:bg-zinc-800 focus:bg-zinc-800 hover:text-zinc-100 focus:text-zinc-100"
                 >
                   <Trophy size={15} />
                   Leaderboard
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-zinc-800" />
                 <DropdownMenuItem
                   onClick={() => signOut({ redirectUrl: '/' })}
-                  className="flex items-center gap-2 text-red-400 cursor-pointer"
+                  className="flex items-center gap-2 cursor-pointer text-red-400 hover:bg-zinc-800 focus:bg-zinc-800 hover:text-red-300 focus:text-red-300"
                 >
                   <SignOut size={15} />
                   Logout

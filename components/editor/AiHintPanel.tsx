@@ -81,7 +81,7 @@ export function AiHintPanel({ challenge, code, runResult, onHintUsed }: Props) {
         className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 disabled:opacity-40 text-white text-xs font-medium transition-opacity"
       >
         <Sparkle size={13} weight="fill" />
-        AI Hint
+        Hint
       </button>
     )
   }
@@ -93,7 +93,7 @@ export function AiHintPanel({ challenge, code, runResult, onHintUsed }: Props) {
         className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-medium"
       >
         <Sparkle size={13} weight="fill" />
-        AI Hint
+        Hint
         <X size={11} className="ml-1 opacity-70" />
       </button>
 
@@ -101,7 +101,7 @@ export function AiHintPanel({ challenge, code, runResult, onHintUsed }: Props) {
         <div className="flex items-center gap-2 px-4 py-2.5 border-b border-zinc-800">
           <Sparkle size={13} weight="fill" className="text-purple-400" />
           <span className="text-xs text-purple-300 font-semibold uppercase tracking-wide">
-            AI Hint — Groq Llama 3.3
+            Hint
           </span>
           {loading && (
             <span className="ml-2 text-[10px] text-zinc-500 animate-pulse">thinking…</span>
