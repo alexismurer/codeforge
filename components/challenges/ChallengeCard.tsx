@@ -34,35 +34,36 @@ export function ChallengeCard({ challenge, progress }: Props) {
   return (
     <Link
       href={`/challenges/${challenge.slug}`}
-      className="group flex items-center justify-between p-4 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-xl transition-all"
+      className="group flex flex-col gap-3 p-4 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-xl transition-all"
     >
-      <div className="flex flex-col gap-1.5 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span
-            className={`text-[11px] font-medium px-2 py-0.5 rounded border ${TOPIC_COLORS[challenge.topic]}`}
-          >
-            {TOPIC_LABELS[challenge.topic]}
-          </span>
-          <span className="text-[11px] text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded border border-zinc-700">
-            {TYPE_LABELS[challenge.type]}
-          </span>
-        </div>
-        <span className="font-medium text-zinc-100 text-sm truncate">{challenge.title}</span>
-        <DifficultyStars difficulty={challenge.difficulty} />
+      <div className="flex items-center gap-2 flex-wrap">
+        <span
+          className={`text-[11px] font-medium px-2 py-0.5 rounded border ${TOPIC_COLORS[challenge.topic]}`}
+        >
+          {TOPIC_LABELS[challenge.topic]}
+        </span>
+        <span className="text-[11px] text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded border border-zinc-700">
+          {TYPE_LABELS[challenge.type]}
+        </span>
       </div>
 
-      <div className="flex items-center gap-3 flex-shrink-0 ml-4">
-        <span className="text-[11px] text-amber-400 font-semibold">+{challenge.xp_reward} XP</span>
-        {solved ? (
-          <CheckCircle size={18} weight="fill" className="text-emerald-400" />
-        ) : attempted ? (
-          <Circle size={18} weight="regular" className="text-zinc-500" />
-        ) : (
-          <ArrowRight
-            size={16}
-            className="text-zinc-600 group-hover:text-zinc-400 transition-colors"
-          />
-        )}
+      <span className="font-medium text-zinc-100 text-sm leading-snug">{challenge.title}</span>
+
+      <div className="flex items-center justify-between mt-auto">
+        <DifficultyStars difficulty={challenge.difficulty} />
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] text-amber-400 font-semibold">+{challenge.xp_reward} XP</span>
+          {solved ? (
+            <CheckCircle size={16} weight="fill" className="text-emerald-400" />
+          ) : attempted ? (
+            <Circle size={16} weight="regular" className="text-zinc-500" />
+          ) : (
+            <ArrowRight
+              size={14}
+              className="text-zinc-600 group-hover:text-zinc-400 transition-colors"
+            />
+          )}
+        </div>
       </div>
     </Link>
   )
