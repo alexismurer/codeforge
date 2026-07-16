@@ -22,7 +22,7 @@ function stripExports(code: string): string {
     .replace(/^export\s+((?:async\s+)?function|class|const|let|var)/gm, '$1')
 }
 
-function buildIframeDoc(code: string, testSuite: string): string {
+export function buildIframeDoc(code: string, testSuite: string): string {
   const cleanSuite = stripHiddenMarkers(testSuite)
   const cleanCode = stripExports(code)
   return `<!DOCTYPE html>
