@@ -37,4 +37,12 @@ describe('CodeBlock', () => {
     fireEvent.click(dialog)
     expect(HTMLDialogElement.prototype.close).toHaveBeenCalledOnce()
   })
+
+  test('closes modal on Escape key (cancel event)', () => {
+    render(<CodeBlock code="const x = 1" />)
+    fireEvent.click(screen.getByRole('button', { name: /expand/i }))
+    const dialog = screen.getByRole('dialog', { hidden: true })
+    fireEvent(dialog, new Event('cancel'))
+    expect(HTMLDialogElement.prototype.close).toHaveBeenCalledOnce()
+  })
 })

@@ -26,6 +26,7 @@ export function CodeBlock({ code }: Props) {
       <dialog
         ref={dialogRef}
         onClick={(e) => { if (e.target === dialogRef.current) closeModal() }}
+        onCancel={closeModal}
         className="backdrop:bg-black/60 bg-transparent p-0 max-w-3xl w-full rounded-xl shadow-2xl outline-none"
       >
         <div className="bg-zinc-900 border border-zinc-700 rounded-xl overflow-hidden">
