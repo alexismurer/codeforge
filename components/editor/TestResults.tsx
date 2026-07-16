@@ -23,7 +23,7 @@ function TestRow({ test }: { test: TestResult }) {
       <div className="flex flex-col gap-0.5 min-w-0">
         <span className={test.passed ? 'text-emerald-300' : 'text-red-300'}>{test.name}</span>
         {!test.passed && test.error && (
-          <span className="text-red-500 font-mono text-[11px] break-all">{test.error}</span>
+          <span className="text-red-500 font-mono text-[11px] break-words">{test.error}</span>
         )}
       </div>
     </div>
