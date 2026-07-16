@@ -1,9 +1,9 @@
 import { Suspense } from 'react'
 import { auth } from '@clerk/nextjs/server'
 import { getChallenges, getUserProgress } from '@/lib/challenges'
-import { ChallengeCard } from '@/components/challenges/ChallengeCard'
+import { ChallengeGrid } from '@/components/challenges/ChallengeGrid'
 import { ChallengeFilters } from '@/components/challenges/ChallengeFilters'
-import type { Topic } from '@/lib/types'
+import type { ChallengeProgress, Topic } from '@/lib/types'
 
 type SearchParams = { topic?: Topic; difficulty?: string }
 
@@ -20,7 +20,7 @@ export default async function ChallengesPage({
     userId ? getUserProgress(userId) : Promise.resolve([]),
   ])
 
-  const progressMap = Object.fromEntries(
+  const progressMap: Record<string, ChallengeProgress> = Object.fromEntries(
     progressList.map((p) => [p.challenge_id, p])
   )
 
@@ -31,7 +31,7 @@ export default async function ChallengesPage({
   })
 
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4 flex flex-col gap-6">
+    <div className="max-w-6xl mx-auto py-8 px-4 flex flex-col gap-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold text-zinc-100">Challenges</h1>
         <p className="text-zinc-500 text-sm">
@@ -43,21 +43,13 @@ export default async function ChallengesPage({
         <ChallengeFilters />
       </Suspense>
 
-      <div className="flex flex-col gap-2">
-        {filtered.length === 0 ? (
-          <p className="text-zinc-500 text-sm py-8 text-center">
-            No challenges match your filters.
-          </p>
-        ) : (
-          filtered.map((challenge) => (
-            <ChallengeCard
-              key={challenge.id}
-              challenge={challenge}
-              progress={progressMap[challenge.id]}
-            />
-          ))
-        )}
-      </div>
+      {filtered.length === 0 ? (
+        <p className="text-zinc-500 text-sm py-8 text-center">
+          No challenges match your filters.
+        </p>
+      ) : (
+        <ChallengeGrid challenges={filtered} progressMap={progressMap} />
+      )}
     </div>
   )
 }

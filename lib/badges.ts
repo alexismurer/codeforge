@@ -12,6 +12,10 @@ export type BadgeContext = {
   noHintSolves: number
   maxDifficultySolved: number
   alreadyEarned: string[]
+  currentLevel: number
+  refactorFirstAttempts: number
+  difficulty4Solved: number
+  difficulty5FirstAttempt: number
 }
 
 export function evaluateBadges(ctx: BadgeContext): string[] {
@@ -40,6 +44,24 @@ export function evaluateBadges(ctx: BadgeContext): string[] {
         break
       case 'difficulty_solved':
         earned = ctx.maxDifficultySolved >= badge.threshold
+        break
+      case 'full_stack':
+        earned =
+          (ctx.topicCounts['js'] ?? 0) >= 1 &&
+          (ctx.topicCounts['ts'] ?? 0) >= 1 &&
+          (ctx.topicCounts['react'] ?? 0) >= 1
+        break
+      case 'level_reached':
+        earned = ctx.currentLevel >= badge.threshold
+        break
+      case 'clean_coder':
+        earned = ctx.refactorFirstAttempts >= badge.threshold
+        break
+      case 'difficulty_4_solved':
+        earned = ctx.difficulty4Solved >= badge.threshold
+        break
+      case 'difficulty_5_first_attempt':
+        earned = ctx.difficulty5FirstAttempt >= badge.threshold
         break
       default:
         if (badge.condition.startsWith('topic_solved_')) {
