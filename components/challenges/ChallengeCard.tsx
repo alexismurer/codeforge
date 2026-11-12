@@ -1,23 +1,18 @@
 import Link from 'next/link'
-import { CheckCircle, Circle, ArrowRight } from '@phosphor-icons/react/dist/ssr'
-import { DifficultyStars } from './DifficultyStars'
+import { CheckCircle, ArrowUpRight } from '@phosphor-icons/react/dist/ssr'
+import { DifficultyHeat } from './DifficultyHeat'
+import { TopicLogo } from './TopicLogo'
 import type { Challenge, ChallengeProgress } from '@/lib/types'
 
-const TOPIC_COLORS: Record<string, string> = {
-  js: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
-  ts: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
-  react: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20',
-}
-
 const TOPIC_LABELS: Record<string, string> = {
-  js: 'JavaScript',
-  ts: 'TypeScript',
+  js: 'JS',
+  ts: 'TS',
   react: 'React',
 }
 
 const TYPE_LABELS: Record<string, string> = {
   implement: 'Implement',
-  'fix-bug': 'Fix Bug',
+  'fix-bug': 'Fix bug',
   refactor: 'Refactor',
   'multiple-choice': 'Quiz',
 }
@@ -34,36 +29,42 @@ export function ChallengeCard({ challenge, progress }: Props) {
   return (
     <Link
       href={`/challenges/${challenge.slug}`}
-      className="group flex flex-col gap-3 p-4 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-xl transition-all"
+      className="group relative flex flex-col gap-4 overflow-hidden rounded-md border border-border bg-card p-4 transition-colors duration-200 hover:border-ember/40 hover:bg-surface-2/60 focus-visible:outline-2 focus-visible:outline-ember"
     >
-      <div className="flex items-center gap-2 flex-wrap">
-        <span
-          className={`text-[11px] font-medium px-2 py-0.5 rounded border ${TOPIC_COLORS[challenge.topic]}`}
-        >
-          {TOPIC_LABELS[challenge.topic]}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 -top-16 h-24 bg-[radial-gradient(closest-side,var(--ember),transparent)] opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-25"
+      />
+      {solved && <span aria-hidden className="absolute inset-y-0 left-0 w-[2px] bg-ember" />}
+
+      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
+        <span aria-hidden className="flex">
+          <TopicLogo topic={challenge.topic} className="size-4" />
         </span>
-        <span className="text-[11px] text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded border border-zinc-700">
-          {TYPE_LABELS[challenge.type]}
+        <span className="text-muted-foreground">{TOPIC_LABELS[challenge.topic]}</span>
+        <span>/</span>
+        <span>{TYPE_LABELS[challenge.type]}</span>
+        <span className="ml-auto">
+          {solved ? (
+            <span className="flex items-center gap-1 text-ember">
+              <CheckCircle size={13} weight="fill" /> Solved
+            </span>
+          ) : attempted ? (
+            <span className="text-muted-foreground">In progress</span>
+          ) : (
+            <ArrowUpRight
+              size={14}
+              className="text-faint transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ember"
+            />
+          )}
         </span>
       </div>
 
-      <span className="font-medium text-zinc-100 text-sm leading-snug">{challenge.title}</span>
+      <span className="text-[15px] font-medium leading-snug text-foreground">{challenge.title}</span>
 
-      <div className="flex items-center justify-between mt-auto">
-        <DifficultyStars difficulty={challenge.difficulty} />
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] text-amber-400 font-semibold">+{challenge.xp_reward} XP</span>
-          {solved ? (
-            <CheckCircle size={16} weight="fill" className="text-emerald-400" />
-          ) : attempted ? (
-            <Circle size={16} weight="regular" className="text-zinc-500" />
-          ) : (
-            <ArrowRight
-              size={14}
-              className="text-zinc-600 group-hover:text-zinc-400 transition-colors"
-            />
-          )}
-        </div>
+      <div className="mt-auto flex items-center justify-between border-t border-border pt-3">
+        <DifficultyHeat difficulty={challenge.difficulty} />
+        <span className="font-mono text-[11px] text-molten">+{challenge.xp_reward} XP</span>
       </div>
     </Link>
   )

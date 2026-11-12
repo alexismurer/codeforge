@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Trophy, Medal } from '@phosphor-icons/react'
 import { createClient } from '@/lib/supabase/client'
 import { LEVEL_NAMES } from '@/lib/gamification'
+import { CountUp } from '@/components/motion/CountUp'
+import { Reveal } from '@/components/motion/Reveal'
 
 type LeaderboardEntry = {
   id?: string
@@ -20,11 +21,7 @@ type Props = {
   currentUserId: string | null
 }
 
-const RANK_ICONS: Record<number, React.ReactNode> = {
-  0: <Trophy size={14} weight="fill" className="text-amber-400" />,
-  1: <Medal size={14} weight="fill" className="text-zinc-300" />,
-  2: <Medal size={14} weight="fill" className="text-amber-700" />,
-}
+const RANK_EDGE = ['bg-molten', 'bg-ember', 'bg-ember/50']
 
 export function LeaderboardClient({ initialAllTime, initialWeekly, currentUserId }: Props) {
   const [tab, setTab] = useState<'alltime' | 'weekly'>('alltime')
@@ -57,55 +54,80 @@ export function LeaderboardClient({ initialAllTime, initialWeekly, currentUserId
   const rows = tab === 'alltime' ? allTime : initialWeekly
 
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4 flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold text-zinc-100">Leaderboard</h1>
-        <p className="text-zinc-500 text-sm">Updated in real time</p>
+    <div className="mx-auto flex max-w-3xl flex-col gap-8 px-4 py-10 sm:px-6">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-col gap-2">
+          <span className="eyebrow">{'// Hall of heat'}</span>
+          <h1 className="font-display text-4xl font-semibold tracking-[-0.03em] text-foreground sm:text-5xl">Leaderboard</h1>
+        </div>
+        <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="live-dot size-1.5 rounded-full bg-ember" />
+          Live
+        </span>
       </div>
 
-      <div className="flex gap-1 bg-zinc-900 p-1 rounded-lg w-fit">
+      <div role="tablist" className="flex w-fit rounded-md border border-border bg-card p-0.5">
         {(['alltime', 'weekly'] as const).map((t) => (
           <button
             key={t}
+            role="tab"
+            aria-selected={tab === t}
             onClick={() => setTab(t)}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              tab === t ? 'bg-zinc-700 text-zinc-100' : 'text-zinc-500 hover:text-zinc-300'
+            className={`relative rounded-[4px] px-4 py-1.5 text-[13px] font-medium transition-colors ${
+              tab === t ? 'bg-surface-2 text-foreground' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            {t === 'alltime' ? 'All Time' : 'This Week'}
+            {t === 'alltime' ? 'All time' : 'This week'}
+            {tab === t && <span className="absolute inset-x-4 -bottom-px h-[2px] rounded-full bg-ember" />}
           </button>
         ))}
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        {rows.map((entry, idx) => {
-          const entryId = entry.id ?? entry.user_id
-          const isCurrentUser = entryId === currentUserId
-          return (
-            <div
-              key={entryId ?? idx}
-              className={`flex items-center gap-4 px-4 py-3 rounded-xl border transition-colors ${
-                isCurrentUser
-                  ? 'bg-indigo-950/40 border-indigo-800/50'
-                  : 'bg-zinc-900 border-zinc-800'
-              }`}
-            >
-              <div className="w-6 flex items-center justify-center text-xs text-zinc-500 font-mono">
-                {RANK_ICONS[idx] ?? <span>{idx + 1}</span>}
-              </div>
-              <div className="flex flex-col min-w-0 flex-1">
-                <span className={`font-medium text-sm ${isCurrentUser ? 'text-indigo-300' : 'text-zinc-200'}`}>
-                  {entry.username}
-                  {isCurrentUser && <span className="ml-2 text-[10px] text-indigo-500">you</span>}
-                </span>
-                <span className="text-[11px] text-zinc-500">{LEVEL_NAMES[(entry.level ?? 1) - 1]}</span>
-              </div>
-              <span className="text-amber-400 text-sm font-semibold tabular-nums">
-                {entry.xp.toLocaleString()} XP
-              </span>
-            </div>
-          )
-        })}
+      <div className="overflow-hidden rounded-md border border-border bg-card">
+        <div className="flex items-center gap-4 border-b border-border px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+          <span className="w-8">Rank</span>
+          <span className="flex-1">Player</span>
+          <span>XP</span>
+        </div>
+        {rows.length === 0 ? (
+          <p className="px-4 py-12 text-center font-mono text-[12px] text-faint">No one has struck the anvil yet.</p>
+        ) : (
+          <Reveal key={tab} stagger={0.03} y={8}>
+            {rows.map((entry, idx) => {
+              const entryId = entry.id ?? entry.user_id
+              const isCurrentUser = entryId === currentUserId
+              return (
+                <div
+                  key={entryId ?? idx}
+                  className={`relative flex items-center gap-4 border-b border-border px-4 py-3 transition-colors last:border-b-0 ${
+                    isCurrentUser ? 'bg-ember/[0.08]' : 'hover:bg-surface-2/50'
+                  }`}
+                >
+                  {idx < 3 && <span aria-hidden className={`absolute inset-y-0 left-0 w-[2px] ${RANK_EDGE[idx]}`} />}
+                  <span
+                    className={`w-8 font-mono text-[13px] tabular-nums ${
+                      idx === 0 ? 'text-molten' : idx < 3 ? 'text-ember' : 'text-faint'
+                    }`}
+                  >
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
+                  <div className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-sm font-medium text-foreground">
+                      {entry.username}
+                      {isCurrentUser && (
+                        <span className="ml-2 rounded-[3px] border border-ember/40 px-1 py-px font-mono text-[9px] uppercase tracking-wider text-ember">you</span>
+                      )}
+                    </span>
+                    <span className="font-mono text-[10.5px] text-faint">{LEVEL_NAMES[(entry.level ?? 1) - 1]}</span>
+                  </div>
+                  <span className={`font-mono text-sm ${idx === 0 ? 'text-molten' : 'text-foreground'}`}>
+                    <CountUp value={entry.xp} />
+                  </span>
+                </div>
+              )
+            })}
+          </Reveal>
+        )}
       </div>
     </div>
   )

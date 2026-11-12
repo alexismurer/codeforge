@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Code Forge
 
-## Getting Started
+**Forge real skills. One failing test at a time.**
 
-First, run the development server:
+Code Forge is a hands-on coding challenge platform for JavaScript, TypeScript and React. Write real code in a real editor, run it against a real test suite, and get AI hints that nudge without spoiling the answer. Every solve earns XP, feeds your streak and climbs a live leaderboard.
+
+![Landing page](docs/screenshots/landing.png)
+
+## Features
+
+- **200 challenges** across JS, TS and React: implement, fix the bug, refactor, or quiz, rated 1–5 in difficulty
+- **In-browser editor** powered by Monaco, with code executed in a sandboxed iframe — no server round-trips
+- **Instant test feedback** with pass/fail per case
+- **AI hints** streamed from Llama 3.3 70B (via Groq) that point you in the right direction without handing over the solution
+- **Progression**: XP, levels, daily streaks, badges and an activity heatmap
+- **Live leaderboard** with real-time updates
+
+| Challenges | Editor |
+| --- | --- |
+| ![Challenge list](docs/screenshots/challenges.jpg) | ![Challenge editor](docs/screenshots/editor.jpg) |
+
+![Profile with XP, streak, activity and badges](docs/screenshots/profile.jpg)
+
+## Tech stack
+
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · shadcn/ui · GSAP · Clerk · Supabase · Groq · Vitest
+
+## Getting started
 
 ```bash
+npm install
+# create .env.local with the keys below
+npm run seed                 # load challenges into Supabase
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key (real-time leaderboard only) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (all server-side DB access) |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key |
+| `CLERK_SECRET_KEY` | Clerk secret key |
+| `GROQ_API_KEY` | Groq API key for AI hints |
 
-## Learn More
+Apply the SQL files in `supabase/migrations/` to your Supabase project before seeding.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run build` | Production build |
+| `npm test` | Run the test suite |
+| `npm run seed` | Seed challenges from `content/challenges/` |

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+window.onerror = function (msg) {
+  window.parent.postMessage({ type: 'test-error', message: String(msg) }, '*');
+  return true;
+};
+</script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="/test-harness.js"></script>
+</head>
+<body>
+<script>
+// A fresh document is loaded for every run, so only the first job is accepted.
+let started = false;
+window.addEventListener('message', function (event) {
+  if (started || event.source !== window.parent || !event.data || event.data.type !== 'run') return;
+  started = true;
+  __runChallenge(event.data.code, event.data.testSuite, { jsx: event.data.jsx });
+});
+window.parent.postMessage({ type: 'test-ready' }, '*');
+</script>
+</body>
+</html>

@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { auth } from '@clerk/nextjs/server'
-import { Lightning, ArrowRight } from '@phosphor-icons/react/dist/ssr'
+import { Lightning, ArrowRight, Fire, CheckCircle } from '@phosphor-icons/react/dist/ssr'
+import { CountUp } from '@/components/motion/CountUp'
+import { Reveal } from '@/components/motion/Reveal'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { XpBar } from '@/components/gamification/XpBar'
 import { ActivityHeatmap } from '@/components/gamification/ActivityHeatmap'
@@ -9,6 +11,15 @@ import { BadgeShelf } from '@/components/gamification/BadgeShelf'
 import { ChallengeCard } from '@/components/challenges/ChallengeCard'
 import { getChallenges, getUserProgress } from '@/lib/challenges'
 import { computeWeaknessScores, pickRecommendations } from '@/lib/recommendations'
+
+function Stat({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1.5 bg-card px-4 py-3">
+      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">{label}</span>
+      <span className="flex items-center gap-1.5 font-display text-2xl font-semibold tracking-[-0.02em] text-foreground">{children}</span>
+    </div>
+  )
+}
 
 export default async function DashboardPage() {
   const { userId } = await auth()
@@ -64,58 +75,66 @@ export default async function DashboardPage() {
   const earnedBadgeSlugs = (badgesData.data ?? []).map((b) => b.badge_slug)
 
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4 flex flex-col gap-8">
-      <div className="flex flex-col gap-3">
-        <h1 className="text-2xl font-bold text-zinc-100">
-          Welcome back, {userData.username}
-        </h1>
-        <XpBar xp={userData.xp} level={userData.level} />
-        <div className="flex items-center gap-2 text-sm text-zinc-500">
-          <Lightning size={13} weight="fill" className="text-amber-400" />
-          <span>{userData.xp.toLocaleString()} total XP</span>
-          <span>·</span>
-          <span>{solvedIds.size} challenges solved</span>
-          <span>·</span>
-          <span>🔥 {userData.streak} day streak</span>
+    <Reveal className="mx-auto flex max-w-3xl flex-col gap-10 px-4 py-10 sm:px-6">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <span className="eyebrow">{'// Dashboard'}</span>
+          <h1 className="font-display text-4xl font-semibold tracking-[-0.03em] text-foreground sm:text-5xl">
+            Welcome back, <span className="ember-text">{userData.username}</span>
+          </h1>
         </div>
+        <div className="grid grid-cols-3 gap-px overflow-hidden rounded-md border border-border bg-border">
+          <Stat label="Total XP">
+            <Lightning size={18} weight="fill" className="text-molten" />
+            <CountUp value={userData.xp} />
+          </Stat>
+          <Stat label="Solved">
+            <CheckCircle size={18} weight="fill" className="text-ember" />
+            <CountUp value={solvedIds.size} />
+          </Stat>
+          <Stat label="Streak">
+            <Fire size={18} weight="fill" className={userData.streak > 0 ? 'text-ember' : 'text-faint'} />
+            <CountUp value={userData.streak} />
+            <span className="font-mono text-xs font-normal text-faint">days</span>
+          </Stat>
+        </div>
+        <XpBar xp={userData.xp} level={userData.level} />
       </div>
 
-      <div className="flex flex-col gap-3">
+      <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-zinc-200 text-sm">Recommended for you</h2>
+          <h2 className="eyebrow">{'// Recommended for you'}</h2>
           <Link
             href="/challenges"
-            className="text-xs text-zinc-500 hover:text-zinc-300 flex items-center gap-1"
+            className="flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-ember"
           >
             Browse all <ArrowRight size={12} />
           </Link>
         </div>
         {recommended.length === 0 ? (
-          <p className="text-zinc-500 text-sm">
-            You&apos;ve solved everything! More challenges coming soon.
+          <p className="rounded-md border border-dashed border-border py-10 text-center font-mono text-[12px] text-muted-foreground">
+            You&apos;ve solved everything. More challenges are on the anvil.
           </p>
         ) : (
-          <div className="flex flex-col gap-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             {recommended.map((c) => (
               <ChallengeCard key={c.id} challenge={c} progress={progressMap[c.id]} />
             ))}
           </div>
         )}
-      </div>
+      </section>
 
-      <div className="flex flex-col gap-3">
-        <h2 className="font-semibold text-zinc-200 text-sm">Activity</h2>
+      <section className="flex flex-col gap-4">
+        <h2 className="eyebrow">{'// Activity'}</h2>
         <ActivityHeatmap activity={activity} />
-      </div>
+      </section>
 
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-zinc-200 text-sm">
-            Badges ({earnedBadgeSlugs.length}/12)
-          </h2>
-        </div>
+      <section className="flex flex-col gap-4">
+        <h2 className="eyebrow">
+          {'// Badges'} <span className="text-ember">{earnedBadgeSlugs.length}</span> / 12
+        </h2>
         <BadgeShelf earnedSlugs={earnedBadgeSlugs} />
-      </div>
-    </div>
+      </section>
+    </Reveal>
   )
 }

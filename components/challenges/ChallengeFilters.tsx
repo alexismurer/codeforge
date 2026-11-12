@@ -12,11 +12,11 @@ const TOPICS: { value: Topic | 'all'; label: string }[] = [
 
 const DIFFICULTIES = [
   { value: 'all', label: 'Any difficulty' },
-  { value: '1', label: '★ Easy' },
-  { value: '2', label: '★★ Medium' },
-  { value: '3', label: '★★★ Hard' },
-  { value: '4', label: '★★★★ Expert' },
-  { value: '5', label: '★★★★★ Legendary' },
+  { value: '1', label: 'Easy' },
+  { value: '2', label: 'Medium' },
+  { value: '3', label: 'Hard' },
+  { value: '4', label: 'Expert' },
+  { value: '5', label: 'Legendary' },
 ]
 
 export function ChallengeFilters() {
@@ -33,29 +33,34 @@ export function ChallengeFilters() {
   }
 
   return (
-    <div className="flex items-center gap-3 flex-wrap">
-      <div className="flex gap-1">
-        {TOPICS.map((t) => (
-          <button
-            key={t.value}
-            onClick={() => setFilter('topic', t.value)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              topic === t.value
-                ? 'bg-indigo-600 text-white'
-                : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700'
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
+    <div className="flex flex-wrap items-center gap-3">
+      <div role="tablist" className="flex rounded-md border border-border bg-card p-0.5">
+        {TOPICS.map((t) => {
+          const active = topic === t.value
+          return (
+            <button
+              key={t.value}
+              role="tab"
+              aria-selected={active}
+              onClick={() => setFilter('topic', t.value)}
+              className={`relative rounded-[4px] px-3 py-1.5 text-[13px] font-medium transition-colors ${
+                active ? 'bg-surface-2 text-foreground' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {t.label}
+              {active && <span className="absolute inset-x-3 -bottom-px h-[2px] rounded-full bg-ember" />}
+            </button>
+          )
+        })}
       </div>
       <select
         value={difficulty}
         onChange={(e) => setFilter('difficulty', e.target.value)}
-        className="bg-zinc-800 border border-zinc-700 text-zinc-300 text-sm rounded-lg px-3 py-1.5 outline-none"
+        aria-label="Difficulty"
+        className="h-[34px] rounded-md border border-border bg-card px-3 text-[13px] text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:border-ember/60"
       >
         {DIFFICULTIES.map((d) => (
-          <option key={d.value} value={d.value}>
+          <option key={d.value} value={d.value} className="bg-card text-foreground">
             {d.label}
           </option>
         ))}

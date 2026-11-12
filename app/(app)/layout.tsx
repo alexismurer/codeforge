@@ -47,7 +47,7 @@ export default async function AppLayout({
     .single()
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-950 text-zinc-100">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <TopNav user={profile} />
       <main className="flex-1 overflow-hidden">{children}</main>
     </div>

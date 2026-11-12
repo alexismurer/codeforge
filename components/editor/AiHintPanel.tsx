@@ -11,13 +11,13 @@ const mdComponents: Components = {
     const isBlock = className?.startsWith('language-')
     if (isBlock) {
       return (
-        <pre className="my-2 rounded bg-zinc-800 px-3 py-2 overflow-x-auto text-xs font-mono text-zinc-200">
+        <pre className="my-2 overflow-x-auto rounded-[4px] border border-border bg-background px-3 py-2 font-mono text-xs text-foreground">
           <code>{children}</code>
         </pre>
       )
     }
     return (
-      <code className="rounded bg-zinc-800 px-1 py-0.5 text-xs font-mono text-purple-300" {...props}>
+      <code className="rounded-[3px] bg-surface-2 px-1 py-0.5 font-mono text-xs text-molten" {...props}>
         {children}
       </code>
     )
@@ -107,9 +107,9 @@ export function AiHintPanel({ challenge, code, runResult, onHintUsed }: Props) {
       <button
         onClick={fetchHint}
         disabled={runResult?.passed === true}
-        className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 disabled:opacity-40 text-white text-xs font-medium transition-opacity"
+        className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-card px-3 text-xs font-medium text-foreground transition-colors hover:border-ember/40 disabled:opacity-40"
       >
-        <Sparkle size={13} weight="fill" />
+        <Sparkle size={13} weight="fill" className="text-ember" />
         Hint
       </button>
     )
@@ -119,33 +119,31 @@ export function AiHintPanel({ challenge, code, runResult, onHintUsed }: Props) {
     <>
       <button
         onClick={close}
-        className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-medium"
+        className="flex h-8 items-center gap-1.5 rounded-md border border-ember/40 bg-ember/10 px-3 text-xs font-medium text-foreground"
       >
-        <Sparkle size={13} weight="fill" />
+        <Sparkle size={13} weight="fill" className="text-ember" />
         Hint
         <X size={11} className="ml-1 opacity-70" />
       </button>
 
-      <div className="absolute bottom-[40px] left-[280px] right-[240px] z-10 bg-zinc-900 border border-indigo-900/50 rounded-t-xl shadow-2xl shadow-indigo-950/50">
-        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-zinc-800">
-          <Sparkle size={13} weight="fill" className="text-purple-400" />
-          <span className="text-xs text-purple-300 font-semibold uppercase tracking-wide">
-            Hint
-          </span>
+      <div className="absolute bottom-[40px] left-[280px] right-[260px] z-10 rounded-t-md border border-b-0 border-border bg-card shadow-[0_-24px_60px_-20px_rgba(0,0,0,0.7)]">
+        <div className="flex items-center gap-2 border-b border-border px-4 py-2">
+          <span className="font-mono text-[11px] text-ember">&gt;</span>
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">hint</span>
           {loading && (
-            <span className="ml-2 text-[10px] text-zinc-500 animate-pulse">thinking…</span>
+            <span className="ml-2 animate-pulse font-mono text-[10px] text-faint">thinking…</span>
           )}
-          <button onClick={close} className="ml-auto text-zinc-500 hover:text-zinc-300">
+          <button onClick={close} aria-label="Close hint" className="ml-auto text-faint hover:text-foreground">
             <X size={14} />
           </button>
         </div>
-        <div className="px-4 py-3 text-sm text-zinc-300 leading-relaxed min-h-[60px] max-h-[160px] overflow-y-auto">
+        <div className="max-h-[180px] min-h-[60px] overflow-y-auto px-4 py-3 text-sm leading-relaxed text-muted-foreground">
           {hint ? (
             <ReactMarkdown components={mdComponents}>{hint}</ReactMarkdown>
           ) : loading ? null : (
             'No hint available.'
           )}
-          {loading && <span className="inline-block w-1.5 h-3.5 bg-purple-400 animate-pulse ml-0.5 align-middle" />}
+          {loading && <span className="inline-block w-1.5 h-3.5 bg-ember animate-pulse ml-0.5 align-middle" />}
         </div>
       </div>
     </>

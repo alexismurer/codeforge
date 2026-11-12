@@ -6,6 +6,18 @@ import { ActivityHeatmap } from '@/components/gamification/ActivityHeatmap'
 import { BadgeShelf } from '@/components/gamification/BadgeShelf'
 import { XpBar } from '@/components/gamification/XpBar'
 import { Lightning, Fire, CheckCircle } from '@phosphor-icons/react/dist/ssr'
+import { CountUp } from '@/components/motion/CountUp'
+import { Reveal } from '@/components/motion/Reveal'
+
+function Stat({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1.5 bg-card px-4 py-3">
+      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">{label}</span>
+      <span className="flex items-center gap-1.5 font-display text-2xl font-semibold tracking-[-0.02em] text-foreground">{children}</span>
+    </div>
+  )
+}
+
 
 export default async function ProfilePage({
   params,
@@ -47,55 +59,60 @@ export default async function ProfilePage({
   const joinedYear = new Date(profile.created_at).getFullYear()
 
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4 flex flex-col gap-8">
-      {/* Profile banner — place generated image at public/images/profile-banner.png (recommended 1200×220) */}
-      <div className="relative -mx-4 -mt-8 h-[140px] bg-gradient-to-br from-indigo-950 via-zinc-900 to-purple-950 overflow-hidden">
+    <div className="mx-auto flex max-w-3xl flex-col gap-10 px-4 pb-16 sm:px-6">
+      <div className="relative -mx-4 h-[180px] overflow-hidden sm:-mx-6">
         <Image
           src="/images/profile-banner.png"
           alt=""
           fill
-          style={{ objectFit: 'cover', opacity: 0.55 }}
+          priority
+          style={{ objectFit: 'cover', opacity: 0.4, filter: 'grayscale(0.5) sepia(0.6) saturate(1.6) hue-rotate(-15deg)' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-zinc-950" />
+        <div className="absolute inset-0 bg-[radial-gradient(80%_100%_at_50%_0%,oklch(0.70_0.19_45/18%),transparent)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background" />
       </div>
 
-      <div className="flex items-start gap-4">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
-          {profile.username.charAt(0).toUpperCase()}
-        </div>
-        <div className="flex flex-col gap-1 flex-1 min-w-0">
-          <h1 className="text-xl font-bold text-zinc-100">{profile.username}</h1>
-          <p className="text-zinc-500 text-sm">Member since {joinedYear}</p>
-          <div className="flex items-center gap-3 mt-1 text-sm flex-wrap">
-            <span className="flex items-center gap-1 text-amber-400 font-semibold">
-              <Lightning size={13} weight="fill" />
-              {profile.xp.toLocaleString()} XP
-            </span>
-            <span className="flex items-center gap-1 text-red-400">
-              <Fire size={13} weight="fill" />
-              {profile.streak} day streak
-            </span>
-            <span className="flex items-center gap-1 text-emerald-400">
-              <CheckCircle size={13} weight="fill" />
-              {solvedCount} solved
-            </span>
+      <Reveal className="-mt-24 flex flex-col gap-10">
+        <div className="relative flex items-end gap-5">
+          <div className="flex size-20 flex-shrink-0 items-center justify-center rounded-md border border-ember/50 bg-surface-2 font-display text-4xl font-semibold text-ember shadow-[0_0_40px_-8px_var(--ember)]">
+            {profile.username.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex min-w-0 flex-col gap-1 pb-1">
+            <span className="eyebrow">Member since {joinedYear}</span>
+            <h1 className="truncate font-display text-3xl font-semibold tracking-[-0.03em] text-foreground sm:text-4xl">{profile.username}</h1>
           </div>
         </div>
-      </div>
 
-      <XpBar xp={profile.xp} level={profile.level} />
+        <div className="grid grid-cols-3 gap-px overflow-hidden rounded-md border border-border bg-border">
+          <Stat label="XP">
+            <Lightning size={18} weight="fill" className="text-molten" />
+            <CountUp value={profile.xp} />
+          </Stat>
+          <Stat label="Streak">
+            <Fire size={18} weight="fill" className={profile.streak > 0 ? 'text-ember' : 'text-faint'} />
+            <CountUp value={profile.streak} />
+            <span className="font-mono text-xs font-normal text-faint">days</span>
+          </Stat>
+          <Stat label="Solved">
+            <CheckCircle size={18} weight="fill" className="text-ember" />
+            <CountUp value={solvedCount} />
+          </Stat>
+        </div>
 
-      <div className="flex flex-col gap-3">
-        <h2 className="font-semibold text-zinc-200 text-sm">Activity</h2>
-        <ActivityHeatmap activity={activity} />
-      </div>
+        <XpBar xp={profile.xp} level={profile.level} />
 
-      <div className="flex flex-col gap-3">
-        <h2 className="font-semibold text-zinc-200 text-sm">
-          Badges ({earnedSlugs.length} / 12)
-        </h2>
-        <BadgeShelf earnedSlugs={earnedSlugs} />
-      </div>
+        <section className="flex flex-col gap-4">
+          <h2 className="eyebrow">{'// Activity'}</h2>
+          <ActivityHeatmap activity={activity} />
+        </section>
+
+        <section className="flex flex-col gap-4">
+          <h2 className="eyebrow">
+            {'// Badges'} <span className="text-ember">{earnedSlugs.length}</span> / 12
+          </h2>
+          <BadgeShelf earnedSlugs={earnedSlugs} />
+        </section>
+      </Reveal>
     </div>
   )
 }

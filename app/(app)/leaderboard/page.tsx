@@ -24,7 +24,7 @@ export default async function LeaderboardPage() {
 
   const weeklyMap: Record<string, { user_id: string; username: string; level: number; xp: number }> = {}
   for (const row of weeklyRaw ?? []) {
-    const u = row.users as { id: string; username: string; level: number } | null
+    const u = Array.isArray(row.users) ? row.users[0] : row.users
     if (!u) continue
     if (!weeklyMap[u.id]) weeklyMap[u.id] = { user_id: u.id, username: u.username, level: u.level, xp: 0 }
     weeklyMap[u.id].xp += row.xp_earned

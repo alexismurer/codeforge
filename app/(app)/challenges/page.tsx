@@ -31,11 +31,14 @@ export default async function ChallengesPage({
   })
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold text-zinc-100">Challenges</h1>
-        <p className="text-zinc-500 text-sm">
-          {filtered.length} challenge{filtered.length !== 1 ? 's' : ''} available
+    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-10 sm:px-6">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-col gap-2">
+          <span className="eyebrow">{'// The anvil'}</span>
+          <h1 className="font-display text-4xl font-semibold tracking-[-0.03em] text-foreground sm:text-5xl">Challenges</h1>
+        </div>
+        <p className="font-mono text-[12px] text-muted-foreground">
+          <span className="text-ember">{filtered.length}</span> challenge{filtered.length !== 1 ? 's' : ''} in the queue
         </p>
       </div>
 
@@ -44,7 +47,7 @@ export default async function ChallengesPage({
       </Suspense>
 
       {filtered.length === 0 ? (
-        <p className="text-zinc-500 text-sm py-8 text-center">
+        <p className="rounded-md border border-dashed border-border py-16 text-center font-mono text-[13px] text-muted-foreground">
           No challenges match your filters.
         </p>
       ) : (

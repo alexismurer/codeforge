@@ -39,7 +39,7 @@ ${failingTests.join('\n')}
 Give me a hint.`
 
   const stream = await groq.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
+    model: 'qwen/qwen3.8-27b',
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userMessage },
@@ -47,6 +47,8 @@ Give me a hint.`
     stream: true,
     max_tokens: 300,
     temperature: 0.4,
+    reasoning_effort: 'none',
+    reasoning_format: 'hidden',
   })
 
   const encoder = new TextEncoder()

@@ -1,9 +1,9 @@
 'use client'
 
 import { useSignIn } from '@clerk/nextjs'
-import { GithubLogo, GoogleLogo } from '@phosphor-icons/react'
+import { GithubLogo, GoogleLogo, ArrowRight } from '@phosphor-icons/react'
 
-export function SignInButtons() {
+export function SignInButtons({ captcha = true }: { captcha?: boolean }) {
   const { signIn } = useSignIn()
 
   const signInWith = async (strategy: 'oauth_github' | 'oauth_google') => {
@@ -16,20 +16,21 @@ export function SignInButtons() {
   }
 
   return (
-    <div className="flex flex-col gap-3 w-full max-w-xs">
-      <div id="clerk-captcha" />
+    <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+      {captcha && <div id="clerk-captcha" />}
       <button
         onClick={() => signInWith('oauth_github')}
-        className="flex items-center justify-center gap-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg px-4 py-3 text-sm font-medium transition-colors cursor-pointer"
+        className="ember-glow group flex cursor-pointer items-center justify-center gap-2.5 rounded-md bg-ember px-5 py-3 text-sm font-semibold text-primary-foreground transition-[filter,transform] hover:brightness-110 active:translate-y-px"
       >
         <GithubLogo size={18} weight="fill" />
         Continue with GitHub
+        <ArrowRight size={14} weight="bold" className="transition-transform group-hover:translate-x-0.5" />
       </button>
       <button
         onClick={() => signInWith('oauth_google')}
-        className="flex items-center justify-center gap-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg px-4 py-3 text-sm font-medium transition-colors cursor-pointer"
+        className="flex cursor-pointer items-center justify-center gap-2.5 rounded-md border border-border bg-card px-5 py-3 text-sm font-medium text-foreground transition-colors hover:border-foreground/20 hover:bg-surface-2 active:translate-y-px"
       >
-        <GoogleLogo size={18} weight="fill" />
+        <GoogleLogo size={18} weight="bold" />
         Continue with Google
       </button>
     </div>

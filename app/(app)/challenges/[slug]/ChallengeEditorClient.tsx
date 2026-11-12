@@ -10,6 +10,7 @@ import { IframeRunner, type IframeRunnerHandle } from '@/components/editor/Ifram
 import { TestResults } from '@/components/editor/TestResults'
 import { ProblemPanel } from '@/components/editor/ProblemPanel'
 import { AiHintPanel } from '@/components/editor/AiHintPanel'
+import { CountUp } from '@/components/motion/CountUp'
 import type { Challenge, ChallengeProgress, RunResult } from '@/lib/types'
 
 type Props = {
@@ -48,8 +49,8 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
     }, 10000)
     setRunning(true)
     setRunResult(null)
-    runnerRef.current?.run(code, challenge.test_suite)
-  }, [code, challenge.test_suite])
+    runnerRef.current?.run(code, challenge.test_suite, { jsx: challenge.topic === 'react' })
+  }, [code, challenge.test_suite, challenge.topic])
 
   const handleResult = useCallback(
     async (result: RunResult) => {
@@ -113,18 +114,20 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
   return (
     <div className="flex flex-col h-[calc(100vh-52px)]">
       {/* Challenge bar */}
-      <div className="flex items-center gap-3 px-4 py-2.5 border-b border-zinc-800 bg-zinc-950 flex-shrink-0">
+      <div className="flex items-center gap-3 px-4 py-2 border-b border-border bg-background flex-shrink-0">
         <Link
           href="/challenges"
-          className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 transition-colors"
+          aria-label="Back to challenges"
+          className="flex size-8 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors hover:border-ember/40 hover:text-foreground"
         >
-          <ArrowLeft size={15} />
+          <ArrowLeft size={14} />
         </Link>
-        <span className="font-semibold text-zinc-100 text-sm">{challenge.title}</span>
+        <span className="hidden font-mono text-[11px] uppercase tracking-[0.12em] text-faint sm:inline">Challenges /</span>
+        <span className="truncate font-display text-[15px] font-semibold tracking-[-0.01em] text-foreground">{challenge.title}</span>
         <div className="ml-auto flex items-center gap-2">
           <button
             onClick={handleReset}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs transition-colors"
+            className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-card px-3 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowCounterClockwise size={13} />
             Reset
@@ -132,10 +135,10 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
           <button
             onClick={handleRun}
             disabled={running}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-medium transition-colors"
+            className="ember-glow flex h-8 items-center gap-1.5 rounded-md bg-ember px-4 text-xs font-semibold text-primary-foreground transition-[filter] hover:brightness-110 disabled:opacity-60"
           >
-            <Play size={13} weight="fill" />
-            Run Tests
+            <Play size={12} weight="fill" />
+            {running ? 'Running…' : 'Run tests'}
           </button>
           <AiHintPanel
             challenge={challenge}
@@ -147,14 +150,15 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
       </div>
 
       {solveResult && (
-        <div className="bg-emerald-950 border-b border-emerald-800 px-4 py-2.5 flex items-center gap-4 flex-shrink-0">
-          <CheckCircle size={18} weight="fill" className="text-emerald-400" />
-          <span className="text-emerald-300 text-sm font-medium">
-            Challenge solved! +{solveResult.xpEarned} XP
-            {solveResult.newLevel && ` · Level up — ${solveResult.newLevel}`}
-            {solveResult.newBadges.length > 0 && ` · 🏆 ${solveResult.newBadges.join(', ')}`}
+        <div className="relative flex flex-shrink-0 items-center gap-4 overflow-hidden border-b border-ember/30 bg-ember/10 px-4 py-2.5">
+          <span aria-hidden className="absolute inset-y-0 left-0 w-1/2 bg-[linear-gradient(90deg,oklch(0.70_0.19_45/25%),transparent)]" />
+          <CheckCircle size={18} weight="fill" className="relative text-ember" />
+          <span className="relative text-sm font-medium text-foreground">
+            Forged. <span className="font-mono text-molten">+<CountUp value={solveResult.xpEarned} /> XP</span>
+            {solveResult.newLevel && <span className="text-muted-foreground"> · Level up: <span className="text-foreground">{solveResult.newLevel}</span></span>}
+            {solveResult.newBadges.length > 0 && <span className="text-muted-foreground"> · New badge: <span className="text-foreground">{solveResult.newBadges.join(', ')}</span></span>}
           </span>
-          <Link href="/challenges" className="ml-auto text-xs text-emerald-500 hover:text-emerald-300">
+          <Link href="/challenges" className="relative ml-auto font-mono text-[11px] uppercase tracking-[0.12em] text-ember hover:text-molten">
             Next challenge →
           </Link>
         </div>
@@ -163,12 +167,12 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
       {/* 3-panel layout */}
       <div className="flex flex-1 overflow-hidden relative">
         {/* Problem panel */}
-        <div className="w-[280px] flex-shrink-0 border-r border-zinc-800 overflow-y-auto">
+        <div className="w-[280px] flex-shrink-0 border-r border-border bg-card/40 overflow-y-auto">
           <ProblemPanel challenge={challenge} progress={progress} />
         </div>
 
         {/* Editor */}
-        <div className="flex-1 flex flex-col min-w-0 border-r border-zinc-800">
+        <div className="flex-1 flex flex-col min-w-0 border-r border-border bg-[#1a1714]">
           <div className="flex-1 overflow-hidden">
             <CodeEditor
               value={code}
@@ -177,17 +181,17 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
             />
           </div>
           {/* Run status bar */}
-          <div className="flex items-center gap-3 px-4 py-2 border-t border-zinc-800 bg-zinc-950 flex-shrink-0">
+          <div className="flex items-center gap-3 px-4 py-2 border-t border-border bg-background flex-shrink-0">
             <div
-              className={`w-2 h-2 rounded-full ${
+              className={`size-2 rounded-full ${
                 !runResult
-                  ? 'bg-zinc-700'
+                  ? 'bg-surface-2'
                   : runResult.passed
-                  ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]'
-                  : 'bg-red-400 shadow-[0_0_6px_#f87171]'
+                  ? 'bg-success shadow-[0_0_8px_var(--success)]'
+                  : 'bg-destructive shadow-[0_0_8px_var(--destructive)]'
               }`}
             />
-            <span className="text-xs text-zinc-500">
+            <span className="font-mono text-[11px] text-muted-foreground">
               {!runResult
                 ? 'Not run yet'
                 : runResult.passed
@@ -198,9 +202,9 @@ export function ChallengeEditorClient({ challenge, progress, userId }: Props) {
         </div>
 
         {/* Test results panel */}
-        <div className="w-[240px] flex-shrink-0 overflow-hidden">
-          <div className="flex items-center gap-2 px-3 py-2 border-b border-zinc-800">
-            <span className="text-[11px] text-zinc-500 uppercase tracking-wide">Test Results</span>
+        <div className="w-[260px] flex-shrink-0 overflow-hidden bg-card/40">
+          <div className="flex h-[37px] items-center gap-2 px-3 border-b border-border">
+            <span className="eyebrow">Test results</span>
           </div>
           <div className="h-[calc(100%-37px)]">
             <TestResults result={runResult} running={running} />

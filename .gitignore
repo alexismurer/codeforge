@@ -48,3 +48,9 @@ todo.txt
 
 # brainstorm visuals
 .superpowers/
+# AI agent files, plans and local notes
+AGENTS.md
+CLAUDE.md
+.claude/
+docs/superpowers/
+prompts.txt
