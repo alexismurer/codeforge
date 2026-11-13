@@ -4,7 +4,7 @@
 
 Code Forge is a hands-on coding challenge platform for JavaScript, TypeScript and React. Write real code in a real editor, run it against a real test suite, and get AI hints that nudge without spoiling the answer. Every solve earns XP, feeds your streak and climbs a live leaderboard.
 
-![Landing page](docs/screenshots/landing.png)
+![Landing page](docs/gifs/landing.gif)
 
 ## Features
 
@@ -19,7 +19,7 @@ Code Forge is a hands-on coding challenge platform for JavaScript, TypeScript an
 | --- | --- |
 | ![Challenge list](docs/screenshots/challenges.jpg) | ![Challenge editor](docs/screenshots/editor.jpg) |
 
-![Profile with XP, streak, activity and badges](docs/screenshots/profile.jpg)
+<p align="center"><img src="docs/gifs/profile.gif" alt="Profile with XP, streak, activity and badges" width="600"></p>
 
 ## Tech stack
 
